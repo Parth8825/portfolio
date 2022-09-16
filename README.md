@@ -6,6 +6,14 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+## Icons
+
+https://www.flaticon.com/search?word=award&order_by=4
+
+## Fonts
+
+https://fonts.google.com/about
+
 ### `npm start`
 
 Runs the app in the development mode.\
