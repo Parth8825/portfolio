@@ -14,6 +14,16 @@ https://www.flaticon.com/search?word=award&order_by=4
 
 https://fonts.google.com/about
 
+## clip path generator
+
+https://bennettfeely.com/clippy/
+
+## scrallable mouse SVG
+
+https://www.svgrepo.com/svg/325415/mouse-scroll-wheel
+
+---
+
 ### `npm start`
 
 Runs the app in the development mode.\
