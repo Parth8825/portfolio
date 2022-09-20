@@ -22,6 +22,11 @@ https://bennettfeely.com/clippy/
 
 https://www.svgrepo.com/svg/325415/mouse-scroll-wheel
 
+## using EmailJS to send an email AND how to use it
+
+https://www.emailjs.com/
+https://www.emailjs.com/docs/examples/reactjs/
+
 ---
 
 ### `npm run build`
