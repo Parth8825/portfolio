@@ -8,7 +8,7 @@ In the project directory, you can run:
 
 ## Icons
 
-https://www.flaticon.com/search?word=award&order_by=4
+https://www.flaticon.com/
 
 ## Fonts
 
