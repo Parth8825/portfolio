@@ -60,7 +60,7 @@ const Contact = () => {
             <input
               style={{ backgroundColor: darkMode && "#333" }}
               type="text"
-              placeholder="Your name"
+              placeholder="name"
               name="userName"
             />
             <input
@@ -72,7 +72,7 @@ const Contact = () => {
             <input
               style={{ backgroundColor: darkMode && "#333" }}
               type="text"
-              placeholder="Your email"
+              placeholder="email"
               name="userEmail"
             />
             <textarea
