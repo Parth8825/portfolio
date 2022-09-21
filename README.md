@@ -8,7 +8,7 @@ In the project directory, you can run:
 
 ## Icons
 
-https://www.flaticon.com/search?word=award&order_by=4
+https://www.flaticon.com/
 
 ## Fonts
 
@@ -21,6 +21,11 @@ https://bennettfeely.com/clippy/
 ## scrallable mouse SVG
 
 https://www.svgrepo.com/svg/325415/mouse-scroll-wheel
+
+## using EmailJS to send an email AND how to use it
+
+https://www.emailjs.com/
+https://www.emailjs.com/docs/examples/reactjs/
 
 ---
 
