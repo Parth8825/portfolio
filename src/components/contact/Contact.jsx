@@ -39,15 +39,32 @@ const Contact = () => {
           <div className="c-info">
             <div className="c-info-item">
               <img src={Phone} alt="" className="c-icon" />
-              +1 647 607 0989
+              <a
+                href="tel:+1 647-607-0989"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                +1 647-607-0989
+              </a>
             </div>
             <div className="c-info-item">
               <img src={Email} alt="" className="c-icon" />
-              parthdarji20@gmail.com
+              <a
+                href="mailto: parthdarji20@gmail.com"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                parthdarji20@gmail
+              </a>
             </div>
             <div className="c-info-item">
               <img src={Address} alt="" className="c-icon" />
-              381 Krug street, Kitchener, ON, Canada
+              <a
+                href="http://maps.google.com/?q=Krug street, Kitchener, ON, Canada"
+                target={"_blank"}
+                rel="noreferrer"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                Krug street, Kitchener, ON, Canada
+              </a>
             </div>
           </div>
         </div>
