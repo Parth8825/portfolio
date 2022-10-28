@@ -12,8 +12,10 @@ const Intro = () => {
           <div className="i-title">
             <div className="i-title-wrapper">
               <div className="i-title-item">Web Developer</div>
-              <div className="i-title-item">UI Designer</div>
-              <div className="i-title-item">Unit test</div>
+              <div className="i-title-item">ASP.NET MVC</div>
+              <div className="i-title-item">C#</div>
+              <div className="i-title-item">React</div>
+              <div className="i-title-item">Angular</div>
               <div className="i-title-item">Database</div>
               <div className="i-title-item">Reader</div>
             </div>
