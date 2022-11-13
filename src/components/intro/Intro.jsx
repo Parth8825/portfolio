@@ -19,6 +19,7 @@ const Intro = () => {
               <div className="i-title-item">Database</div>
               <div className="i-title-item">Reader</div>
             </div>
+            <div>>
           </div>
           <p className="i-desc">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
