@@ -55,7 +55,7 @@ form {
 }
 
 input {
-  width: 50%;
+  width: 400px;
   height: 50px;
   border: none;
   border-bottom: 1px solid black;
@@ -63,7 +63,13 @@ input {
   font-size: 14px;
   padding-left: 10px;
 }
-
+.f-fields {
+  width: 100%;
+  height: 50px;
+  margin: 10px 0px;
+  font-size: 14px;
+  padding-left: 10px;
+}
 textarea {
   width: 100%;
   margin: 10px 0px;
