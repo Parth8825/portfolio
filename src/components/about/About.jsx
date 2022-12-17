@@ -1,6 +1,6 @@
 import React from "react";
 import "./about.css";
-import Award from "../../img/award.png";
+// import Award from "../../img/award.png";
 
 const About = () => {
   return (
@@ -23,13 +23,13 @@ const About = () => {
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
           aliquip ex ea commodo consequat duis aute irure dolor in reprehende.
         </p>
-        <div className="a-award">
+        {/* <div className="a-award">
           <img src={Award} alt="" className="a-award-img" />
           <div className="a-award-texts">
             <h4 className="a-award-title">International Coding Award 2022</h4>
             aliquip ex ea commodo consequat duis aute irure dolor in reprehende.
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
