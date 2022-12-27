@@ -13,26 +13,23 @@ const Contact = () => {
   const [subject, setSubject] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [error, setError] = useState(false);
-  const [regexError, setRegexError] = useState(false);
+  const [error, setError] = useState({});
+  const [isSubmit, setIsSubmit] = useState(false);
+
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
-  const emailRegex = /^[\w-\\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+
+  const initialValues = {
+    name,
+    subject,
+    email,
+    message,
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setDone(false);
-    setRegexError(false);
-    if (
-      name.length === 0 ||
-      email.length === 0 ||
-      message.length === 0 ||
-      subject.length === 0
-    ) {
-      setError(true);
-    } else if (!email.match(emailRegex)) {
-      setRegexError(true);
-    } else {
+    setError(validate(initialValues));
+    if (Object.keys(error).length === 0 && isSubmit) {
       emailjs
         .sendForm(
           "service_wggal0m",
@@ -52,6 +49,37 @@ const Contact = () => {
         );
     }
   };
+
+  const validate = (values) => {
+    const formErrors = {};
+    const emailRegex = /^[\w-\\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    if (!values.name) {
+      formErrors.name = "Name is requried!!";
+      setDone(false);
+      setIsSubmit(true);
+    }
+    if (!values.subject) {
+      formErrors.subject = "Subject is requried!!";
+      setDone(false);
+      setIsSubmit(true);
+    }
+    if (!values.email) {
+      formErrors.email = "Email is requried!!";
+      setDone(false);
+      setIsSubmit(true);
+    } else if (!emailRegex.test(values.email)) {
+      formErrors.email = "Invalid email";
+      setDone(false);
+      setIsSubmit(true);
+    }
+    if (!values.message) {
+      formErrors.message = "message is requried!!";
+      setDone(false);
+      setIsSubmit(true);
+    }
+    return formErrors;
+  };
+
   return (
     <div className="c">
       <div className="c-bg"></div>
@@ -114,11 +142,7 @@ const Contact = () => {
               onChange={(e) => setName(e.target.value)}
             />
             <div>
-              {error && name.length <= 0 ? (
-                <label style={{ color: "red" }}> Name is empty!!</label>
-              ) : (
-                ""
-              )}
+              <span style={{ color: "red" }}> {error.name}</span>
             </div>
             <input
               style={{ backgroundColor: darkMode && "#333" }}
@@ -128,11 +152,7 @@ const Contact = () => {
               onChange={(e) => setSubject(e.target.value)}
             />
             <div>
-              {error && subject.length <= 0 ? (
-                <label style={{ color: "red" }}> Subject is empty!!</label>
-              ) : (
-                ""
-              )}
+              <span style={{ color: "red" }}> {error.subject}</span>
             </div>
             <input
               style={{ backgroundColor: darkMode && "#333" }}
@@ -142,18 +162,7 @@ const Contact = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
             <div>
-              {error && email.length <= 0 ? (
-                <label style={{ color: "red" }}> Email Id is empty!!</label>
-              ) : (
-                ""
-              )}
-            </div>
-            <div>
-              {regexError ? (
-                <label style={{ color: "red" }}> Invalid Email</label>
-              ) : (
-                ""
-              )}
+              <span style={{ color: "red" }}> {error.email}</span>
             </div>
             <textarea
               style={{ backgroundColor: darkMode && "#333" }}
@@ -163,16 +172,12 @@ const Contact = () => {
               onChange={(e) => setMessage(e.target.value)}
             />
             <div>
-              {error && message.length <= 0 ? (
-                <label style={{ color: "red" }}> Your message is empty!!</label>
-              ) : (
-                ""
-              )}
+              <span style={{ color: "red" }}> {error.message}</span>
             </div>
             <div>
               <button>Submit</button>
             </div>
-            {done && "Thank you...You mail has been sent successfully"}
+            {done && "Thank you...Your mail has been sent successfully"}
           </form>
         </div>
       </div>
