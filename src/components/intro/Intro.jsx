@@ -12,7 +12,7 @@ const Intro = () => {
           <div className="i-title">
             <div className="i-title-wrapper">
               <div className="i-title-item">Web Developer</div>
-              <div className="i-title-item">Full Stack Developer</div>
+              <div className="i-title-item">Full Stack</div>
               <div className="i-title-item">ASP.NET MVC</div>
               <div className="i-title-item">React</div>
               <div className="i-title-item">Angular</div>
@@ -23,7 +23,8 @@ const Intro = () => {
           <p className="i-desc">
             I have gained a deep understanding of codebase reasoning and logic
             in C#, ASP.NET MVC, JavaScript, Node JS, Angular, React, and
-            databases like MySQL and MongoDB as an outcome of the study.
+            databases like MySQL and MongoDB as an outcome of the computer
+            programming study.
           </p>
         </div>
         <svg
