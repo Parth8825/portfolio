@@ -2,12 +2,12 @@ export const products = [
   {
     id: 1,
     img: "/images/blogApp.png",
-    link: "https://parthblogapp.herokuapp.com/",
+    link: "https://github.com/Parth8825/blog_application",
   },
   {
     id: 2,
     img: "/images/EMSApp.png",
-    link: "https://capstone-project-team-prt.herokuapp.com/login",
+    link: "https://github.com/Parth8825/Capstone_Project",
   },
   // {
   //   id: 3,
