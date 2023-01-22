@@ -103,13 +103,13 @@ const Contact = () => {
             <div className="c-info-item">
               <img src={Email} alt="" className="c-icon" />
               <a
-                href="mailto: parthdarji20@gmail.com"
+                href="mailto: parthdarji8825@gmail.com"
                 style={{
                   textDecoration: "none",
                   color: darkMode ? "white" : "#222",
                 }}
               >
-                parthdarji20@gmail
+                parthdarji8825@gmail.com
               </a>
             </div>
             <div className="c-info-item">
