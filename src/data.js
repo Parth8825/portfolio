@@ -1,8 +1,8 @@
 export const products = [
   {
     id: 1,
-    img: "/images/blogApp.png",
-    link: "https://github.com/Parth8825/blog_application",
+    img: "/images/UMS.png",
+    link: "https://github.com/Parth8825/UserManagement_Project",
   },
   {
     id: 2,

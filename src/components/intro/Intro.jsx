@@ -11,20 +11,24 @@ const Intro = () => {
           <h1 className="i-name">Parth Darji</h1>
           <div className="i-title">
             <div className="i-title-wrapper">
-              <div className="i-title-item">Web Developer</div>
-              <div className="i-title-item">Full Stack</div>
+              <div className="i-title-item">Full Stack Developer</div>
               <div className="i-title-item">ASP.NET MVC</div>
-              <div className="i-title-item">React</div>
+              <div className="i-title-item">C#</div>
+              <div className="i-title-item">JavaScript</div>
+              <div className="i-title-item">JQuery</div>
+              <div className="i-title-item">MySQL</div>
               <div className="i-title-item">Angular</div>
-              <div className="i-title-item">Database</div>
-              <div className="i-title-item">Reader</div>
+              <div className="i-title-item">React</div>
+              <div className="i-title-item">GitHub</div>
             </div>
           </div>
           <p className="i-desc">
-            I have gained a deep understanding of codebase reasoning and logic
-            in C#, ASP.NET MVC, JavaScript, Node JS, Angular, React, and
-            databases like MySQL and MongoDB as an outcome of the computer
-            programming study.
+            Seeking for a Software Developer position in a fast-growing
+            organization to utilize expertise in software development using
+            ASP.NET, C#, MVC, SQL, and Entity Framework and testing, as well as
+            deployment and support using agile development methodologies. Coming
+            with well-honed skills in computer science in addition to excellent
+            communication skills.
           </p>
         </div>
         <svg

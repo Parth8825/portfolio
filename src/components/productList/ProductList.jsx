@@ -9,8 +9,15 @@ const ProductList = () => {
       <div className="pl-texts">
         <h1 className="pl-title">Create & inspire. It's Parth</h1>
         <p className="pl-desc">
-          It is a creative portfolio that your work has been waiting for. It
-          contains stunning portfolio styles & a whole lot more awaits inside.
+          Here is the project created by me. You can check out more of my work
+          on github profile a whole lot more awaits inside.{" "}
+          <a
+            href="https://github.com/Parth8825"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            https://github.com/Parth8825
+          </a>
         </p>
         <p>
           <b>Deployemnt of these websites on the way...</b>
