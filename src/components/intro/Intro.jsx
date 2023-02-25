@@ -19,13 +19,13 @@ const Intro = () => {
               <div className="i-title-item">JQuery</div>
               <div className="i-title-item">Angular</div>
               <div className="i-title-item">React</div>
-              <div className="i-title-item">GitHub</div>
+              <div cllassName="i-title-item">GitHub</div>
             </div>
           </div>
           <p className="i-desc">
             Seeking for a Software Developer position in a fast-growing
             organization to utilize expertise in software development using
-            ASP.NET, C#, MVC, SQL, and Entity Framework and testing, as well as
+            ASP.NET, C#, MVC, SQL, Entity Framework, and testing as well as
             deployment and support using agile development methodologies. Coming
             with well-honed skills in computer science in addition to excellent
             communication skills.
