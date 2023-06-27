@@ -91,13 +91,13 @@ const Contact = () => {
               <img src={Phone} alt="" className="c-icon" />
 
               <a
-                href="tel:+1 519-897-2236"
+                href="tel:+1 647-607-0989"
                 style={{
                   textDecoration: "none",
                   color: darkMode ? "white" : "#222",
                 }}
               >
-                +1 519-897-2236
+                +1 647-607-0989
               </a>
             </div>
             <div className="c-info-item">
