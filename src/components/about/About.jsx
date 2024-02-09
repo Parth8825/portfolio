@@ -13,7 +13,7 @@ const About = () => {
       </div>
       <div className="a-right">
         <h1 className="a-title">About Me</h1>
-        <p className="a-sub">Full Stack .NET Developer</p>
+        <p className="a-sub">Software Developer</p>
         <p className="a-desc">
           &#x2022; Experience in Software Development Life Cycle SDLC
           involving Requirement Gathering, Analysis, Logical Physical
