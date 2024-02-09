@@ -23,9 +23,9 @@ const Intro = () => {
             </div>
           </div>
           <p className="i-desc">
-            Seeking for a Software Developer position in a fast-growing
-            organization to utilize expertise in software development using
-            ASP.NET, C#, MVC, SQL, Entity Framework, and testing as well as
+            Software Developer in a fast-growing
+            organization. Expertise in software development using
+            ASP.NET, C#, MVC, JavaScript, MSSQL, ADO.NET, and testing as well as
             deployment and support using agile development methodologies. Coming
             with well-honed skills in computer science in addition to excellent
             communication skills.
