@@ -15,7 +15,7 @@ const About = () => {
         <h1 className="a-title">About Me</h1>
         <p className="a-sub">Full Stack .NET Developer</p>
         <p className="a-desc">
-          &#x2022; 3 Years of experience in Software Development Life Cycle SDLC
+          &#x2022; Experience in Software Development Life Cycle SDLC
           involving Requirement Gathering, Analysis, Logical Physical
           Architectural Modeling, Design, Development, Testing, Implementation,
           and Production Support.
@@ -30,14 +30,14 @@ const About = () => {
           Model View Controller MVC design pattern.
           <br></br>&#x2022; Good experience with development methodologies like
           Agile SCRUM, Waterfall, and Test-driven development.<br></br>&#x2022;
-          Developed a POC to create ASP.NET MVC 4 application which in turn uses
-          ASP.NET Web API application in Visual Studio 2017.
-          <br></br>&#x2022; Able to work as a team player as well as
+          Developed a POC to create ASP.NET MVC application which in turn uses
+          ASP.NET Web API application in Visual Studio.
+          <br></br>&#x2022; Able to work as a team as well as
           individually. Highly organized, and dedicated with a positive attitude
           along with strong analytical and troubleshooting skills.
         </p>
         <p className="a-desc-mobile">
-          &#x2022; 3 Years of experience in Software Development Life Cycle SDLC
+          &#x2022; Experience in Software Development Life Cycle SDLC
           involving Requirement Gathering, Analysis, Logical Physical
           Architectural Modeling, Design, Development, Testing, Implementation,
           and Production Support.<br></br>&#x2022; Experience in designing web
