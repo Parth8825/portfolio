@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState } from "react";
 import "./contact.css";
 import Phone from "../../img/phone-call.png";
 import Email from "../../img/email.png";
-import Address from "../../img/map.png";
+//import Address from "../../img/map.png";
 import emailjs from "@emailjs/browser";
 import { ThemeContext } from "../../context";
 
@@ -35,7 +35,7 @@ const Contact = () => {
           "service_wggal0m",
           "template_yuu9elc",
           formRef.current,
-          "4QFN7_0-E4dVmMD8Y"
+          "4QFN7_0-E4dVmMD8Y",
         )
         .then(
           (result) => {
@@ -45,7 +45,7 @@ const Contact = () => {
           },
           (error) => {
             console.log(error.text);
-          }
+          },
         );
     }
   };
@@ -112,10 +112,10 @@ const Contact = () => {
                 parthdarji8825@gmail.com
               </a>
             </div>
-            <div className="c-info-item">
+            {/* <div className="c-info-item">
               <img src={Address} alt="" className="c-icon" />
               <a
-                href="http://maps.google.com/?q=Krug street, Kitchener, ON, Canada"
+                href="http://maps.google.com/?q=Kitchener,ON,Canada"
                 target={"_blank"}
                 rel="noreferrer"
                 style={{
@@ -123,9 +123,9 @@ const Contact = () => {
                   color: darkMode ? "white" : "#222",
                 }}
               >
-                Krug street, Kitchener, ON, Canada
+                Kitchener, ON, Canada
               </a>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="c-right">

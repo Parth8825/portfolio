@@ -1,6 +1,5 @@
 import React from "react";
 import "./intro.css";
-import myPic from "../../img/mypic.png";
 
 const Intro = () => {
   return (
@@ -12,23 +11,22 @@ const Intro = () => {
           <div className="i-title">
             <div className="i-title-wrapper">
               <div className="i-title-item">Software Developer</div>
-              <div className="i-title-item">ASP.NET MVC</div>
+              <div className="i-title-item">Dot NET Core</div>
               <div className="i-title-item">C#</div>
+              <div className="i-title-item">Azure</div>
               <div className="i-title-item">SQL</div>
               <div className="i-title-item">JavaScript</div>
-              <div className="i-title-item">JQuery</div>
+              <div className="i-title-item">jQuery</div>
               <div className="i-title-item">React</div>
-              <div className="i-title-item">Azure</div>
               <div cllassName="i-title-item">GitHub</div>
+              <div cllassName="i-title-item">DevOps</div>
             </div>
           </div>
           <p className="i-desc">
-            Software Developer in a fast-growing
-            organization. Expertise in software development using
-            ASP.NET, C#, MVC, JavaScript, MSSQL, ADO.NET, and testing as well as
-            deployment and support using agile development methodologies. Coming
-            with well-honed skills in computer science in addition to excellent
-            communication skills.
+            Software Developer with strong experience in building scalable web
+            applications using ASP.NET, C#, MVC, JavaScript, and SQL Server.
+            Proficient in developing, testing, and deploying robust solutions
+            using modern development practices and Agile methodologies.
           </p>
         </div>
         <svg
@@ -47,7 +45,14 @@ const Intro = () => {
       </div>
       <div className="i-right">
         <div className="i-bg"></div>
-        <img src={myPic} alt="" className="i-img" />
+        <picture>
+          <source srcSet={require("../../img/mypic.webp")} type="image/webp" />
+          <img
+            src={require("../../img/mypic-compressed.png")}
+            alt="Parth Darji"
+            className="i-img"
+          />
+        </picture>
       </div>
     </div>
   );
