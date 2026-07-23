@@ -1,32 +1,18 @@
-export const products = [
+export const projectsData = [
   {
     id: 1,
-    img: "/images/UMS.png",
+    title: "User Management System",
+    desc: "Enterprise user management system built with ASP.NET Core MVC, role-based access control, SQL Server integration, and secure user authentication.",
+    img: "/images/project-user-management.png",
     link: "https://github.com/Parth8825/UserManagement_Project",
+    tags: [".NET Core", "C#", "SQL Server", "MVC", "Identity", "Bootstrap"],
   },
   {
     id: 2,
-    img: "/images/EMSApp.png",
+    title: "Employee Management System (EMS)",
+    desc: "Capstone project web application for employee records, attendance tracking, department workflows, and reporting.",
+    img: "/images/project-employee-management.png",
     link: "https://github.com/Parth8825/Capstone_Project",
+    tags: ["ASP.NET Core", "Web API", "C#", "React", "Azure", "Entity Framework"],
   },
-  // {
-  //   id: 3,
-  //   img: "/images/blogApp.png",
-  //   link: "https://parthblogapp.herokuapp.com/",
-  // },
-  // {
-  //   id: 4,
-  //   img: "/images/blogApp.png",
-  //   link: "https://parthblogapp.herokuapp.com/",
-  // },
-  // {
-  //   id: 5,
-  //   img: "/images/blogApp.png",
-  //   link: "https://parthblogapp.herokuapp.com/",
-  // },
-  // {
-  //   id: 6,
-  //   img: "/images/blogApp.png",
-  //   link: "https://parthblogapp.herokuapp.com/",
-  // },
 ];

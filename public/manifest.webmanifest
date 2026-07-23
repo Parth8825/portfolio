@@ -1,0 +1,26 @@
+{
+  "short_name": "Parth Darji",
+  "name": "Parth Darji - Software Developer Portfolio",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "id": "/",
+  "start_url": "/",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "description": "Parth Darji - Software Developer Portfolio App",
+  "categories": ["portfolio", "developer", "technology"]
+}
