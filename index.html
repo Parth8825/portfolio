@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Parth Portfolio" />
+  
+  <meta name="description" content="Parth Darji - Software Developer specializing in ASP.NET Core, C#, Azure, SQL Server, and modern React web applications." />
+  <meta name="keywords" content="Parth Darji, Software Developer, DotNET Core, C#, Azure, SQL, React, Portfolio, Web Developer" />
+  <meta property="og:title" content="Parth Darji | Software Developer Portfolio" />
+  <meta property="og:description" content="Full-stack Software Developer building scalable web applications with .NET Core, C#, Azure, and React." />
+  <meta property="og:type" content="website" />
+  
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="alternate icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+  
+  <title>Parth Darji | Software Developer Portfolio</title>
+</head>
+
+<body class="bg-slate-950 text-slate-100 antialiased selection:bg-cyan-500 selection:text-white transition-colors duration-300">
+  <noscript>You need to enable JavaScript to view this application.</noscript>
+  <div id="root"></div>
+  
+  <script type="module" src="/src/main.jsx"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14" />
+      <stop offset="50%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </linearGradient>
+
+    <!-- Text Gradient (Cyan to Indigo to Purple) -->
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="50%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#c084fc" />
+    </linearGradient>
+
+    <!-- Border Glow Gradient -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#c084fc" stop-opacity="0.2" />
+    </linearGradient>
+
+    <!-- Ambient Glow Filter -->
+    <filter id="glowFilter" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Outer Rounded Square Container -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)" />
+  <rect width="500" height="500" x="6" y="6" rx="122" fill="none" stroke="url(#borderGrad)" stroke-width="4" />
+
+  <!-- Subtle Inner Tech Accent Lines -->
+  <circle cx="256" cy="256" r="210" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.15" stroke-dasharray="8 8" />
+
+  <!-- Monogram Text "PD" -->
+  <g filter="url(#glowFilter)">
+    <text 
+      x="256" 
+      y="320" 
+      font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'Outfit', 'Montserrat', 'Helvetica Neue', sans-serif" 
+      font-size="220" 
+      font-weight="900" 
+      letter-spacing="8" 
+      text-anchor="middle" 
+      fill="url(#textGrad)"
+    >PD</text>
+  </g>
+
+  <!-- Small Glowing Tech Dot Accent -->
+  <circle cx="400" cy="370" r="16" fill="#38bdf8" filter="url(#glowFilter)" />
+</svg>
