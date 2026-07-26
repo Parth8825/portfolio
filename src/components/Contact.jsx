@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState } from "react";
 import { ThemeContext } from "../context";
 import emailjs from "@emailjs/browser";
-import { Mail, Phone, MapPin, Send, CheckCircle, AlertCircle, Loader2, ExternalLink } from "lucide-react";
+import { Mail, MapPin, Send, CheckCircle, AlertCircle, Loader2, ExternalLink } from "lucide-react";
 
 // Security utility function to escape HTML special characters
 const sanitizeInput = (str) => {
@@ -161,7 +161,7 @@ const Contact = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Left Column: Contact Cards & Info */}
           <div className="lg:col-span-5 space-y-6 text-left">
-            <div className={`p-8 rounded-3xl border space-y-8 ${
+            <div className={`p-5 sm:p-8 rounded-3xl border space-y-8 ${
               darkMode ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200 shadow-lg"
             }`}>
               <div>
@@ -169,26 +169,8 @@ const Contact = () => {
                   Contact Details
                 </h3>
                 <p className={`text-sm ${darkMode ? "text-slate-400" : "text-slate-600"}`}>
-                  Reach out directly via phone or email, or drop a message using the form.
+                  Reach out directly via email or send a message using the inquiry form below.
                 </p>
-              </div>
-
-              {/* Contact Item: Phone */}
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
-                  <Phone size={22} />
-                </div>
-                <div>
-                  <p className="text-xs uppercase tracking-wider font-semibold text-cyan-400">Phone</p>
-                  <a
-                    href="tel:+16476070989"
-                    className={`text-base font-bold hover:text-cyan-400 transition-colors ${
-                      darkMode ? "text-white" : "text-slate-900"
-                    }`}
-                  >
-                    +1 (647) 607-0989
-                  </a>
-                </div>
               </div>
 
               {/* Contact Item: Email */}
@@ -197,7 +179,7 @@ const Contact = () => {
                   <Mail size={22} />
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-wider font-semibold text-indigo-400">Email</p>
+                  <p className="text-xs uppercase tracking-wider font-semibold text-indigo-400">Personal Email Address</p>
                   <a
                     href="mailto:parthdarji8825@gmail.com"
                     className={`text-base font-bold hover:text-indigo-400 transition-colors break-all ${
@@ -215,9 +197,9 @@ const Contact = () => {
                   <MapPin size={22} />
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-wider font-semibold text-purple-400">Location</p>
+                  <p className="text-xs uppercase tracking-wider font-semibold text-purple-400">Current Location</p>
                   <p className={`text-base font-bold ${darkMode ? "text-white" : "text-slate-900"}`}>
-                    Kitchener, ON, Canada
+                    Ahmedabad, Gujarat, India
                   </p>
                 </div>
               </div>
@@ -226,7 +208,7 @@ const Contact = () => {
 
           {/* Right Column: Contact Form */}
           <div className="lg:col-span-7">
-            <div className={`p-8 sm:p-10 rounded-3xl border ${
+            <div className={`p-5 sm:p-10 rounded-3xl border ${
               darkMode ? "glass-panel border-slate-800" : "glass-panel-light border-slate-200 shadow-xl"
             }`}>
               <form ref={formRef} onSubmit={handleSubmit} noValidate autoComplete="off" className="space-y-6 text-left">

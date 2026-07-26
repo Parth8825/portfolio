@@ -30,12 +30,12 @@ const About = () => {
   ];
 
   const bulletPoints = [
-    "Experienced in Software Development Life Cycle (SDLC) involving requirement gathering, design, testing, and production support.",
-    "Expert in designing web applications using ASP.NET Core, C#, Entity Framework, Enterprise Library, LINQ, and REST Web APIs.",
-    "Skilled in front-end design with HTML5, CSS3, JavaScript, jQuery, and React in clean modular structures.",
-    "Sound knowledge of Object-Oriented Programming (OOP) principles: Inheritance, Abstraction, Encapsulation, and Polymorphism.",
-    "Implemented enterprise applications using Model-View-Controller (MVC) design patterns.",
-    "Highly dedicated team player with strong analytical and troubleshooting skills.",
+    "2+ years of experience designing, developing, and deploying scalable enterprise web applications and APIs.",
+    "Expertise in building secure RESTful & GraphQL APIs using ASP.NET Core, C#, Azure App Services, Azure Storage, and Azure SQL.",
+    "Engineered centralized OAuth 2.0 authentication wrapper services with Microsoft Identity Platform for microservices security.",
+    "Hands-on experience in modern frontend integration using React, TypeScript, Vite, jQuery, AJAX, and Bootstrap.",
+    "Experienced in migrating content-driven platforms (Umbraco CMS v13 to v17) and developing Shopify integration apps.",
+    "Post-Graduate Diploma in Computer Programming (Conestoga College, Canada) & Bachelor of IT Engineering (GTU, India).",
   ];
 
   return (
