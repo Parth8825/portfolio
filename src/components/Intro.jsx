@@ -1,7 +1,9 @@
 import React, { useContext, useState, useEffect } from "react";
 import { ThemeContext } from "../context";
-import { ArrowRight, Github, Linkedin, Mail, Sparkles } from "lucide-react";
+import { ArrowRight, Mail, Sparkles, Code2, Globe2, Award, Zap } from "lucide-react";
+import { GithubIcon, LinkedinIcon } from "./Icons";
 import developerAvatar from "../assets/images/developer-avatar.webp";
+import { getYearsOfExperience } from "../utils/experience";
 
 const titles = [
   "Software Developer",
@@ -15,6 +17,7 @@ const titles = [
 const Intro = () => {
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
+  const yearsExp = getYearsOfExperience();
 
   const [titleIndex, setTitleIndex] = useState(0);
   const [fade, setFade] = useState(true);
@@ -29,6 +32,29 @@ const Intro = () => {
     }, 2800);
     return () => clearInterval(interval);
   }, []);
+
+  const stats = [
+    {
+      icon: <Award className="text-cyan-400" size={18} />,
+      value: yearsExp,
+      label: "Enterprise Experience",
+    },
+    {
+      icon: <Code2 className="text-indigo-400" size={18} />,
+      value: "5+",
+      label: "Production Web Apps & APIs",
+    },
+    {
+      icon: <Globe2 className="text-purple-400" size={18} />,
+      value: "2",
+      label: "Countries (Canada 🇨🇦 & India 🇮🇳)",
+    },
+    {
+      icon: <Zap className="text-emerald-400" size={18} />,
+      value: "100%",
+      label: "Clean Architecture & CI/CD",
+    },
+  ];
 
   return (
     <section id="home" className="min-h-screen pt-28 pb-16 flex items-center relative overflow-hidden">
@@ -74,13 +100,13 @@ const Intro = () => {
             </span>
           </div>
 
-          {/* Description */}
+          {/* Dynamic Description */}
           <p
             className={`max-w-2xl text-sm sm:text-lg leading-relaxed ${
               darkMode ? "text-slate-300" : "text-slate-600"
             }`}
           >
-            Result-driven Azure & .NET Developer with 2+ years of experience designing, developing, and deploying scalable web applications and APIs. Expertise in
+            Result-driven Azure & .NET Developer with {yearsExp} of experience designing, developing, and deploying scalable web applications and APIs. Expertise in
             <strong className="text-cyan-400 font-semibold"> ASP.NET Core, Azure Services, RESTful & GraphQL APIs, OAuth 2.0, SQL Server, </strong>
             and modern frontend frameworks like React & TypeScript.
           </p>
@@ -119,7 +145,7 @@ const Intro = () => {
                     : "bg-white border-slate-200 text-slate-700 hover:text-slate-900 shadow-sm"
                 }`}
               >
-                <Github size={20} />
+                <GithubIcon size={20} />
               </a>
 
               <a
@@ -133,7 +159,7 @@ const Intro = () => {
                     : "bg-white border-slate-200 text-slate-700 hover:text-slate-900 shadow-sm"
                 }`}
               >
-                <Linkedin size={20} />
+                <LinkedinIcon size={20} />
               </a>
 
               <a
@@ -148,6 +174,30 @@ const Intro = () => {
                 <Mail size={20} />
               </a>
             </div>
+          </div>
+
+          {/* Animated Impact Stats Bar */}
+          <div className="pt-6 border-t border-slate-800/40 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {stats.map((st, sIdx) => (
+              <div
+                key={sIdx}
+                className={`p-3.5 rounded-2xl border transition-all duration-300 hover:-translate-y-1 ${
+                  darkMode
+                    ? "bg-slate-900/60 border-slate-800 hover:border-cyan-500/40"
+                    : "bg-white border-slate-200 shadow-sm hover:border-cyan-400"
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  {st.icon}
+                  <span className={`text-lg sm:text-xl font-extrabold ${darkMode ? "text-white" : "text-slate-900"}`}>
+                    {st.value}
+                  </span>
+                </div>
+                <p className={`text-[11px] font-medium leading-snug ${darkMode ? "text-slate-400" : "text-slate-600"}`}>
+                  {st.label}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
 

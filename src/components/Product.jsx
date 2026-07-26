@@ -1,14 +1,15 @@
 import React, { useContext } from "react";
 import { ThemeContext } from "../context";
-import { Cpu, ShieldCheck } from "lucide-react";
+import { Cpu, ShieldCheck, ArrowRight } from "lucide-react";
 
-const Product = ({ title, company, desc, architecture, tags }) => {
+const Product = ({ title, company, desc, architecture, tags, onOpenModal }) => {
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
 
   return (
     <div
-      className={`group rounded-3xl border overflow-hidden transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between ${
+      onClick={onOpenModal}
+      className={`group rounded-3xl border overflow-hidden transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between cursor-pointer ${
         darkMode
           ? "bg-slate-900/70 border-slate-800 hover:border-cyan-500/50 hover:shadow-2xl hover:shadow-cyan-500/10"
           : "bg-white border-slate-200 hover:border-cyan-400 shadow-md hover:shadow-xl"
@@ -55,8 +56,8 @@ const Product = ({ title, company, desc, architecture, tags }) => {
         </div>
       </div>
 
-      {/* Tech Stack Tags Footer */}
-      <div className="p-5 sm:p-8 pt-0">
+      {/* Tech Stack Tags & CTA Footer */}
+      <div className="p-5 sm:p-8 pt-0 space-y-4">
         <div className="pt-3.5 border-t border-slate-800/40 flex flex-wrap gap-1.5">
           {tags &&
             tags.map((tag, idx) => (
@@ -67,6 +68,11 @@ const Product = ({ title, company, desc, architecture, tags }) => {
                 {tag}
               </span>
             ))}
+        </div>
+
+        <div className="flex items-center gap-1 text-xs font-bold text-cyan-400 group-hover:text-cyan-300 uppercase tracking-wider">
+          <span>View Architecture Details</span>
+          <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
         </div>
       </div>
     </div>

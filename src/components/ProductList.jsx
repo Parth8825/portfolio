@@ -1,12 +1,15 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { ThemeContext } from "../context";
 import Product from "./Product";
+import ProjectModal from "./ProjectModal";
 import { enterpriseProjects } from "../data";
-import { FolderCode, Linkedin, Mail } from "lucide-react";
+import { FolderCode, Mail } from "lucide-react";
+import { LinkedinIcon } from "./Icons";
 
 const ProductList = () => {
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
+  const [selectedProject, setSelectedProject] = useState(null);
 
   return (
     <section id="projects" className="py-20 relative">
@@ -21,7 +24,7 @@ const ProductList = () => {
             Featured <span className="text-gradient">Production Projects</span>
           </h2>
           <p className={`max-w-2xl mx-auto text-base sm:text-lg ${darkMode ? "text-slate-400" : "text-slate-600"}`}>
-            Key enterprise web applications, real-time validation APIs, OAuth 2.0 microservices, and CMS migrations engineered during production tenure.
+            Key enterprise web applications, real-time validation APIs, OAuth 2.0 microservices, and CMS migrations engineered during production tenure. Click any card to inspect system architecture.
           </p>
         </div>
 
@@ -35,6 +38,7 @@ const ProductList = () => {
               desc={item.desc}
               architecture={item.architecture}
               tags={item.tags}
+              onOpenModal={() => setSelectedProject(item)}
             />
           ))}
         </div>
@@ -70,12 +74,20 @@ const ProductList = () => {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm transition-all shadow-md shadow-blue-600/25 active:scale-95 w-full sm:w-auto"
             >
-              <Linkedin size={18} />
+              <LinkedinIcon size={18} />
               LinkedIn
             </a>
           </div>
         </div>
       </div>
+
+      {/* Case Study Detail Modal */}
+      {selectedProject && (
+        <ProjectModal
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+        />
+      )}
     </section>
   );
 };
