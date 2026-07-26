@@ -18,10 +18,10 @@ describe('App Component', () => {
     // Check main hero section content
     expect(screen.getAllByText(/Darji/i).length).toBeGreaterThan(0);
 
-    // Check section headings
-    expect(screen.getByText(/Professional Background/i)).toBeInTheDocument();
+    // Check section headings for redesigned grand layout
+    expect(screen.getByText(/Career & Academic Journey/i)).toBeInTheDocument();
     expect(screen.getByText(/Skills &/i)).toBeInTheDocument();
-    expect(screen.getByText(/Portfolio/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Featured/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/Let's Discuss/i)).toBeInTheDocument();
   });
 });

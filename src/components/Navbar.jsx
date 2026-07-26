@@ -1,12 +1,13 @@
 import React, { useContext, useState, useEffect } from "react";
 import { ThemeContext } from "../context";
-import { Sun, Moon, Menu, X, Code2 } from "lucide-react";
+import { Sun, Moon, Menu, X, Code2, Search } from "lucide-react";
 
-const Navbar = () => {
+const Navbar = ({ onOpenCommandPalette }) => {
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [osKey, setOsKey] = useState("Ctrl+K");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,10 +17,19 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const isMac =
+      typeof window !== "undefined" &&
+      ((navigator.platform && navigator.platform.toUpperCase().indexOf("MAC") >= 0) ||
+        (navigator.userAgent && navigator.userAgent.toUpperCase().indexOf("MAC") >= 0));
+    setOsKey(isMac ? "⌘K" : "Ctrl+K");
+  }, []);
+
   const navLinks = [
     { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
+    { name: "Experience", href: "#experience" },
     { name: "Skills", href: "#skills" },
+    { name: "Code", href: "#code-showcase" },
     { name: "Projects", href: "#projects" },
     { name: "Contact", href: "#contact" },
   ];
@@ -74,12 +84,26 @@ const Navbar = () => {
         </nav>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* OS-Aware Command Palette Trigger Button */}
+          <button
+            onClick={onOpenCommandPalette}
+            aria-label="Open Command Palette"
+            className={`p-2 sm:px-3 sm:py-2 rounded-xl border text-xs font-mono transition-all duration-200 flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95 ${
+              darkMode
+                ? "bg-slate-900 border-slate-800 text-slate-300 hover:border-cyan-500/50 hover:text-white"
+                : "bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200"
+            }`}
+          >
+            <Search size={14} className="text-cyan-400" />
+            <span className="hidden sm:inline font-semibold">{osKey}</span>
+          </button>
+
           {/* Theme Switcher Button */}
           <button
             onClick={toggleTheme}
             aria-label="Toggle Theme"
-            className={`p-2.5 rounded-xl border transition-all duration-200 ${
+            className={`p-2.5 rounded-xl border transition-all duration-200 active:scale-95 ${
               darkMode
                 ? "bg-slate-900 border-slate-800 text-amber-400 hover:bg-slate-800"
                 : "bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200"
@@ -92,7 +116,7 @@ const Navbar = () => {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle Navigation Menu"
-            className={`md:hidden p-2.5 rounded-xl border transition-all duration-200 ${
+            className={`md:hidden p-2.5 rounded-xl border transition-all duration-200 active:scale-95 ${
               darkMode
                 ? "bg-slate-900 border-slate-800 text-slate-200"
                 : "bg-slate-100 border-slate-200 text-slate-700"
