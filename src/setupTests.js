@@ -14,3 +14,24 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: () => {},
   }),
 });
+
+// Mock IntersectionObserver for Framer Motion viewport animations in jsdom
+class IntersectionObserverMock {
+  constructor() {}
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+Object.defineProperty(window, 'IntersectionObserver', {
+  writable: true,
+  configurable: true,
+  value: IntersectionObserverMock,
+});
+
+Object.defineProperty(globalThis, 'IntersectionObserver', {
+  writable: true,
+  configurable: true,
+  value: IntersectionObserverMock,
+});
+

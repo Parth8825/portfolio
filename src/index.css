@@ -84,3 +84,13 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #475569;
 }
+
+/* Prevent Mobile Safari / WebKit auto-zoom on input focus while keeping desktop crisp */
+@media (max-width: 640px) {
+  input[type="text"],
+  input[type="email"],
+  textarea {
+    font-size: 16px !important;
+  }
+}
+

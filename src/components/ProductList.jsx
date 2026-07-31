@@ -5,6 +5,7 @@ import ProjectModal from "./ProjectModal";
 import { enterpriseProjects } from "../data";
 import { FolderCode, Mail } from "lucide-react";
 import { LinkedinIcon } from "./Icons";
+import { motion, AnimatePresence } from "framer-motion";
 
 const ProductList = () => {
   const theme = useContext(ThemeContext);
@@ -15,7 +16,13 @@ const ProductList = () => {
     <section id="projects" className="py-20 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center space-y-4 mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+          className="text-center space-y-4 mb-16"
+        >
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 text-xs font-semibold tracking-wide uppercase">
             <FolderCode size={14} />
             Enterprise Solutions
@@ -26,13 +33,14 @@ const ProductList = () => {
           <p className={`max-w-2xl mx-auto text-base sm:text-lg ${darkMode ? "text-slate-400" : "text-slate-600"}`}>
             Key enterprise web applications, real-time validation APIs, OAuth 2.0 microservices, and CMS migrations engineered during production tenure. Click any card to inspect system architecture.
           </p>
-        </div>
+        </motion.div>
 
         {/* Project Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {enterpriseProjects.map((item) => (
+          {enterpriseProjects.map((item, index) => (
             <Product
               key={item.id}
+              index={index}
               title={item.title}
               company={item.company}
               desc={item.desc}
@@ -44,7 +52,11 @@ const ProductList = () => {
         </div>
 
         {/* Connect Banner */}
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
           className={`p-5 sm:p-8 rounded-3xl border text-center flex flex-col sm:flex-row items-center justify-between gap-6 ${
             darkMode
               ? "glass-panel border-slate-800"
@@ -78,16 +90,18 @@ const ProductList = () => {
               LinkedIn
             </a>
           </div>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Case Study Detail Modal */}
-      {selectedProject && (
-        <ProjectModal
-          project={selectedProject}
-          onClose={() => setSelectedProject(null)}
-        />
-      )}
+      {/* Case Study Detail Modal with AnimatePresence for 3D Flip */}
+      <AnimatePresence>
+        {selectedProject && (
+          <ProjectModal
+            project={selectedProject}
+            onClose={() => setSelectedProject(null)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 };

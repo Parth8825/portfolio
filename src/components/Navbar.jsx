@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { ThemeContext } from "../context";
 import { Sun, Moon, Menu, X, Code2, Search } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Navbar = ({ onOpenCommandPalette }) => {
   const theme = useContext(ThemeContext);
@@ -39,7 +40,10 @@ const Navbar = ({ onOpenCommandPalette }) => {
   };
 
   return (
-    <header
+    <motion.header
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
           ? darkMode
@@ -127,28 +131,34 @@ const Navbar = ({ onOpenCommandPalette }) => {
         </div>
       </div>
 
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div
-          className={`md:hidden border-b px-4 pt-4 pb-6 space-y-3 animate-in slide-in-from-top duration-200 ${
-            darkMode
-              ? "bg-slate-950/95 border-slate-800 text-white"
-              : "bg-white/95 border-slate-200 text-slate-900"
-          }`}
-        >
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-base font-medium hover:bg-cyan-500/10 hover:text-cyan-400 transition-colors"
-            >
-              {link.name}
-            </a>
-          ))}
-        </div>
-      )}
-    </header>
+      {/* Mobile Drawer with AnimatePresence */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className={`md:hidden border-b px-4 pt-4 pb-6 space-y-3 overflow-hidden ${
+              darkMode
+                ? "bg-slate-950/95 border-slate-800 text-white"
+                : "bg-white/95 border-slate-200 text-slate-900"
+            }`}
+          >
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3 py-2 rounded-lg text-base font-medium hover:bg-cyan-500/10 hover:text-cyan-400 transition-colors"
+              >
+                {link.name}
+              </a>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
   );
 };
 
