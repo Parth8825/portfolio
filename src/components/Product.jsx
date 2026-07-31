@@ -1,15 +1,22 @@
 import React, { useContext } from "react";
 import { ThemeContext } from "../context";
 import { Cpu, ShieldCheck, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
-const Product = ({ title, company, desc, architecture, tags, onOpenModal }) => {
+const Product = ({ title, company, desc, architecture, tags, onOpenModal, index = 0 }) => {
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5, delay: index * 0.12 }}
+      whileHover={{ y: -8, scale: 1.02 }}
+      whileTap={{ scale: 0.97, rotateY: 15 }}
       onClick={onOpenModal}
-      className={`group rounded-3xl border overflow-hidden transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between cursor-pointer ${
+      className={`group rounded-3xl border overflow-hidden transition-all duration-300 flex flex-col justify-between cursor-pointer ${
         darkMode
           ? "bg-slate-900/70 border-slate-800 hover:border-cyan-500/50 hover:shadow-2xl hover:shadow-cyan-500/10"
           : "bg-white border-slate-200 hover:border-cyan-400 shadow-md hover:shadow-xl"
@@ -75,7 +82,7 @@ const Product = ({ title, company, desc, architecture, tags, onOpenModal }) => {
           <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

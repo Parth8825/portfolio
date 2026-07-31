@@ -23,7 +23,7 @@ describe('CodeShowcase Component', () => {
     expect(screen.getByText('SQL Stored Procedure')).toBeInTheDocument();
   });
 
-  it('switches active snippet when tab is clicked', () => {
+  it('switches active snippet when tab is clicked', async () => {
     render(
       <ThemeProvider>
         <CodeShowcase />
@@ -33,6 +33,6 @@ describe('CodeShowcase Component', () => {
     const sqlTab = screen.getByText('SQL Stored Procedure');
     fireEvent.click(sqlTab);
 
-    expect(screen.getByText(/CREATE PROCEDURE/i)).toBeInTheDocument();
+    expect(await screen.findByText(/CREATE PROCEDURE/i)).toBeInTheDocument();
   });
 });

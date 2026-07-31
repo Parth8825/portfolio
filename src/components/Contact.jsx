@@ -2,6 +2,7 @@ import React, { useContext, useRef, useState } from "react";
 import { ThemeContext } from "../context";
 import emailjs from "@emailjs/browser";
 import { Mail, MapPin, Send, CheckCircle, AlertCircle, Loader2, ExternalLink } from "lucide-react";
+import { motion } from "framer-motion";
 
 // Security utility function to escape HTML special characters
 const sanitizeInput = (str) => {
@@ -145,7 +146,13 @@ const Contact = () => {
     <section id="contact" className="py-20 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center space-y-4 mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+          className="text-center space-y-4 mb-16"
+        >
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-semibold tracking-wide uppercase">
             <Mail size={14} />
             Get In Touch
@@ -156,11 +163,17 @@ const Contact = () => {
           <p className={`max-w-2xl mx-auto text-base sm:text-lg ${darkMode ? "text-slate-400" : "text-slate-600"}`}>
             Always open to discussing new opportunities, software projects, or technological partnerships.
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          {/* Left Column: Contact Cards & Info */}
-          <div className="lg:col-span-5 space-y-6 text-left">
+          {/* Left Column: Contact Cards & Info (Slides in from Left) */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-5 space-y-6 text-left"
+          >
             <div className={`p-5 sm:p-8 rounded-3xl border space-y-8 ${
               darkMode ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200 shadow-lg"
             }`}>
@@ -204,10 +217,16 @@ const Contact = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Right Column: Contact Form */}
-          <div className="lg:col-span-7">
+          {/* Right Column: Contact Form (Slides in from Right) */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-7"
+          >
             <div className={`p-5 sm:p-10 rounded-3xl border ${
               darkMode ? "glass-panel border-slate-800" : "glass-panel-light border-slate-200 shadow-xl"
             }`}>
@@ -225,7 +244,7 @@ const Contact = () => {
                     onChange={handleChange}
                     autoComplete="name"
                     placeholder="John Doe"
-                    className={`w-full px-4 py-3 rounded-xl border text-sm transition-all outline-hidden focus:ring-2 focus:ring-cyan-500 ${
+                    className={`w-full px-4 py-3 rounded-xl border text-base sm:text-sm text-[16px] transition-all outline-hidden focus:ring-2 focus:ring-cyan-500 ${
                       errors.userName
                         ? "border-red-500/80 bg-red-500/5 text-red-200"
                         : darkMode
@@ -253,7 +272,7 @@ const Contact = () => {
                     onChange={handleChange}
                     autoComplete="off"
                     placeholder="Project Inquiry / Job Opportunity"
-                    className={`w-full px-4 py-3 rounded-xl border text-sm transition-all outline-hidden focus:ring-2 focus:ring-cyan-500 ${
+                    className={`w-full px-4 py-3 rounded-xl border text-base sm:text-sm text-[16px] transition-all outline-hidden focus:ring-2 focus:ring-cyan-500 ${
                       errors.userSubject
                         ? "border-red-500/80 bg-red-500/5 text-red-200"
                         : darkMode
@@ -281,7 +300,7 @@ const Contact = () => {
                     onChange={handleChange}
                     autoComplete="email"
                     placeholder="john@example.com"
-                    className={`w-full px-4 py-3 rounded-xl border text-sm transition-all outline-hidden focus:ring-2 focus:ring-cyan-500 ${
+                    className={`w-full px-4 py-3 rounded-xl border text-base sm:text-sm text-[16px] transition-all outline-hidden focus:ring-2 focus:ring-cyan-500 ${
                       errors.userEmail
                         ? "border-red-500/80 bg-red-500/5 text-red-200"
                         : darkMode
@@ -309,7 +328,7 @@ const Contact = () => {
                     onChange={handleChange}
                     autoComplete="off"
                     placeholder="Tell me about your project details or message..."
-                    className={`w-full px-4 py-3 rounded-xl border text-sm transition-all outline-hidden focus:ring-2 focus:ring-cyan-500 resize-y ${
+                    className={`w-full px-4 py-3 rounded-xl border text-base sm:text-sm text-[16px] transition-all outline-hidden focus:ring-2 focus:ring-cyan-500 resize-y ${
                       errors.message
                         ? "border-red-500/80 bg-red-500/5 text-red-200"
                         : darkMode
@@ -374,7 +393,7 @@ const Contact = () => {
                 </button>
               </form>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

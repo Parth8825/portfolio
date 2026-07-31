@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { ThemeContext } from "../context";
 import { ArrowRight, Mail, Sparkles, Code2, Globe2, Award, Zap } from "lucide-react";
+import { motion } from "framer-motion";
 import { GithubIcon, LinkedinIcon } from "./Icons";
 import developerAvatar from "../assets/images/developer-avatar.webp";
 import { getYearsOfExperience } from "../utils/experience";
@@ -66,7 +67,12 @@ const Intro = () => {
         {/* Left Column - Hero Text */}
         <div className="lg:col-span-7 space-y-6 text-left">
           {/* Status Badge */}
-          <div className="inline-flex max-w-full items-center gap-2 px-3.5 py-2 sm:py-1.5 rounded-2xl sm:rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-[11px] sm:text-xs font-semibold tracking-wide uppercase leading-relaxed shadow-sm">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="inline-flex max-w-full items-center gap-2 px-3.5 py-2 sm:py-1.5 rounded-2xl sm:rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-[11px] sm:text-xs font-semibold tracking-wide uppercase leading-relaxed shadow-sm"
+          >
             <span className="relative flex h-2 w-2 shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
@@ -75,10 +81,15 @@ const Intro = () => {
             <span className="leading-tight">
               Software Developer @ TechnoBrains <span className="hidden sm:inline text-cyan-500/70">•</span> <br className="sm:hidden" /> Ahmedabad, India
             </span>
-          </div>
+          </motion.div>
 
           {/* Heading */}
-          <div className="space-y-2">
+          <motion.div
+            initial={{ opacity: 0, x: -60 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="space-y-2"
+          >
             <p className={darkMode ? "text-slate-400 text-base sm:text-lg font-medium" : "text-slate-600 text-base sm:text-lg font-medium"}>
               Hello, my name is
             </p>
@@ -86,10 +97,15 @@ const Intro = () => {
               <span className={darkMode ? "text-white" : "text-slate-900"}>Parth </span>
               <span className="text-gradient">Darji</span>
             </h1>
-          </div>
+          </motion.div>
 
           {/* Animated Role Switcher */}
-          <div className="min-h-12 flex flex-wrap items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.35 }}
+            className="min-h-12 flex flex-wrap items-center"
+          >
             <span className="text-lg sm:text-2xl font-semibold text-cyan-400">I am a </span>
             <span
               className={`ml-2.5 text-lg sm:text-2xl font-bold ${
@@ -98,10 +114,13 @@ const Intro = () => {
             >
               {titles[titleIndex]}
             </span>
-          </div>
+          </motion.div>
 
           {/* Dynamic Description */}
-          <p
+          <motion.p
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.45 }}
             className={`max-w-2xl text-sm sm:text-lg leading-relaxed ${
               darkMode ? "text-slate-300" : "text-slate-600"
             }`}
@@ -109,10 +128,15 @@ const Intro = () => {
             Result-driven Azure & .NET Developer with {yearsExp} of experience designing, developing, and deploying scalable web applications and APIs. Expertise in
             <strong className="text-cyan-400 font-semibold"> ASP.NET Core, Azure Services, RESTful & GraphQL APIs, OAuth 2.0, SQL Server, </strong>
             and modern frontend frameworks like React & TypeScript.
-          </p>
+          </motion.p>
 
           {/* CTA Action Buttons */}
-          <div className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.55 }}
+            className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4"
+          >
             <a
               href="#projects"
               className="inline-flex items-center justify-center gap-2.5 px-5 py-3 sm:px-6 sm:py-3.5 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-semibold rounded-xl text-sm sm:text-base transition-all duration-200 shadow-lg shadow-cyan-500/25 active:scale-95 group w-full sm:w-auto"
@@ -174,13 +198,21 @@ const Intro = () => {
                 <Mail size={20} />
               </a>
             </div>
-          </div>
+          </motion.div>
 
           {/* Animated Impact Stats Bar */}
-          <div className="pt-6 border-t border-slate-800/40 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.65 }}
+            className="pt-6 border-t border-slate-800/40 grid grid-cols-2 sm:grid-cols-4 gap-3"
+          >
             {stats.map((st, sIdx) => (
-              <div
+              <motion.div
                 key={sIdx}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: 0.7 + sIdx * 0.1 }}
                 className={`p-3.5 rounded-2xl border transition-all duration-300 hover:-translate-y-1 ${
                   darkMode
                     ? "bg-slate-900/60 border-slate-800 hover:border-cyan-500/40"
@@ -196,13 +228,18 @@ const Intro = () => {
                 <p className={`text-[11px] font-medium leading-snug ${darkMode ? "text-slate-400" : "text-slate-600"}`}>
                   {st.label}
                 </p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
 
         {/* Right Column - Protected Avatar / Hero Graphic */}
-        <div className="lg:col-span-5 flex justify-center items-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, x: 50 }}
+          animate={{ opacity: 1, scale: 1, x: 0 }}
+          transition={{ duration: 0.7, delay: 0.3 }}
+          className="lg:col-span-5 flex justify-center items-center"
+        >
           <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96">
             {/* Glowing backdrop card */}
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-cyan-500 to-indigo-600 rotate-6 opacity-30 blur-lg" />
@@ -232,7 +269,7 @@ const Intro = () => {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

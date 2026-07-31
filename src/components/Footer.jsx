@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { ThemeContext } from "../context";
 import { Code2, ArrowUp } from "lucide-react";
+import { motion } from "framer-motion";
 
 const Footer = () => {
   const theme = useContext(ThemeContext);
@@ -11,7 +12,11 @@ const Footer = () => {
   };
 
   return (
-    <footer
+    <motion.footer
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6 }}
       className={`border-t py-12 transition-colors duration-300 ${
         darkMode ? "bg-slate-950 border-slate-800 text-slate-400" : "bg-slate-50 border-slate-200 text-slate-600"
       }`}
@@ -46,7 +51,7 @@ const Footer = () => {
           <ArrowUp size={18} />
         </button>
       </div>
-    </footer>
+    </motion.footer>
   );
 };
 

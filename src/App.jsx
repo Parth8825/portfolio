@@ -9,6 +9,7 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import CommandPalette from "./components/CommandPalette";
 import { ThemeContext } from "./context";
+import { AnimatePresence } from "framer-motion";
 
 function App() {
   const theme = useContext(ThemeContext);
@@ -43,10 +44,14 @@ function App() {
       </main>
       <Footer />
 
-      <CommandPalette
-        isOpen={commandPaletteOpen}
-        onClose={() => setCommandPaletteOpen(false)}
-      />
+      <AnimatePresence>
+        {commandPaletteOpen && (
+          <CommandPalette
+            isOpen={commandPaletteOpen}
+            onClose={() => setCommandPaletteOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

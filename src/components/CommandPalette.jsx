@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { ThemeContext } from "../context";
 import { Search, Home, Briefcase, Wrench, FolderCode, Mail, Copy, Check, Terminal } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "./Icons";
+import { motion } from "framer-motion";
 
 const CommandPalette = ({ isOpen, onClose }) => {
   const theme = useContext(ThemeContext);
@@ -9,6 +10,16 @@ const CommandPalette = ({ isOpen, onClose }) => {
 
   const [query, setQuery] = useState("");
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      const originalStyle = window.getComputedStyle(document.body).overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalStyle;
+      };
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -126,16 +137,26 @@ const CommandPalette = ({ isOpen, onClose }) => {
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 sm:px-6 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-20 px-3 sm:px-6 bg-slate-950/80 backdrop-blur-md overflow-x-hidden"
+    >
       <div className="fixed inset-0" onClick={onClose} aria-label="Close command palette background" />
 
-      <div
-        className={`relative w-full max-w-xl rounded-3xl border shadow-2xl z-10 overflow-hidden text-left animate-in zoom-in-95 duration-200 ${
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: -20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: -20 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+        className={`relative w-full max-w-xl rounded-3xl border shadow-2xl z-10 overflow-hidden text-left ${
           darkMode ? "bg-slate-900 border-slate-800 text-white" : "bg-white border-slate-200 text-slate-900"
         }`}
       >
-        {/* Search Input Bar */}
-        <div className="px-5 py-4 border-b border-slate-800/40 flex items-center gap-3">
+        {/* Search Input Bar with 16px font-size to prevent mobile browser auto-zoom */}
+        <div className="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-slate-800/40 flex items-center gap-3">
           <Search size={20} className="text-cyan-400 shrink-0" />
           <input
             type="text"
@@ -143,11 +164,11 @@ const CommandPalette = ({ isOpen, onClose }) => {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Type a command or search..."
             autoFocus
-            className={`w-full bg-transparent text-sm sm:text-base outline-hidden font-medium ${
+            className={`w-full bg-transparent text-base sm:text-base outline-hidden font-medium text-[16px] ${
               darkMode ? "text-white placeholder-slate-500" : "text-slate-900 placeholder-slate-400"
             }`}
           />
-          <kbd className="px-2 py-1 rounded-md text-[10px] font-mono uppercase bg-slate-800 text-slate-400 border border-slate-700">
+          <kbd className="px-2 py-1 rounded-md text-[10px] font-mono uppercase bg-slate-800 text-slate-400 border border-slate-700 shrink-0">
             ESC
           </kbd>
         </div>
@@ -180,8 +201,8 @@ const CommandPalette = ({ isOpen, onClose }) => {
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

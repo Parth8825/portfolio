@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { ThemeContext } from "../context";
 import { Code2, Copy, Check, Terminal, ShieldAlert, FileCode, Minus, Square, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const demoCodeSnippets = [
   {
@@ -189,7 +190,13 @@ const CodeShowcase = () => {
     <section id="code-showcase" className="py-20 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
-        <div className="text-center space-y-4 mb-10">
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+          className="text-center space-y-4 mb-10"
+        >
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-semibold tracking-wide uppercase shadow-sm">
             <Terminal size={14} />
             Clean Architecture Patterns
@@ -208,7 +215,7 @@ const CodeShowcase = () => {
               <strong>Integrity Notice:</strong> All code examples below are synthetic, generic patterns created solely for technical demonstration. No proprietary company source code is used.
             </span>
           </div>
-        </div>
+        </motion.div>
 
         {/* Tab Navigation Controls */}
         <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-6">
@@ -218,14 +225,21 @@ const CodeShowcase = () => {
               <button
                 key={snip.id}
                 onClick={() => setActiveTab(snip.id)}
-                className={`px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-1.5 sm:gap-2 cursor-pointer ${
+                className={`relative px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-1.5 sm:gap-2 cursor-pointer z-10 ${
                   isActive
-                    ? "bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/25 scale-105"
+                    ? "text-slate-950"
                     : darkMode
                     ? "bg-slate-900/80 border border-slate-800 text-slate-300 hover:border-slate-700"
                     : "bg-white border border-slate-200 text-slate-700 hover:border-cyan-400 shadow-xs"
                 }`}
               >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeTabPill"
+                    className="absolute inset-0 bg-cyan-500 rounded-xl z-[-1] shadow-lg shadow-cyan-500/25"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
                 <Code2 size={15} />
                 <span>{snip.title}</span>
               </button>
@@ -234,7 +248,13 @@ const CodeShowcase = () => {
         </div>
 
         {/* OS-Aware Simulated IDE / Code Terminal Window */}
-        <div className="max-w-4xl mx-auto rounded-3xl border border-slate-800 bg-slate-950 overflow-hidden shadow-2xl">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+          className="max-w-4xl mx-auto rounded-3xl border border-slate-800 bg-slate-950 overflow-hidden shadow-2xl"
+        >
           {/* OS-Aware IDE Window Header Bar */}
           <div className="px-4 sm:px-6 py-3 sm:py-3.5 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between gap-2">
             {isMac ? (
@@ -289,13 +309,22 @@ const CodeShowcase = () => {
             </div>
           </div>
 
-          {/* Code Viewer Body */}
-          <div className="p-4 sm:p-6 overflow-x-auto text-left font-mono text-[11px] sm:text-sm leading-relaxed text-slate-200 bg-slate-950/90">
-            <pre className="whitespace-pre">
-              <code>{currentSnippet?.code}</code>
-            </pre>
+          {/* Code Viewer Body with Tab Switch Animation */}
+          <div className="p-4 sm:p-6 overflow-x-auto text-left font-mono text-[11px] sm:text-sm leading-relaxed text-slate-200 bg-slate-950/90 min-h-[300px]">
+            <AnimatePresence mode="wait">
+              <motion.pre
+                key={currentSnippet?.id}
+                initial={{ opacity: 0, x: 15 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -15 }}
+                transition={{ duration: 0.25 }}
+                className="whitespace-pre"
+              >
+                <code>{currentSnippet?.code}</code>
+              </motion.pre>
+            </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

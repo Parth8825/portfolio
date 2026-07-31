@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { ThemeContext } from "../context";
 import { experienceData } from "../data";
 import { Briefcase, GraduationCap, MapPin, Calendar, CheckCircle2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const Experience = () => {
   const theme = useContext(ThemeContext);
@@ -18,7 +19,13 @@ const Experience = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Title Header */}
-        <div className="text-center space-y-4 mb-16 sm:mb-20">
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+          className="text-center space-y-4 mb-16 sm:mb-20"
+        >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-semibold tracking-wide uppercase shadow-sm">
             <Briefcase size={14} />
             Career & Academic Journey
@@ -29,7 +36,7 @@ const Experience = () => {
           <p className={`max-w-2xl mx-auto text-base sm:text-lg ${darkMode ? "text-slate-400" : "text-slate-600"}`}>
             My professional path across software development in Canada and India, showcasing enterprise engineering achievements.
           </p>
-        </div>
+        </motion.div>
 
         {/* Pixel-Perfect Responsive Timeline */}
         <div className="relative space-y-8 sm:space-y-12 before:absolute before:inset-0 before:left-5 md:before:left-1/2 before:-translate-x-px before:h-full before:w-1 before:bg-gradient-to-b before:from-cyan-500 before:via-indigo-500 before:to-purple-500">
@@ -38,8 +45,12 @@ const Experience = () => {
             const isEducation = item.type === "Education";
 
             return (
-              <div
+              <motion.div
                 key={item.id}
+                initial={{ opacity: 0, y: 45, x: isEven ? -25 : 25 }}
+                whileInView={{ opacity: 1, y: 0, x: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.6, delay: index * 0.12 }}
                 className="relative flex items-start md:items-center justify-start md:justify-normal md:odd:flex-row-reverse group"
               >
                 {/* Glowing Marker Badge */}
@@ -105,7 +116,7 @@ const Experience = () => {
                     ))}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
