@@ -51,15 +51,15 @@ const ProjectModal = ({ project, onClose }) => {
         className={`relative w-full max-w-2xl rounded-3xl p-6 sm:p-8 shadow-2xl z-10 space-y-6 text-left my-auto [backface-visibility:hidden] [transform-style:preserve-3d] ${
           darkMode
             ? "glass-panel border border-cyan-500/30 text-slate-100 shadow-cyan-500/10"
-            : "glass-panel-light border border-slate-200 text-slate-900 shadow-cyan-500/10"
+            : "bg-[#fbf9f5] border border-[#d6cebf] text-[#1c1917] shadow-2xl"
         }`}
       >
         {/* Header Bar */}
         <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-800/40">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Building2 size={16} className={darkMode ? "text-cyan-400 shrink-0" : "text-cyan-600 shrink-0"} />
-              <span className={`text-xs font-bold uppercase tracking-wider ${darkMode ? "text-cyan-400" : "text-cyan-700"}`}>
+              <Building2 size={16} className={darkMode ? "text-cyan-400 shrink-0" : "text-cyan-700 shrink-0"} />
+              <span className={`text-xs font-bold uppercase tracking-wider ${darkMode ? "text-cyan-400" : "text-cyan-800"}`}>
                 {project.company}
               </span>
             </div>
@@ -72,7 +72,7 @@ const ProjectModal = ({ project, onClose }) => {
             className={`p-2.5 rounded-2xl transition-all duration-200 cursor-pointer shadow-md active:scale-90 shrink-0 ${
               darkMode
                 ? "bg-slate-800/80 hover:bg-cyan-500 hover:text-slate-950 text-slate-300"
-                : "bg-slate-100 hover:bg-cyan-600 hover:text-white text-slate-700"
+                : "bg-[#ede8df] hover:bg-cyan-700 hover:text-white text-[#1c1917]"
             }`}
           >
             <X size={18} />
@@ -81,44 +81,44 @@ const ProjectModal = ({ project, onClose }) => {
 
         {/* Overview Description */}
         <div>
-          <h4 className={`text-xs uppercase font-bold tracking-wider mb-2 ${darkMode ? "text-cyan-400" : "text-cyan-700"}`}>
+          <h4 className={`text-xs uppercase font-bold tracking-wider mb-2 ${darkMode ? "text-cyan-400" : "text-cyan-800"}`}>
             Project Overview
           </h4>
-          <p className={`text-sm sm:text-base leading-relaxed ${darkMode ? "text-slate-300" : "text-slate-600"}`}>
+          <p className={`text-sm sm:text-base leading-relaxed ${darkMode ? "text-slate-300" : "text-[#3f3b35]"}`}>
             {project.desc}
           </p>
         </div>
 
         {/* Architecture Details */}
         <div className={`p-4 rounded-2xl border space-y-2 ${
-          darkMode ? "bg-slate-950/60 border-slate-800/80" : "bg-slate-50 border-slate-200"
+          darkMode ? "bg-slate-950/60 border-slate-800/80" : "bg-[#ede8df] border-[#d6cebf]"
         }`}>
-          <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-wider ${darkMode ? "text-cyan-400" : "text-cyan-700"}`}>
+          <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-wider ${darkMode ? "text-cyan-400" : "text-cyan-800"}`}>
             <Cpu size={16} className="shrink-0" />
             <span>System Architecture & Integration</span>
           </div>
-          <p className={`text-xs sm:text-sm font-mono leading-relaxed break-words ${darkMode ? "text-slate-300" : "text-slate-700"}`}>
+          <p className={`text-xs sm:text-sm font-mono leading-relaxed break-words ${darkMode ? "text-slate-300" : "text-[#1c1917] font-medium"}`}>
             {project.architecture}
           </p>
         </div>
 
         {/* Key Highlights */}
         <div>
-          <h4 className={`text-xs uppercase font-bold tracking-wider mb-3 ${darkMode ? "text-slate-400" : "text-slate-500"}`}>
+          <h4 className={`text-xs uppercase font-bold tracking-wider mb-3 ${darkMode ? "text-slate-400" : "text-[#44403c]"}`}>
             Key Technical Achievements
           </h4>
           <div className="space-y-2.5">
             {project.achievements && project.achievements.length > 0 ? (
               project.achievements.map((achievement, idx) => (
                 <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm">
-                  <CheckCircle2 size={16} className={`${darkMode ? "text-cyan-400" : "text-cyan-600"} shrink-0 mt-0.5`} />
-                  <span className={darkMode ? "text-slate-200" : "text-slate-700"}>{achievement}</span>
+                  <CheckCircle2 size={16} className={`${darkMode ? "text-cyan-400" : "text-cyan-700"} shrink-0 mt-0.5`} />
+                  <span className={darkMode ? "text-slate-200" : "text-[#3f3b35] font-medium"}>{achievement}</span>
                 </div>
               ))
             ) : (
               <div className="flex items-start gap-2.5 text-xs sm:text-sm">
-                <CheckCircle2 size={16} className={`${darkMode ? "text-cyan-400" : "text-cyan-600"} shrink-0 mt-0.5`} />
-                <span className={darkMode ? "text-slate-200" : "text-slate-700"}>
+                <CheckCircle2 size={16} className={`${darkMode ? "text-cyan-400" : "text-cyan-700"} shrink-0 mt-0.5`} />
+                <span className={darkMode ? "text-slate-200" : "text-[#3f3b35] font-medium"}>
                   Architected with enterprise security protocols and cloud services.
                 </span>
               </div>
@@ -134,7 +134,7 @@ const ProjectModal = ({ project, onClose }) => {
               className={`px-3 py-1 rounded-lg text-xs font-semibold shadow-xs ${
                 darkMode
                   ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
-                  : "bg-cyan-50 text-cyan-800 border border-cyan-300 font-medium"
+                  : "bg-[#ede8df] text-cyan-800 border border-[#d6cebf] font-semibold"
               }`}
             >
               {tag}

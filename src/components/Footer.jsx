@@ -18,7 +18,7 @@ const Footer = () => {
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
       className={`border-t py-12 transition-colors duration-300 ${
-        darkMode ? "bg-slate-950 border-slate-800 text-slate-400" : "bg-slate-50 border-slate-200 text-slate-600"
+        darkMode ? "bg-slate-950 border-slate-800 text-slate-400" : "bg-[#e4ded3] border-[#d6cebf] text-[#44403c]"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -27,7 +27,7 @@ const Footer = () => {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
             <Code2 size={16} />
           </div>
-          <span className={`font-bold ${darkMode ? "text-white" : "text-slate-900"}`}>
+          <span className={`font-bold ${darkMode ? "text-white" : "text-[#1c1917]"}`}>
             Parth Darji
           </span>
           <span className="text-xs text-slate-500">| Software Developer</span>
@@ -45,7 +45,7 @@ const Footer = () => {
           className={`p-3 rounded-xl border transition-all duration-200 ${
             darkMode
               ? "bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:border-cyan-500/50"
-              : "bg-white border-slate-200 text-slate-700 hover:text-slate-900 shadow-sm"
+              : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917] hover:bg-[#ede8df] shadow-2xs"
           }`}
         >
           <ArrowUp size={18} />

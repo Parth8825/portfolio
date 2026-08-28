@@ -39,4 +39,21 @@ describe('CodeShowcase Component', () => {
     fireEvent.click(reactTab);
     expect(await screen.findByText(/useMembershipValidation/i)).toBeInTheDocument();
   });
+
+  it('toggles simulated execution drawer when Run Demo is clicked', async () => {
+    render(
+      <ThemeProvider>
+        <CodeShowcase />
+      </ThemeProvider>
+    );
+
+    const runBtn = screen.getByText('Run Demo');
+    fireEvent.click(runBtn);
+
+    expect(await screen.findByText('Simulated Runtime Output')).toBeInTheDocument();
+    expect(await screen.findByText('STATUS: 200 OK')).toBeInTheDocument();
+
+    const hideBtn = screen.getByText('Hide Output');
+    fireEvent.click(hideBtn);
+  });
 });

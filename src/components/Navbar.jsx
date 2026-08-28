@@ -62,7 +62,7 @@ const Navbar = ({ onOpenCommandPalette }) => {
         scrolled
           ? darkMode
             ? "glass-panel bg-slate-950/80 shadow-lg shadow-black/20 py-3"
-            : "glass-panel-light bg-white/80 shadow-md py-3"
+            : "glass-panel-light bg-[#ede8df]/85 border-b border-[#d6cebf]/80 shadow-xs py-3"
           : "bg-transparent py-5"
       }`}
     >
@@ -79,7 +79,7 @@ const Navbar = ({ onOpenCommandPalette }) => {
             className={
               darkMode
                 ? "text-white group-hover:text-cyan-400 transition-colors"
-                : "text-slate-900 group-hover:text-cyan-600 transition-colors"
+                : "text-[#1c1917] group-hover:text-cyan-700 transition-colors"
             }
           >
             Parth<span className="text-cyan-500">.</span>
@@ -98,10 +98,10 @@ const Navbar = ({ onOpenCommandPalette }) => {
                   isActive
                     ? darkMode
                       ? "text-cyan-400 font-semibold"
-                      : "text-cyan-700 font-bold"
+                      : "text-cyan-800 font-bold"
                     : darkMode
                     ? "text-slate-300 hover:text-cyan-400"
-                    : "text-slate-700 hover:text-cyan-600"
+                    : "text-[#44403c] hover:text-cyan-700 font-semibold"
                 }`}
               >
                 {link.name}
@@ -118,7 +118,7 @@ const Navbar = ({ onOpenCommandPalette }) => {
         </nav>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2.5">
           {/* OS-Aware Command Palette Trigger Button */}
           <button
             onClick={onOpenCommandPalette}
@@ -126,10 +126,10 @@ const Navbar = ({ onOpenCommandPalette }) => {
             className={`p-2 sm:px-3 sm:py-2 rounded-xl border text-xs font-mono transition-all duration-200 flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95 ${
               darkMode
                 ? "bg-slate-900 border-slate-800 text-slate-300 hover:border-cyan-500/50 hover:text-white"
-                : "bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200 hover:border-cyan-500"
+                : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917] hover:bg-[#ede8df] hover:border-cyan-600 shadow-2xs"
             }`}
           >
-            <Search size={14} className={darkMode ? "text-cyan-400" : "text-cyan-600"} />
+            <Search size={14} className={darkMode ? "text-cyan-400" : "text-cyan-700"} />
             <span className="hidden sm:inline font-semibold">{osKey}</span>
           </button>
 
@@ -140,7 +140,7 @@ const Navbar = ({ onOpenCommandPalette }) => {
             className={`p-2.5 rounded-xl border transition-all duration-200 active:scale-95 ${
               darkMode
                 ? "bg-slate-900 border-slate-800 text-amber-400 hover:bg-slate-800"
-                : "bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200"
+                : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917] hover:bg-[#ede8df] shadow-2xs"
             }`}
           >
             {darkMode ? <Sun size={18} /> : <Moon size={18} />}
@@ -153,7 +153,7 @@ const Navbar = ({ onOpenCommandPalette }) => {
             className={`md:hidden p-2.5 rounded-xl border transition-all duration-200 active:scale-95 ${
               darkMode
                 ? "bg-slate-900 border-slate-800 text-slate-200"
-                : "bg-slate-100 border-slate-200 text-slate-700"
+                : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917]"
             }`}
           >
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -172,7 +172,7 @@ const Navbar = ({ onOpenCommandPalette }) => {
             className={`md:hidden border-b px-4 pt-4 pb-6 space-y-3 overflow-hidden ${
               darkMode
                 ? "bg-slate-950/95 border-slate-800 text-white"
-                : "bg-white/95 border-slate-200 text-slate-900"
+                : "bg-[#ede8df]/95 border-[#d6cebf] text-[#1c1917]"
             }`}
           >
             {navLinks.map((link) => {
@@ -186,10 +186,10 @@ const Navbar = ({ onOpenCommandPalette }) => {
                     isActive
                       ? darkMode
                         ? "bg-cyan-500/15 text-cyan-400 font-semibold"
-                        : "bg-cyan-50 text-cyan-800 font-bold"
+                        : "bg-cyan-900/10 text-cyan-900 font-bold"
                       : darkMode
                       ? "text-slate-200 hover:bg-cyan-500/10 hover:text-cyan-400"
-                      : "text-slate-700 hover:bg-cyan-50 hover:text-cyan-700"
+                      : "text-[#3f3b35] hover:bg-cyan-900/5 hover:text-cyan-900"
                   }`}
                 >
                   {link.name}

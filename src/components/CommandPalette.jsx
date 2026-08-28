@@ -92,7 +92,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: copied ? "Email Copied to Clipboard!" : "Copy Email Address (parthdarji8825@gmail.com)",
       category: "Action",
       action: () => {
-        navigator.clipboard.writeText("parthdarji8825@gmail.com");
+        navigator.clipboard.writeText("parthdarji8825@gmail.com").catch(() => {});
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       },
@@ -103,7 +103,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Open LinkedIn Profile",
       category: "External Link",
       action: () => {
-        window.open("https://www.linkedin.com/in/parthdarji8825", "_blank");
+        window.open("https://www.linkedin.com/in/parthdarji8825", "_blank", "noopener,noreferrer");
         onClose();
       },
     },
@@ -113,7 +113,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Open GitHub Profile",
       category: "External Link",
       action: () => {
-        window.open("https://github.com/Parth8825", "_blank");
+        window.open("https://github.com/Parth8825", "_blank", "noopener,noreferrer");
         onClose();
       },
     },
@@ -186,12 +186,12 @@ const CommandPalette = ({ isOpen, onClose }) => {
         exit={{ opacity: 0, scale: 0.95, y: -20 }}
         transition={{ duration: 0.25, ease: "easeOut" }}
         className={`relative w-full max-w-xl rounded-3xl border shadow-2xl z-10 overflow-hidden text-left ${
-          darkMode ? "bg-slate-900 border-slate-800 text-white" : "bg-white border-slate-200 text-slate-900"
+          darkMode ? "bg-slate-900 border-slate-800 text-white" : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917] shadow-xl"
         }`}
       >
         {/* Search Input Bar with 16px font-size to prevent mobile browser auto-zoom */}
         <div className="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-slate-800/40 flex items-center gap-3">
-          <Search size={20} className={darkMode ? "text-cyan-400 shrink-0" : "text-cyan-600 shrink-0"} />
+          <Search size={20} className={darkMode ? "text-cyan-400 shrink-0" : "text-cyan-700 shrink-0"} />
           <input
             type="text"
             role="combobox"
@@ -204,7 +204,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
             placeholder="Type a command or navigate with ↑↓..."
             autoFocus
             className={`w-full bg-transparent text-base sm:text-base outline-hidden font-medium text-[16px] ${
-              darkMode ? "text-white placeholder-slate-500" : "text-slate-900 placeholder-slate-400"
+              darkMode ? "text-white placeholder-slate-500" : "text-[#1c1917] placeholder-[#78716c]"
             }`}
           />
           <kbd className="px-2 py-1 rounded-md text-[10px] font-mono uppercase bg-slate-800 text-slate-400 border border-slate-700 shrink-0">
@@ -230,10 +230,10 @@ const CommandPalette = ({ isOpen, onClose }) => {
                     isSelected
                       ? darkMode
                         ? "bg-slate-800 border-cyan-500/50 text-white shadow-xs"
-                        : "bg-cyan-50 border-cyan-300 text-cyan-950 shadow-xs"
+                        : "bg-cyan-900/10 border-cyan-300 text-cyan-950 shadow-xs"
                       : darkMode
                       ? "border-transparent text-slate-300 hover:bg-slate-800/60"
-                      : "border-transparent text-slate-700 hover:bg-slate-100"
+                      : "border-transparent text-[#3f3b35] hover:bg-[#ede8df]"
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -242,7 +242,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded-md ${
-                      darkMode ? "text-slate-400 bg-slate-800/80" : "text-slate-600 bg-slate-200"
+                      darkMode ? "text-slate-400 bg-slate-800/80" : "text-[#44403c] bg-[#ede8df]"
                     }`}>
                       {cmd.category}
                     </span>

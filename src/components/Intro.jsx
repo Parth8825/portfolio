@@ -1,8 +1,9 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { ThemeContext } from "../context";
 import { ArrowRight, Mail, Sparkles, Code2, Globe2, Award, Zap } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { GithubIcon, LinkedinIcon } from "./Icons";
+import Magnetic from "./Magnetic";
 import developerAvatar from "../assets/images/developer-avatar.webp";
 import { getYearsOfExperience } from "../utils/experience";
 
@@ -15,24 +16,200 @@ const titles = [
   "React & Frontend Engineer",
 ];
 
+// Interactive 3D Spatial Parallax Avatar (Moves Face with True 3D Depth)
+const TiltAvatar = () => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x, { stiffness: 180, damping: 20 });
+  const mouseYSpring = useSpring(y, { stiffness: 180, damping: 20 });
+
+  // 3D Card Rotation
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["16deg", "-16deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-16deg", "16deg"]);
+
+  // 3D Parallax Face Movement (Independent inner depth plane)
+  const faceTranslateX = useTransform(mouseXSpring, [-0.5, 0.5], ["-22px", "22px"]);
+  const faceTranslateY = useTransform(mouseYSpring, [-0.5, 0.5], ["-20px", "20px"]);
+
+  // Holographic Light Reflection Glare Sweep
+  const glareX = useTransform(mouseXSpring, [-0.5, 0.5], ["-100%", "100%"]);
+  const glareY = useTransform(mouseYSpring, [-0.5, 0.5], ["-100%", "100%"]);
+  const glareOpacity = useTransform(mouseXSpring, [-0.5, 0, 0.5], [0.4, 0.1, 0.4]);
+
+  // Floating 3D Badge (Opposite depth layer creating spatial separation)
+  const badgeTranslateX = useTransform(mouseXSpring, [-0.5, 0.5], ["12px", "-12px"]);
+  const badgeTranslateY = useTransform(mouseYSpring, [-0.5, 0.5], ["12px", "-12px"]);
+
+  const handleUpdate = (clientX, clientY, rect) => {
+    const mouseX = (clientX - rect.left) / rect.width - 0.5;
+    const mouseY = (clientY - rect.top) / rect.height - 0.5;
+    x.set(mouseX);
+    y.set(mouseY);
+  };
+
+  const handleMouseMove = (e) => {
+    handleUpdate(e.clientX, e.clientY, e.currentTarget.getBoundingClientRect());
+  };
+
+  const handleTouchMove = (e) => {
+    if (e.touches && e.touches[0]) {
+      handleUpdate(e.touches[0].clientX, e.touches[0].clientY, e.currentTarget.getBoundingClientRect());
+    }
+  };
+
+  const handleLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <div style={{ perspective: 1200 }} className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 select-none">
+      {/* Glowing backdrop card with dynamic shift */}
+      <motion.div
+        style={{
+          x: useTransform(mouseXSpring, [-0.5, 0.5], ["20px", "-20px"]),
+          y: useTransform(mouseYSpring, [-0.5, 0.5], ["20px", "-20px"]),
+        }}
+        className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 rotate-6 opacity-35 blur-xl pointer-events-none"
+      />
+
+      <motion.div
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleLeave}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleLeave}
+        style={{
+          rotateX,
+          rotateY,
+          transformStyle: "preserve-3d",
+        }}
+        className="absolute inset-0 rounded-3xl bg-slate-900 border-2 border-slate-700/80 overflow-hidden shadow-2xl flex items-center justify-center group cursor-grab active:cursor-grabbing"
+      >
+        {/* Invisible Protection Overlay Shield (blocks right click & drag) */}
+        <div 
+          className="absolute inset-0 z-30 select-none pointer-events-auto"
+          onContextMenu={(e) => e.preventDefault()}
+          onDragStart={(e) => e.preventDefault()}
+        />
+        
+        {/* 3D Parallax Moving Face Layer */}
+        <motion.div
+          style={{
+            x: faceTranslateX,
+            y: faceTranslateY,
+            scale: 1.15,
+          }}
+          className="w-full h-full pointer-events-none select-none"
+        >
+          <img
+            src={developerAvatar}
+            alt="Parth Darji - Software Developer"
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+            className="w-full h-full object-cover object-[50%_15%]"
+          />
+        </motion.div>
+
+        {/* Dynamic Holographic Reflection Sheen */}
+        <motion.div
+          style={{
+            x: glareX,
+            y: glareY,
+            opacity: glareOpacity,
+          }}
+          className="pointer-events-none absolute -inset-full bg-gradient-to-tr from-transparent via-white/25 to-transparent rotate-45 z-20"
+        />
+
+        {/* Floating 3D Tech Badge that pops out in front */}
+        <motion.div
+          style={{
+            x: badgeTranslateX,
+            y: badgeTranslateY,
+          }}
+          className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-2.5 sm:p-3 rounded-2xl glass-panel text-left flex items-center justify-between border border-white/20 z-25 shadow-xl backdrop-blur-md"
+        >
+          <div>
+            <p className="text-[10px] sm:text-xs text-cyan-400 font-semibold uppercase tracking-wider">Tech Focus</p>
+            <p className="text-xs sm:text-sm font-bold text-white">.NET Core & Modern Web</p>
+          </div>
+          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-400 animate-pulse shrink-0 shadow-xs shadow-emerald-400" />
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+};
+
+// Fluid Spring/Timer Animated Counter for hero metrics
+const AnimatedCounter = ({ value }) => {
+  const match = String(value).match(/^(\d+)(.*)$/);
+  const targetNum = match ? parseInt(match[1], 10) : 0;
+  const suffix = match ? match[2] : "";
+
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (isInView && targetNum > 0) {
+      let start = 0;
+      const duration = 1200;
+      const stepTime = Math.max(Math.floor(duration / targetNum), 20);
+      const interval = setInterval(() => {
+        start += Math.ceil(targetNum / 30) || 1;
+        if (start >= targetNum) {
+          setCount(targetNum);
+          clearInterval(interval);
+        } else {
+          setCount(start);
+        }
+      }, stepTime);
+      return () => clearInterval(interval);
+    }
+  }, [isInView, targetNum]);
+
+  return (
+    <span ref={ref}>
+      {count}{suffix}
+    </span>
+  );
+};
+
 const Intro = () => {
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
   const yearsExp = getYearsOfExperience();
 
-  const [titleIndex, setTitleIndex] = useState(0);
-  const [fade, setFade] = useState(true);
+  // Mechanical Typewriter Engine
+  const [displayText, setDisplayText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [loopNum, setLoopNum] = useState(0);
+  const [typingSpeed, setTypingSpeed] = useState(85);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setFade(false);
-      setTimeout(() => {
-        setTitleIndex((prev) => (prev + 1) % titles.length);
-        setFade(true);
-      }, 300);
-    }, 2800);
-    return () => clearInterval(interval);
-  }, []);
+    const currentTitle = titles[loopNum % titles.length];
+
+    const handleType = () => {
+      if (isDeleting) {
+        setDisplayText((prev) => currentTitle.substring(0, prev.length - 1));
+        setTypingSpeed(45);
+      } else {
+        setDisplayText((prev) => currentTitle.substring(0, prev.length + 1));
+        setTypingSpeed(85);
+      }
+
+      if (!isDeleting && displayText === currentTitle) {
+        setTimeout(() => setIsDeleting(true), 1800);
+      } else if (isDeleting && displayText === "") {
+        setIsDeleting(false);
+        setLoopNum((prev) => prev + 1);
+        setTypingSpeed(200);
+      }
+    };
+
+    const timer = setTimeout(handleType, typingSpeed);
+    return () => clearTimeout(timer);
+  }, [displayText, isDeleting, loopNum, typingSpeed]);
 
   const stats = [
     {
@@ -103,7 +280,7 @@ const Intro = () => {
             </h1>
           </motion.div>
 
-          {/* Animated Role Switcher */}
+          {/* Animated Mechanical Typewriter Role Switcher */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -114,10 +291,11 @@ const Intro = () => {
             <span
               className={`ml-2.5 text-lg sm:text-2xl font-bold ${
                 darkMode ? "text-indigo-300" : "text-indigo-600"
-              } transition-opacity duration-300 ${fade ? "opacity-100" : "opacity-0"}`}
+              }`}
             >
-              {titles[titleIndex]}
+              {displayText}
             </span>
+            <span className="inline-block w-0.5 sm:w-1 h-5 sm:h-7 bg-cyan-400 ml-1.5 translate-y-0.5 rounded-full animate-pulse shadow-xs shadow-cyan-400" />
           </motion.div>
 
           {/* Dynamic Description */}
@@ -141,66 +319,76 @@ const Intro = () => {
             transition={{ duration: 0.5, delay: 0.55 }}
             className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4"
           >
-            <a
-              href="#projects"
-              className="inline-flex items-center justify-center gap-2.5 px-5 py-3 sm:px-6 sm:py-3.5 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-semibold rounded-xl text-sm sm:text-base transition-all duration-200 shadow-lg shadow-cyan-500/25 active:scale-95 group w-full sm:w-auto"
-            >
-              View Projects
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </a>
+            <Magnetic strength={0.25} className="w-full sm:w-auto">
+              <a
+                href="#projects"
+                className="inline-flex items-center justify-center gap-2.5 px-5 py-3 sm:px-6 sm:py-3.5 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-semibold rounded-xl text-sm sm:text-base transition-all duration-200 shadow-lg shadow-cyan-500/25 active:scale-95 group w-full sm:w-auto"
+              >
+                View Projects
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </a>
+            </Magnetic>
 
-            <a
-              href="#contact"
-              className={`inline-flex items-center justify-center gap-2 px-5 py-3 sm:px-6 sm:py-3.5 rounded-xl border font-semibold text-sm sm:text-base transition-all duration-200 w-full sm:w-auto ${
-                darkMode
-                  ? "bg-slate-900/80 border-slate-800 text-slate-200 hover:bg-slate-800 hover:border-slate-700"
-                  : "bg-white border-slate-200 text-slate-800 hover:bg-slate-50 shadow-sm"
-              }`}
-            >
-              Contact Me
-            </a>
+            <Magnetic strength={0.25} className="w-full sm:w-auto">
+              <a
+                href="#contact"
+                className={`inline-flex items-center justify-center gap-2 px-5 py-3 sm:px-6 sm:py-3.5 rounded-xl border font-semibold text-sm sm:text-base transition-all duration-200 w-full sm:w-auto ${
+                  darkMode
+                    ? "bg-slate-900/80 border-slate-800 text-slate-200 hover:bg-slate-800 hover:border-slate-700"
+                    : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917] hover:bg-[#ede8df] shadow-2xs"
+                }`}
+              >
+                Contact Me
+              </a>
+            </Magnetic>
 
-            {/* Social Links */}
+            {/* Social Links with Magnetic Attraction */}
             <div className="flex items-center gap-2 w-full sm:w-auto justify-start sm:justify-none pt-2 sm:pt-0">
-              <a
-                href="https://github.com/Parth8825"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="GitHub Profile"
-                className={`p-3 rounded-xl border transition-colors ${
-                  darkMode
-                    ? "bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:border-cyan-500/50"
-                    : "bg-white border-slate-200 text-slate-700 hover:text-slate-900 shadow-sm"
-                }`}
-              >
-                <GithubIcon size={20} />
-              </a>
+              <Magnetic strength={0.45}>
+                <a
+                  href="https://github.com/Parth8825"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHub Profile"
+                  className={`p-3 rounded-xl border transition-colors flex items-center justify-center ${
+                    darkMode
+                      ? "bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:border-cyan-500/50"
+                      : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917] hover:bg-[#ede8df] hover:border-cyan-600 shadow-2xs"
+                  }`}
+                >
+                  <GithubIcon size={20} />
+                </a>
+              </Magnetic>
 
-              <a
-                href="https://www.linkedin.com/in/parthdarji8825"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn Profile"
-                className={`p-3 rounded-xl border transition-colors ${
-                  darkMode
-                    ? "bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:border-cyan-500/50"
-                    : "bg-white border-slate-200 text-slate-700 hover:text-slate-900 shadow-sm"
-                }`}
-              >
-                <LinkedinIcon size={20} />
-              </a>
+              <Magnetic strength={0.45}>
+                <a
+                  href="https://www.linkedin.com/in/parthdarji8825"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn Profile"
+                  className={`p-3 rounded-xl border transition-colors flex items-center justify-center ${
+                    darkMode
+                      ? "bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:border-cyan-500/50"
+                      : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917] hover:bg-[#ede8df] hover:border-cyan-600 shadow-2xs"
+                  }`}
+                >
+                  <LinkedinIcon size={20} />
+                </a>
+              </Magnetic>
 
-              <a
-                href="mailto:parthdarji8825@gmail.com"
-                aria-label="Email Me"
-                className={`p-3 rounded-xl border transition-colors ${
-                  darkMode
-                    ? "bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:border-cyan-500/50"
-                    : "bg-white border-slate-200 text-slate-700 hover:text-slate-900 shadow-sm"
-                }`}
-              >
-                <Mail size={20} />
-              </a>
+              <Magnetic strength={0.45}>
+                <a
+                  href="mailto:parthdarji8825@gmail.com"
+                  aria-label="Email Me"
+                  className={`p-3 rounded-xl border transition-colors flex items-center justify-center ${
+                    darkMode
+                      ? "bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:border-cyan-500/50"
+                      : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917] hover:bg-[#ede8df] hover:border-cyan-600 shadow-2xs"
+                  }`}
+                >
+                  <Mail size={20} />
+                </a>
+              </Magnetic>
             </div>
           </motion.div>
 
@@ -216,20 +404,21 @@ const Intro = () => {
                 key={sIdx}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 0.7 + sIdx * 0.1 }}
-                className={`p-3.5 rounded-2xl border transition-all duration-300 hover:-translate-y-1 ${
+                whileHover={{ y: -5, scale: 1.03 }}
+                transition={{ duration: 0.3, delay: 0.7 + sIdx * 0.1 }}
+                className={`p-3.5 rounded-2xl border transition-all duration-300 cursor-default ${
                   darkMode
-                    ? "bg-slate-900/60 border-slate-800 hover:border-cyan-500/40"
-                    : "bg-white border-slate-200 shadow-sm hover:border-cyan-400"
+                    ? "bg-slate-900/85 backdrop-blur-md hover:bg-slate-950/15 hover:backdrop-blur-none border-slate-700/60 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/10"
+                    : "bg-[#fbf9f5]/90 backdrop-blur-md hover:bg-[#ede8df]/25 hover:backdrop-blur-none border-[#d6cebf] shadow-2xs hover:border-cyan-600/50 hover:shadow-md"
                 }`}
               >
                 <div className="flex items-center gap-2 mb-1">
                   {st.icon}
-                  <span className={`text-lg sm:text-xl font-extrabold ${darkMode ? "text-white" : "text-slate-900"}`}>
-                    {st.value}
+                  <span className={`text-lg sm:text-xl font-black ${darkMode ? "text-white" : "text-[#1c1917]"}`}>
+                    <AnimatedCounter value={st.value} />
                   </span>
                 </div>
-                <p className={`text-[11px] font-medium leading-snug ${darkMode ? "text-slate-400" : "text-slate-600"}`}>
+                <p className={`text-[11px] font-semibold leading-snug ${darkMode ? "text-slate-200" : "text-[#44403c]"}`}>
                   {st.label}
                 </p>
               </motion.div>
@@ -237,42 +426,14 @@ const Intro = () => {
           </motion.div>
         </div>
 
-        {/* Right Column - Protected Avatar / Hero Graphic */}
+        {/* Right Column - Protected Avatar with 3D Tilt */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95, x: 50 }}
           animate={{ opacity: 1, scale: 1, x: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
           className="lg:col-span-5 flex justify-center items-center"
         >
-          <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96">
-            {/* Glowing backdrop card */}
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-cyan-500 to-indigo-600 rotate-6 opacity-30 blur-lg" />
-            <div className="absolute inset-0 rounded-3xl bg-slate-900 border border-slate-800 overflow-hidden shadow-2xl flex items-center justify-center group">
-              {/* Invisible Protection Overlay Shield (blocks right click & drag) */}
-              <div 
-                className="absolute inset-0 z-10 select-none"
-                onContextMenu={(e) => e.preventDefault()}
-                onDragStart={(e) => e.preventDefault()}
-              />
-              
-              <img
-                src={developerAvatar}
-                alt="Parth Darji - Software Developer"
-                draggable={false}
-                onContextMenu={(e) => e.preventDefault()}
-                className="w-full h-full object-cover object-[50%_15%] group-hover:scale-105 transition-transform duration-500 select-none pointer-events-none"
-              />
-
-              {/* Floating tech badge over avatar */}
-              <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-2.5 sm:p-3 rounded-2xl glass-panel text-left flex items-center justify-between border border-white/10 z-20">
-                <div>
-                  <p className="text-[10px] sm:text-xs text-cyan-400 font-semibold uppercase tracking-wider">Tech Focus</p>
-                  <p className="text-xs sm:text-sm font-bold text-white">.NET Core & Modern Web</p>
-                </div>
-                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-              </div>
-            </div>
-          </div>
+          <TiltAvatar />
         </motion.div>
       </div>
     </section>

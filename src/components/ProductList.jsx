@@ -23,14 +23,16 @@ const ProductList = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-4 mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 text-xs font-semibold tracking-wide uppercase">
+          <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold tracking-wide uppercase ${
+            darkMode ? "border-purple-500/30 bg-purple-500/10 text-purple-400" : "border-purple-300 bg-purple-900/10 text-purple-900"
+          }`}>
             <FolderCode size={14} />
             Enterprise Solutions
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
             Featured <span className="text-gradient">Production Projects</span>
           </h2>
-          <p className={`max-w-2xl mx-auto text-base sm:text-lg ${darkMode ? "text-slate-400" : "text-slate-600"}`}>
+          <p className={`max-w-2xl mx-auto text-base sm:text-lg ${darkMode ? "text-slate-400" : "text-[#44403c]"}`}>
             Key enterprise web applications, real-time validation APIs, OAuth 2.0 microservices, and CMS migrations engineered during production tenure. Click any card to inspect system architecture.
           </p>
         </motion.div>
@@ -60,14 +62,14 @@ const ProductList = () => {
           className={`p-5 sm:p-8 rounded-3xl border text-center flex flex-col sm:flex-row items-center justify-between gap-6 ${
             darkMode
               ? "glass-panel border-slate-800"
-              : "glass-panel-light border-slate-200 shadow-md"
+              : "bg-[#fbf9f5] border-[#d6cebf] shadow-md"
           }`}
         >
           <div className="text-left">
-            <h3 className={`text-lg sm:text-xl font-bold mb-1 ${darkMode ? "text-white" : "text-slate-900"}`}>
+            <h3 className={`text-lg sm:text-xl font-bold mb-1 ${darkMode ? "text-white" : "text-[#1c1917]"}`}>
               Interested in architecture details or technical collaboration?
             </h3>
-            <p className={`text-xs sm:text-sm ${darkMode ? "text-slate-400" : "text-slate-600"}`}>
+            <p className={`text-xs sm:text-sm ${darkMode ? "text-slate-400" : "text-[#44403c]"}`}>
               Connect directly via email or LinkedIn to discuss system design, API architecture, and software opportunities.
             </p>
           </div>
