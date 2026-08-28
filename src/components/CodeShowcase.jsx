@@ -158,7 +158,116 @@ BEGIN
     END CATCH
 END`,
   },
+  {
+    id: "react",
+    title: "React Custom Hook",
+    fileName: "useMembershipValidation.ts",
+    language: "typescript",
+    badge: "Demo React / TS Pattern",
+    code: `// Demo Code: Synthetic React Custom Hook with AbortController
+export function useMembershipValidation(partnerId: string) {
+  const [status, setStatus] = useState<ValidationState>({ isValid: false, loading: false });
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const validateMember = useCallback(async (membershipNumber: string): Promise<boolean> => {
+    if (!membershipNumber.trim()) return false;
+
+    // Abort previous in-flight validation requests
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+
+    setStatus(prev => ({ ...prev, loading: true, error: null }));
+
+    try {
+      const response = await fetch(\`/api/v1/partners/\${partnerId}/validate\`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ membershipNumber, timestamp: new Date().toISOString() }),
+        signal: abortControllerRef.current.signal,
+      });
+
+      if (!response.ok) throw new Error("Validation service unreachable");
+      const data: ValidationResponse = await response.json();
+
+      setStatus({ isValid: data.isEligible, loading: false, tier: data.tierName });
+      return data.isEligible;
+    } catch (err: unknown) {
+      if ((err as Error).name !== "AbortError") {
+        setStatus({ isValid: false, loading: false, error: (err as Error).message });
+      }
+      return false;
+    }
+  }, [partnerId]);
+
+  return { status, validateMember };
+}`,
+  },
 ];
+
+// Lightweight token highlighter for C#, SQL, and TypeScript
+const highlightTokens = (code) => {
+  if (!code) return null;
+  const lines = code.split("\n");
+
+  const tokenRegex = /(\/\/.*$|--.*$|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`[^`]*`|@"[^"]*"|\b(?:public|private|protected|internal|class|interface|async|await|return|new|var|if|else|using|namespace|static|readonly|typeof|void|const|function|export|import|from|try|catch|throw|finally|CREATE|PROCEDURE|SELECT|FROM|WHERE|INNER|JOIN|ON|BEGIN|END|SET|NOCOUNT|OUTPUT|VARCHAR|BIT|EXISTS|AND|OR|GETUTCDATE|ORDER|BY|GROUP|AS)\b|\b(?:Task|IActionResult|ControllerBase|OrderManagementController|ILogger|DiscountResultDto|DiscountCheckRequestDto|IOAuthTokenService|IConfidentialClientApplication|MemoryCache|CustomerDto|PagedResult|IQueryable|CustomerSearchFilter|Customer|MemoryCacheEntryOptions|ValidationState|ValidationResponse|AbortController|string|int|bool|decimal|unknown|Error|Promise)\b|\b(?:true|false|null|undefined)\b|\b\d+(?:\.\d+)?\b|[{}();,[\]]|=>|\s+|[^\s{}();,[\]]+)/g;
+
+  return lines.map((line, lineIdx) => {
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith("//") || trimmed.startsWith("--")) {
+      return (
+        <div key={lineIdx} className="table-row">
+          <span className="table-cell pr-4 text-right select-none text-slate-600 font-mono text-xs">{lineIdx + 1}</span>
+          <span className="table-cell text-slate-500 italic">{line}</span>
+        </div>
+      );
+    }
+
+    if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+      return (
+        <div key={lineIdx} className="table-row">
+          <span className="table-cell pr-4 text-right select-none text-slate-600 font-mono text-xs">{lineIdx + 1}</span>
+          <span className="table-cell text-amber-300 font-semibold">{line}</span>
+        </div>
+      );
+    }
+
+    const tokens = [];
+    let match;
+    while ((match = tokenRegex.exec(line)) !== null) {
+      tokens.push(match[0]);
+    }
+
+    return (
+      <div key={lineIdx} className="table-row hover:bg-slate-900/60 transition-colors">
+        <span className="table-cell pr-4 text-right select-none text-slate-600 font-mono text-xs">{lineIdx + 1}</span>
+        <span className="table-cell whitespace-pre">
+          {tokens.map((token, tIdx) => {
+            if (token.startsWith("//") || token.startsWith("--")) {
+              return <span key={tIdx} className="text-slate-500 italic">{token}</span>;
+            }
+            if (token.startsWith('"') || token.startsWith("'") || token.startsWith("`") || token.startsWith('@"')) {
+              return <span key={tIdx} className="text-emerald-400">{token}</span>;
+            }
+            if (/^\b(?:public|private|protected|internal|class|interface|async|await|return|new|var|if|else|using|namespace|static|readonly|typeof|void|const|function|export|import|from|try|catch|throw|finally|CREATE|PROCEDURE|SELECT|FROM|WHERE|INNER|JOIN|ON|BEGIN|END|SET|NOCOUNT|OUTPUT|VARCHAR|BIT|EXISTS|AND|OR|GETUTCDATE|ORDER|BY|GROUP|AS)\b$/.test(token)) {
+              return <span key={tIdx} className="text-cyan-400 font-semibold">{token}</span>;
+            }
+            if (/^\b(?:true|false|null|undefined)\b$/.test(token)) {
+              return <span key={tIdx} className="text-rose-400 font-semibold">{token}</span>;
+            }
+            if (/^\b(?:Task|IActionResult|ControllerBase|OrderManagementController|ILogger|DiscountResultDto|DiscountCheckRequestDto|IOAuthTokenService|IConfidentialClientApplication|MemoryCache|CustomerDto|PagedResult|IQueryable|CustomerSearchFilter|Customer|MemoryCacheEntryOptions|ValidationState|ValidationResponse|AbortController|string|int|bool|decimal|unknown|Error|Promise)\b$/.test(token)) {
+              return <span key={tIdx} className="text-yellow-300 font-semibold">{token}</span>;
+            }
+            if (/^\d+(\.\d+)?$/.test(token)) {
+              return <span key={tIdx} className="text-purple-400">{token}</span>;
+            }
+            return <span key={tIdx} className="text-slate-200">{token}</span>;
+          })}
+        </span>
+      </div>
+    );
+  });
+};
 
 const CodeShowcase = () => {
   const theme = useContext(ThemeContext);
@@ -197,7 +306,9 @@ const CodeShowcase = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-4 mb-10"
         >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-semibold tracking-wide uppercase shadow-sm">
+          <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold tracking-wide uppercase shadow-sm ${
+            darkMode ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400" : "border-cyan-300 bg-cyan-50 text-cyan-800"
+          }`}>
             <Terminal size={14} />
             Clean Architecture Patterns
           </div>
@@ -205,12 +316,14 @@ const CodeShowcase = () => {
             Synthetic Demo <span className="text-gradient">Code Patterns</span>
           </h2>
           <p className={`max-w-2xl mx-auto text-sm sm:text-lg ${darkMode ? "text-slate-400" : "text-slate-600"}`}>
-            Demonstration C#, ASP.NET Core, OAuth 2.0, and SQL design patterns illustrating clean code standards and architecture practices.
+            Demonstration C#, ASP.NET Core, OAuth 2.0, SQL, and React design patterns illustrating clean code standards and architecture practices.
           </p>
 
           {/* Integrity & Demo Disclaimer Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs max-w-xl text-left">
-            <ShieldAlert size={18} className="text-amber-400 shrink-0" />
+          <div className={`inline-flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2 rounded-2xl border text-xs max-w-xl text-left ${
+            darkMode ? "bg-amber-500/10 border-amber-500/30 text-amber-300" : "bg-amber-50 border-amber-300 text-amber-900"
+          }`}>
+            <ShieldAlert size={18} className={darkMode ? "text-amber-400 shrink-0" : "text-amber-700 shrink-0"} />
             <span>
               <strong>Integrity Notice:</strong> All code examples below are synthetic, generic patterns created solely for technical demonstration. No proprietary company source code is used.
             </span>
@@ -309,19 +422,19 @@ const CodeShowcase = () => {
             </div>
           </div>
 
-          {/* Code Viewer Body with Tab Switch Animation */}
-          <div className="p-4 sm:p-6 overflow-x-auto text-left font-mono text-[11px] sm:text-sm leading-relaxed text-slate-200 bg-slate-950/90 min-h-[300px]">
+          {/* Code Viewer Body with Line Numbers and Syntax Highlighting */}
+          <div className="p-4 sm:p-6 overflow-x-auto text-left font-mono text-[11px] sm:text-xs md:text-sm leading-relaxed text-slate-200 bg-slate-950/95 min-h-[320px]">
             <AnimatePresence mode="wait">
-              <motion.pre
+              <motion.div
                 key={currentSnippet?.id}
                 initial={{ opacity: 0, x: 15 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -15 }}
                 transition={{ duration: 0.25 }}
-                className="whitespace-pre"
+                className="table w-full border-collapse"
               >
-                <code>{currentSnippet?.code}</code>
-              </motion.pre>
+                {highlightTokens(currentSnippet?.code)}
+              </motion.div>
             </AnimatePresence>
           </div>
         </motion.div>

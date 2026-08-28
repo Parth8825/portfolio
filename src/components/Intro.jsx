@@ -36,7 +36,7 @@ const Intro = () => {
 
   const stats = [
     {
-      icon: <Award className="text-cyan-400" size={18} />,
+      icon: <Award className={darkMode ? "text-cyan-400" : "text-cyan-600"} size={18} />,
       value: yearsExp,
       label: "Enterprise Experience",
     },
@@ -71,15 +71,19 @@ const Intro = () => {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="inline-flex max-w-full items-center gap-2 px-3.5 py-2 sm:py-1.5 rounded-2xl sm:rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-[11px] sm:text-xs font-semibold tracking-wide uppercase leading-relaxed shadow-sm"
+            className={`inline-flex max-w-full items-center gap-2 px-3.5 py-2 sm:py-1.5 rounded-2xl sm:rounded-full border text-[11px] sm:text-xs font-semibold tracking-wide uppercase leading-relaxed shadow-sm ${
+              darkMode
+                ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400"
+                : "border-cyan-300 bg-cyan-50 text-cyan-800"
+            }`}
           >
             <span className="relative flex h-2 w-2 shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
             </span>
-            <Sparkles size={13} className="text-cyan-400 shrink-0 hidden xs:inline-block" />
+            <Sparkles size={13} className={`${darkMode ? "text-cyan-400" : "text-cyan-600"} shrink-0 hidden xs:inline-block`} />
             <span className="leading-tight">
-              Software Developer @ TechnoBrains <span className="hidden sm:inline text-cyan-500/70">•</span> <br className="sm:hidden" /> Ahmedabad, India
+              Software Developer @ TechnoBrains <span className="hidden sm:inline opacity-70">•</span> <br className="sm:hidden" /> Ahmedabad, India
             </span>
           </motion.div>
 
@@ -106,7 +110,7 @@ const Intro = () => {
             transition={{ duration: 0.5, delay: 0.35 }}
             className="min-h-12 flex flex-wrap items-center"
           >
-            <span className="text-lg sm:text-2xl font-semibold text-cyan-400">I am a </span>
+            <span className={`text-lg sm:text-2xl font-semibold ${darkMode ? "text-cyan-400" : "text-cyan-700"}`}>I am a </span>
             <span
               className={`ml-2.5 text-lg sm:text-2xl font-bold ${
                 darkMode ? "text-indigo-300" : "text-indigo-600"
@@ -126,7 +130,7 @@ const Intro = () => {
             }`}
           >
             Result-driven Azure & .NET Developer with {yearsExp} of experience designing, developing, and deploying scalable web applications and APIs. Expertise in
-            <strong className="text-cyan-400 font-semibold"> ASP.NET Core, Azure Services, RESTful & GraphQL APIs, OAuth 2.0, SQL Server, </strong>
+            <strong className={`font-semibold ${darkMode ? "text-cyan-400" : "text-cyan-800"}`}> ASP.NET Core, Azure Services, RESTful & GraphQL APIs, OAuth 2.0, SQL Server, </strong>
             and modern frontend frameworks like React & TypeScript.
           </motion.p>
 

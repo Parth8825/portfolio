@@ -5,7 +5,7 @@
 [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4.0-06B6D4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
 [![PWA Ready](https://img.shields.io/badge/PWA-Standalone_App-000000?style=flat-square&logo=pwa)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
 [![Build Status](https://img.shields.io/badge/Netlify-Deploys_OK-00C7B7?style=flat-square&logo=netlify)](https://parthsportfolio.netlify.app/)
-[![Tests Passed](https://img.shields.io/badge/Vitest-4%2F4_Passed-6E9F18?style=flat-square&logo=vitest)](https://vitest.dev/)
+[![Tests](https://img.shields.io/badge/Vitest-Passing-6E9F18?style=flat-square&logo=vitest)](https://vitest.dev/)
 
 Live Application: **[https://parthsportfolio.netlify.app/](https://parthsportfolio.netlify.app/)**
 
@@ -16,13 +16,16 @@ A modern, high-performance web portfolio for **Parth Darji**, Software Developer
 ## ✨ Features
 
 - ⚡ **Vite 6 + React 19 Core**: Fast HMR and sub-second production builds replacing legacy Create React App.
-- 🎨 **Tailwind CSS v4 Styling**: Custom design system featuring dark slate glassmorphic panels, neon gradients, and fluid typography.
-- 📱 **Progressive Web App (PWA)**: Standalone installability on mobile and desktop Chrome with offline asset caching.
-- 🛡️ **Multi-Layer Image Protection**: Client-side invisible DOM protection shields blocking right-click/dragging, combined with watermarked Git repository image assets.
-- ✉️ **Secure Contact System**: Real-time field validation, XSS HTML sanitization, EmailJS integration, and prefilled 1-click `mailto:` fallback.
+- 🎨 **Tailwind CSS v4 Styling**: Custom design system featuring dark slate glassmorphic panels, neon gradients, fluid typography, and WCAG AA high-contrast light & dark themes.
+- 🔍 **OS-Aware Command Palette (`⌘K` / `Ctrl+K`)**: Fast Spotlight-style navigation with ArrowUp/Down/Enter keyboard selection, ARIA combobox accessibility, and instant action dispatch.
+- 💻 **Syntax-Highlighted Code Showcase**: Terminal-styled clean architecture patterns across ASP.NET Core, OAuth 2.0, EF Core, SQL stored procedures, and React TypeScript custom hooks.
+- 🧭 **Active Section Scroll Spy**: Real-time navbar indicator tracking scroll position seamlessly across page sections.
+- 📱 **Progressive Web App (PWA)**: Standalone installability on mobile and desktop Chrome with enhanced offline asset and font caching.
+- 🛡️ **Multi-Layer Image Protection**: Client-side DOM protection shields blocking right-click/dragging, combined with watermarked Git repository image assets.
+- ✉️ **Secure Contact System**: Real-time field validation, XSS HTML sanitization, EmailJS integration with fallback client generation, and multi-message submission flow.
 - 🌓 **Auto System Theme Detection**: Real-time OS color preference listener (`prefers-color-scheme`) with `localStorage` persistence.
-- 🧪 **Vitest & ESLint Suite**: Unit test suite covering UI components and form validation, plus ESLint flat configuration.
-- 🚀 **Netlify Deployment Ready**: Preconfigured `netlify.toml` with SPA route redirects (`/*` -> `/index.html`) and security response headers.
+- 🧪 **Vitest & ESLint Suite**: Automated unit testing covering UI components, form validation, keyboard navigation, and custom hooks, backed by GitHub Actions CI.
+- 🚀 **Netlify Deployment Ready**: Preconfigured `netlify.toml` with SPA redirects, 1-year immutable caching for static assets, and security response headers.
 
 ---
 

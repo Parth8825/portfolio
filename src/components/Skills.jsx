@@ -71,7 +71,9 @@ const Skills = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-4 mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-semibold tracking-wide uppercase shadow-sm">
+          <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold tracking-wide uppercase shadow-sm ${
+            darkMode ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400" : "border-cyan-300 bg-cyan-50 text-cyan-800"
+          }`}>
             <Terminal size={14} />
             Technical Toolkit
           </div>
@@ -124,7 +126,9 @@ const Skills = () => {
                     }`}
                   >
                     <span>{skill.name}</span>
-                    <span className="ml-2 text-xs text-cyan-400 font-mono opacity-80">({skill.level})</span>
+                    <span className={`ml-2 text-xs font-mono ${darkMode ? "text-cyan-400 opacity-80" : "text-cyan-700 font-semibold"}`}>
+                      ({skill.level})
+                    </span>
                   </motion.div>
                 ))}
               </div>

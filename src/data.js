@@ -69,6 +69,11 @@ export const enterpriseProjects = [
     desc: "Designed & developed secure, scalable RESTful & GraphQL APIs using ASP.NET Core and Azure to enable CAA partners to validate customer memberships in real time and automate discount eligibility during transaction processing.",
     architecture: "ASP.NET Core Web API + Azure App Services + Azure SQL + Azure Storage",
     tags: ["ASP.NET Core", "C#", "Azure Cloud", "REST API", "GraphQL", "OAuth 2.0"],
+    achievements: [
+      "Engineered high-throughput RESTful & GraphQL endpoints processing partner validation requests with sub-100ms latency.",
+      "Secured endpoints with OAuth 2.0 / Entra ID token validation and granular scope authorization.",
+      "Automated deployment pipelines to Azure App Services using Azure DevOps CI/CD.",
+    ],
   },
   {
     id: 2,
@@ -77,6 +82,11 @@ export const enterpriseProjects = [
     desc: "Engineered a centralized OAuth 2.0 authentication wrapper service utilizing Microsoft Identity Platform to standardize secure communication across internal microservices and Microsoft-protected enterprise resources.",
     architecture: "Microsoft Identity Platform + Bearer Tokens + OAuth 2.0 + Microservices",
     tags: ["C#", ".NET Core", "OAuth 2.0", "Azure AD / Entra ID", "Security"],
+    achievements: [
+      "Standardized enterprise token acquisition across internal microservices using MSAL & Microsoft Identity Platform.",
+      "Implemented in-memory sliding token cache with proactive 5-minute pre-expiration renewal, reducing auth latency.",
+      "Eliminated redundant token requests across multi-service workflows and enforced strict token validation.",
+    ],
   },
   {
     id: 3,
@@ -85,6 +95,11 @@ export const enterpriseProjects = [
     desc: "Created a custom Shopify integration extension using React Router and checkout extensions to perform real-time CAA membership validation during Shopify checkout and collect transaction data seamlessly.",
     architecture: "Shopify Extension + React Router + Node / .NET Web API Backend",
     tags: ["React", "React Router", "TypeScript", "Shopify API", "Web APIs"],
+    achievements: [
+      "Built custom checkout UI extensions using React Router and Shopify Extension APIs for frictionless member lookup.",
+      "Integrated real-time discount validation rules communicating with .NET Web API backends during transaction checkout.",
+      "Ensured seamless mobile and desktop checkout responsive experience with zero cart abandonment impact.",
+    ],
   },
   {
     id: 4,
@@ -93,6 +108,11 @@ export const enterpriseProjects = [
     desc: "Maintained and modernised content-driven web application using Umbraco CMS framework in .NET 10. Successfully migrated platform from Umbraco v13 to v17 with TypeScript, Vite, and custom Backoffice extensions.",
     architecture: "Umbraco CMS (.NET 10) + TypeScript + Vite + Azure App Services",
     tags: [".NET 10", "Umbraco CMS", "TypeScript", "Vite", "Azure"],
+    achievements: [
+      "Successfully executed platform migration from Umbraco v13 to v17 on .NET 10 with zero platform downtime.",
+      "Modernized frontend toolchain to Vite and TypeScript, developing custom Umbraco Backoffice dashboard plugins.",
+      "Optimized Azure App Service hosting configuration and media storage delivery across high-traffic seasons.",
+    ],
   },
   {
     id: 5,
@@ -101,5 +121,10 @@ export const enterpriseProjects = [
     desc: "Developed a partner onboarding portal using .NET Core backend and jQuery/AJAX frontend with validation workflows, server-side pagination with DataTable Library, and optimized SQL Server stored procedures.",
     architecture: ".NET Core MVC + MS SQL Server + jQuery AJAX + DataTable Library",
     tags: [".NET Core", "SQL Server", "jQuery", "AJAX", "Bootstrap"],
+    achievements: [
+      "Designed multi-step partner verification workflow portal with .NET Core MVC and client-side AJAX validation.",
+      "Implemented server-side pagination, multi-column sorting, and filtering via jQuery DataTable Library.",
+      "Authored optimized SQL Server stored procedures and indexes handling complex tabular data lookups efficiently.",
+    ],
   },
 ];

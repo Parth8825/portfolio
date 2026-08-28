@@ -9,12 +9,26 @@ const Navbar = ({ onOpenCommandPalette }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [osKey, setOsKey] = useState("Ctrl+K");
+  const [activeSection, setActiveSection] = useState("home");
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
+
+      const sectionIds = ["home", "experience", "skills", "code-showcase", "projects", "contact"];
+      const scrollPosition = window.scrollY + 140;
+
+      for (let i = sectionIds.length - 1; i >= 0; i--) {
+        const section = document.getElementById(sectionIds[i]);
+        if (section && section.offsetTop <= scrollPosition) {
+          setActiveSection(sectionIds[i]);
+          break;
+        }
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -72,19 +86,35 @@ const Navbar = ({ onOpenCommandPalette }) => {
           </span>
         </a>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation with Active Scroll Spy */}
         <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              className={`text-sm font-medium transition-colors hover:text-cyan-400 ${
-                darkMode ? "text-slate-300" : "text-slate-700 hover:text-cyan-600"
-              }`}
-            >
-              {link.name}
-            </a>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = activeSection === link.href.substring(1);
+            return (
+              <a
+                key={link.name}
+                href={link.href}
+                className={`relative text-sm font-medium transition-colors ${
+                  isActive
+                    ? darkMode
+                      ? "text-cyan-400 font-semibold"
+                      : "text-cyan-700 font-bold"
+                    : darkMode
+                    ? "text-slate-300 hover:text-cyan-400"
+                    : "text-slate-700 hover:text-cyan-600"
+                }`}
+              >
+                {link.name}
+                {isActive && (
+                  <motion.span
+                    layoutId="activeNavIndicator"
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-400 to-indigo-500 rounded-full"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+              </a>
+            );
+          })}
         </nav>
 
         {/* Action Controls */}
@@ -96,10 +126,10 @@ const Navbar = ({ onOpenCommandPalette }) => {
             className={`p-2 sm:px-3 sm:py-2 rounded-xl border text-xs font-mono transition-all duration-200 flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95 ${
               darkMode
                 ? "bg-slate-900 border-slate-800 text-slate-300 hover:border-cyan-500/50 hover:text-white"
-                : "bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200"
+                : "bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200 hover:border-cyan-500"
             }`}
           >
-            <Search size={14} className="text-cyan-400" />
+            <Search size={14} className={darkMode ? "text-cyan-400" : "text-cyan-600"} />
             <span className="hidden sm:inline font-semibold">{osKey}</span>
           </button>
 
@@ -145,16 +175,27 @@ const Navbar = ({ onOpenCommandPalette }) => {
                 : "bg-white/95 border-slate-200 text-slate-900"
             }`}
           >
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 rounded-lg text-base font-medium hover:bg-cyan-500/10 hover:text-cyan-400 transition-colors"
-              >
-                {link.name}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = activeSection === link.href.substring(1);
+              return (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`block px-3 py-2 rounded-lg text-base font-medium transition-colors ${
+                    isActive
+                      ? darkMode
+                        ? "bg-cyan-500/15 text-cyan-400 font-semibold"
+                        : "bg-cyan-50 text-cyan-800 font-bold"
+                      : darkMode
+                      ? "text-slate-200 hover:bg-cyan-500/10 hover:text-cyan-400"
+                      : "text-slate-700 hover:bg-cyan-50 hover:text-cyan-700"
+                  }`}
+                >
+                  {link.name}
+                </a>
+              );
+            })}
           </motion.div>
         )}
       </AnimatePresence>

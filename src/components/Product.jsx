@@ -9,6 +9,9 @@ const Product = ({ title, company, desc, architecture, tags, onOpenModal, index 
 
   return (
     <motion.div
+      role="button"
+      tabIndex={0}
+      aria-label={`View architecture details for ${title}`}
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
@@ -16,10 +19,16 @@ const Product = ({ title, company, desc, architecture, tags, onOpenModal, index 
       whileHover={{ y: -8, scale: 1.02 }}
       whileTap={{ scale: 0.97, rotateY: 15 }}
       onClick={onOpenModal}
-      className={`group rounded-3xl border overflow-hidden transition-all duration-300 flex flex-col justify-between cursor-pointer ${
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpenModal();
+        }
+      }}
+      className={`group rounded-3xl border overflow-hidden transition-all duration-300 flex flex-col justify-between cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-cyan-500 ${
         darkMode
           ? "bg-slate-900/70 border-slate-800 hover:border-cyan-500/50 hover:shadow-2xl hover:shadow-cyan-500/10"
-          : "bg-white border-slate-200 hover:border-cyan-400 shadow-md hover:shadow-xl"
+          : "bg-white border-slate-200 hover:border-cyan-500 shadow-md hover:shadow-xl"
       }`}
     >
       <div>
@@ -38,8 +47,8 @@ const Product = ({ title, company, desc, architecture, tags, onOpenModal, index 
 
         {/* Card Content Body */}
         <div className="p-5 sm:p-8 space-y-4">
-          <h3 className={`text-lg sm:text-2xl font-bold group-hover:text-cyan-400 transition-colors ${
-            darkMode ? "text-white" : "text-slate-900"
+          <h3 className={`text-lg sm:text-2xl font-bold transition-colors ${
+            darkMode ? "text-white group-hover:text-cyan-400" : "text-slate-900 group-hover:text-cyan-600"
           }`}>
             {title}
           </h3>
@@ -54,7 +63,7 @@ const Product = ({ title, company, desc, architecture, tags, onOpenModal, index 
               ? "bg-slate-950/60 border-slate-800 text-slate-300"
               : "bg-slate-50 border-slate-200 text-slate-700"
           }`}>
-            <Cpu size={16} className="text-cyan-400 shrink-0 mt-0.5" />
+            <Cpu size={16} className={darkMode ? "text-cyan-400 shrink-0 mt-0.5" : "text-cyan-600 shrink-0 mt-0.5"} />
             <div className="w-full min-w-0">
               <span className="text-slate-500 font-bold uppercase text-[10px] block mb-0.5">System Architecture</span>
               <span className="break-words leading-relaxed text-[11px] sm:text-xs">{architecture}</span>
@@ -70,14 +79,20 @@ const Product = ({ title, company, desc, architecture, tags, onOpenModal, index 
             tags.map((tag, idx) => (
               <span
                 key={idx}
-                className="px-2.5 py-1 rounded-md text-[11px] sm:text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
+                className={`px-2.5 py-1 rounded-md text-[11px] sm:text-xs font-semibold ${
+                  darkMode
+                    ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
+                    : "bg-cyan-50 text-cyan-800 border border-cyan-300 font-medium"
+                }`}
               >
                 {tag}
               </span>
             ))}
         </div>
 
-        <div className="flex items-center gap-1 text-xs font-bold text-cyan-400 group-hover:text-cyan-300 uppercase tracking-wider">
+        <div className={`flex items-center gap-1 text-xs font-bold uppercase tracking-wider ${
+          darkMode ? "text-cyan-400 group-hover:text-cyan-300" : "text-cyan-700 group-hover:text-cyan-800"
+        }`}>
           <span>View Architecture Details</span>
           <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
         </div>

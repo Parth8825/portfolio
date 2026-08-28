@@ -41,6 +41,9 @@ const ProjectModal = ({ project, onClose }) => {
 
       {/* 3D Flip Animated Modal Body */}
       <motion.div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="project-modal-title"
         initial={{ opacity: 0, rotateY: -65, scale: 0.88 }}
         animate={{ opacity: 1, rotateY: 0, scale: 1 }}
         exit={{ opacity: 0, rotateY: 65, scale: 0.88 }}
@@ -55,18 +58,22 @@ const ProjectModal = ({ project, onClose }) => {
         <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-800/40">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Building2 size={16} className="text-cyan-400 shrink-0" />
-              <span className="text-xs font-bold uppercase tracking-wider text-cyan-400">
+              <Building2 size={16} className={darkMode ? "text-cyan-400 shrink-0" : "text-cyan-600 shrink-0"} />
+              <span className={`text-xs font-bold uppercase tracking-wider ${darkMode ? "text-cyan-400" : "text-cyan-700"}`}>
                 {project.company}
               </span>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-extrabold">{project.title}</h3>
+            <h3 id="project-modal-title" className="text-2xl sm:text-3xl font-extrabold">{project.title}</h3>
           </div>
 
           <button
             onClick={onClose}
             aria-label="Close modal"
-            className="p-2.5 rounded-2xl bg-slate-800/80 hover:bg-cyan-500 hover:text-slate-950 text-slate-300 transition-all duration-200 cursor-pointer shadow-md active:scale-90 shrink-0"
+            className={`p-2.5 rounded-2xl transition-all duration-200 cursor-pointer shadow-md active:scale-90 shrink-0 ${
+              darkMode
+                ? "bg-slate-800/80 hover:bg-cyan-500 hover:text-slate-950 text-slate-300"
+                : "bg-slate-100 hover:bg-cyan-600 hover:text-white text-slate-700"
+            }`}
           >
             <X size={18} />
           </button>
@@ -74,7 +81,9 @@ const ProjectModal = ({ project, onClose }) => {
 
         {/* Overview Description */}
         <div>
-          <h4 className="text-xs uppercase font-bold text-cyan-400 tracking-wider mb-2">Project Overview</h4>
+          <h4 className={`text-xs uppercase font-bold tracking-wider mb-2 ${darkMode ? "text-cyan-400" : "text-cyan-700"}`}>
+            Project Overview
+          </h4>
           <p className={`text-sm sm:text-base leading-relaxed ${darkMode ? "text-slate-300" : "text-slate-600"}`}>
             {project.desc}
           </p>
@@ -84,31 +93,36 @@ const ProjectModal = ({ project, onClose }) => {
         <div className={`p-4 rounded-2xl border space-y-2 ${
           darkMode ? "bg-slate-950/60 border-slate-800/80" : "bg-slate-50 border-slate-200"
         }`}>
-          <div className="flex items-center gap-2 text-cyan-400 text-xs font-bold uppercase tracking-wider">
+          <div className={`flex items-center gap-2 text-xs font-bold uppercase tracking-wider ${darkMode ? "text-cyan-400" : "text-cyan-700"}`}>
             <Cpu size={16} className="shrink-0" />
             <span>System Architecture & Integration</span>
           </div>
-          <p className="text-xs sm:text-sm font-mono text-slate-300 leading-relaxed break-words">
+          <p className={`text-xs sm:text-sm font-mono leading-relaxed break-words ${darkMode ? "text-slate-300" : "text-slate-700"}`}>
             {project.architecture}
           </p>
         </div>
 
         {/* Key Highlights */}
         <div>
-          <h4 className="text-xs uppercase font-bold text-slate-400 tracking-wider mb-3">Key Technical Achievements</h4>
+          <h4 className={`text-xs uppercase font-bold tracking-wider mb-3 ${darkMode ? "text-slate-400" : "text-slate-500"}`}>
+            Key Technical Achievements
+          </h4>
           <div className="space-y-2.5">
-            <div className="flex items-start gap-2.5 text-xs sm:text-sm">
-              <CheckCircle2 size={16} className="text-cyan-400 shrink-0 mt-0.5" />
-              <span>Architected with OAuth 2.0 / Entra ID security protocols and Microsoft Identity Platform.</span>
-            </div>
-            <div className="flex items-start gap-2.5 text-xs sm:text-sm">
-              <CheckCircle2 size={16} className="text-cyan-400 shrink-0 mt-0.5" />
-              <span>Deployed to Microsoft Azure Cloud Services (App Services, Azure SQL, Azure Storage).</span>
-            </div>
-            <div className="flex items-start gap-2.5 text-xs sm:text-sm">
-              <CheckCircle2 size={16} className="text-cyan-400 shrink-0 mt-0.5" />
-              <span>Integrated CI/CD pipelines via Azure DevOps for automated building and release management.</span>
-            </div>
+            {project.achievements && project.achievements.length > 0 ? (
+              project.achievements.map((achievement, idx) => (
+                <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm">
+                  <CheckCircle2 size={16} className={`${darkMode ? "text-cyan-400" : "text-cyan-600"} shrink-0 mt-0.5`} />
+                  <span className={darkMode ? "text-slate-200" : "text-slate-700"}>{achievement}</span>
+                </div>
+              ))
+            ) : (
+              <div className="flex items-start gap-2.5 text-xs sm:text-sm">
+                <CheckCircle2 size={16} className={`${darkMode ? "text-cyan-400" : "text-cyan-600"} shrink-0 mt-0.5`} />
+                <span className={darkMode ? "text-slate-200" : "text-slate-700"}>
+                  Architected with enterprise security protocols and cloud services.
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -117,7 +131,11 @@ const ProjectModal = ({ project, onClose }) => {
           {project.tags?.map((tag, idx) => (
             <span
               key={idx}
-              className="px-3 py-1 rounded-lg text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shadow-xs"
+              className={`px-3 py-1 rounded-lg text-xs font-semibold shadow-xs ${
+                darkMode
+                  ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
+                  : "bg-cyan-50 text-cyan-800 border border-cyan-300 font-medium"
+              }`}
             >
               {tag}
             </span>

@@ -153,7 +153,9 @@ const Contact = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-4 mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-semibold tracking-wide uppercase">
+          <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold tracking-wide uppercase ${
+            darkMode ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400" : "border-cyan-300 bg-cyan-50 text-cyan-800"
+          }`}>
             <Mail size={14} />
             Get In Touch
           </div>
@@ -345,9 +347,20 @@ const Contact = () => {
 
                 {/* Submit Feedback Banners */}
                 {submitted && (
-                  <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm flex items-center gap-3">
-                    <CheckCircle size={20} className="shrink-0 text-emerald-400" />
-                    <span>Thank you! Your message has been sent successfully.</span>
+                  <div className="p-4 sm:p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm space-y-3">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle size={20} className="shrink-0 text-emerald-400" />
+                      <span className="font-semibold">Thank you! Your message has been sent successfully.</span>
+                    </div>
+                    <div className="pt-2 border-t border-emerald-500/20 flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => setSubmitted(false)}
+                        className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 transition-colors cursor-pointer"
+                      >
+                        Send another message
+                      </button>
+                    </div>
                   </div>
                 )}
 

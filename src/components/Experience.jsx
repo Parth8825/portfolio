@@ -26,7 +26,9 @@ const Experience = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-4 mb-16 sm:mb-20"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-semibold tracking-wide uppercase shadow-sm">
+          <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-semibold tracking-wide uppercase shadow-sm ${
+            darkMode ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400" : "border-cyan-300 bg-cyan-50 text-cyan-800"
+          }`}>
             <Briefcase size={14} />
             Career & Academic Journey
           </div>
@@ -67,25 +69,27 @@ const Experience = () => {
                   } ${isEven ? "md:mr-auto" : "md:ml-auto"}`}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                    <span className="px-3 py-0.5 sm:px-3.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                    <span className={`px-3 py-0.5 sm:px-3.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold ${
+                      darkMode ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" : "bg-cyan-50 text-cyan-800 border border-cyan-300"
+                    }`}>
                       {item.type}
                     </span>
                     <div className={`flex items-center gap-1.5 text-xs font-semibold ${darkMode ? "text-slate-400" : "text-slate-500"}`}>
-                      <Calendar size={13} className="text-cyan-400" />
+                      <Calendar size={13} className={darkMode ? "text-cyan-400" : "text-cyan-600"} />
                       {item.period}
                     </div>
                   </div>
 
-                  <h3 className={`text-lg sm:text-2xl font-extrabold mb-1 group-hover:text-cyan-400 transition-colors ${
-                    darkMode ? "text-white" : "text-slate-900"
+                  <h3 className={`text-lg sm:text-2xl font-extrabold mb-1 transition-colors ${
+                    darkMode ? "text-white group-hover:text-cyan-400" : "text-slate-900 group-hover:text-cyan-600"
                   }`}>
                     {item.role}
                   </h3>
 
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4 text-xs sm:text-sm font-semibold text-indigo-400">
+                  <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 mb-4 text-xs sm:text-sm font-semibold ${darkMode ? "text-indigo-400" : "text-indigo-600"}`}>
                     <span>{item.company}</span>
-                    <span className="flex items-center gap-1 text-xs text-slate-400">
-                      <MapPin size={13} className="text-cyan-400" />
+                    <span className={`flex items-center gap-1 text-xs ${darkMode ? "text-slate-400" : "text-slate-500"}`}>
+                      <MapPin size={13} className={darkMode ? "text-cyan-400" : "text-cyan-600"} />
                       {item.location}
                     </span>
                   </div>
@@ -98,7 +102,7 @@ const Experience = () => {
                   <div className="space-y-2.5 mb-5">
                     {item.points.map((pt, pIdx) => (
                       <div key={pIdx} className="flex items-start gap-2.5 text-xs sm:text-sm">
-                        <CheckCircle2 size={16} className="text-cyan-400 shrink-0 mt-0.5" />
+                        <CheckCircle2 size={16} className={`${darkMode ? "text-cyan-400" : "text-cyan-600"} shrink-0 mt-0.5`} />
                         <span className={darkMode ? "text-slate-300" : "text-slate-700"}>{pt}</span>
                       </div>
                     ))}
@@ -109,7 +113,11 @@ const Experience = () => {
                     {item.tech.map((t, tIdx) => (
                       <span
                         key={tIdx}
-                        className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-lg text-[11px] sm:text-xs font-medium bg-slate-800/80 text-slate-200 border border-slate-700/60 hover:border-cyan-500/40 transition-colors"
+                        className={`px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-lg text-[11px] sm:text-xs font-medium transition-colors ${
+                          darkMode
+                            ? "bg-slate-800/80 text-slate-200 border border-slate-700/60 hover:border-cyan-500/40"
+                            : "bg-slate-100 text-slate-700 border border-slate-200 hover:border-cyan-500"
+                        }`}
                       >
                         {t}
                       </span>
