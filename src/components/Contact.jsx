@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useRef, useState, useEffect } from "react";
 import { ThemeContext } from "../context";
 import emailjs from "@emailjs/browser";
 import { Mail, MapPin, Send, CheckCircle, AlertCircle, Loader2, ExternalLink } from "lucide-react";
@@ -18,6 +18,74 @@ const sanitizeInput = (str) => {
   });
 };
 
+// Lightweight zero-dependency celebration confetti burst
+const triggerConfetti = () => {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+  const canvas = document.createElement("canvas");
+  canvas.style.position = "fixed";
+  canvas.style.top = "0";
+  canvas.style.left = "0";
+  canvas.style.width = "100vw";
+  canvas.style.height = "100vh";
+  canvas.style.pointerEvents = "none";
+  canvas.style.zIndex = "9999";
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext ? canvas.getContext("2d") : null;
+  if (!ctx) {
+    canvas.remove();
+    return;
+  }
+  canvas.width = window.innerWidth || 800;
+  canvas.height = window.innerHeight || 600;
+
+  const colors = ["#06b6d4", "#6366f1", "#a855f7", "#10b981", "#f59e0b", "#38bdf8"];
+  const particles = Array.from({ length: 65 }, () => ({
+    x: canvas.width * (0.4 + Math.random() * 0.2),
+    y: canvas.height * 0.6,
+    vx: (Math.random() - 0.5) * 14,
+    vy: -Math.random() * 12 - 4,
+    size: Math.random() * 6 + 4,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    rotation: Math.random() * 360,
+    rotationSpeed: (Math.random() - 0.5) * 8,
+    opacity: 1,
+  }));
+
+  let animationFrame;
+  const render = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    particles.forEach((p) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.35;
+      p.opacity -= 0.012;
+      p.rotation += p.rotationSpeed;
+
+      if (p.opacity > 0) {
+        alive = true;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.globalAlpha = Math.max(p.opacity, 0);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        ctx.restore();
+      }
+    });
+
+    if (alive) {
+      animationFrame = requestAnimationFrame(render);
+    } else {
+      cancelAnimationFrame(animationFrame);
+      canvas.remove();
+    }
+  };
+
+  animationFrame = requestAnimationFrame(render);
+};
+
 const Contact = () => {
   const formRef = useRef();
   const theme = useContext(ThemeContext);
@@ -34,6 +102,12 @@ const Contact = () => {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
+
+  useEffect(() => {
+    if (submitted) {
+      triggerConfetti();
+    }
+  }, [submitted]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -153,7 +227,9 @@ const Contact = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-4 mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-semibold tracking-wide uppercase">
+          <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold tracking-wide uppercase ${
+            darkMode ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400" : "border-cyan-300 bg-cyan-50 text-cyan-800"
+          }`}>
             <Mail size={14} />
             Get In Touch
           </div>
@@ -174,14 +250,16 @@ const Contact = () => {
             transition={{ duration: 0.6 }}
             className="lg:col-span-5 space-y-6 text-left"
           >
-            <div className={`p-5 sm:p-8 rounded-3xl border space-y-8 ${
-              darkMode ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200 shadow-lg"
+            <div className={`p-5 sm:p-8 rounded-3xl border space-y-8 transition-all duration-300 ${
+              darkMode
+                ? "bg-slate-900/85 backdrop-blur-md hover:bg-slate-950/20 hover:backdrop-blur-none border-slate-700/60 hover:border-cyan-500/50 shadow-lg hover:shadow-cyan-500/10"
+                : "bg-[#fbf9f5]/90 backdrop-blur-md hover:bg-[#ede8df]/30 hover:backdrop-blur-none border-[#d6cebf] shadow-sm"
             }`}>
               <div>
-                <h3 className={`text-2xl font-bold mb-2 ${darkMode ? "text-white" : "text-slate-900"}`}>
+                <h3 className={`text-2xl font-extrabold mb-2 ${darkMode ? "text-white" : "text-[#1c1917]"}`}>
                   Contact Details
                 </h3>
-                <p className={`text-sm ${darkMode ? "text-slate-400" : "text-slate-600"}`}>
+                <p className={`text-sm ${darkMode ? "text-slate-200" : "text-[#44403c] font-medium"}`}>
                   Reach out directly via email or send a message using the inquiry form below.
                 </p>
               </div>
@@ -196,7 +274,7 @@ const Contact = () => {
                   <a
                     href="mailto:parthdarji8825@gmail.com"
                     className={`text-base font-bold hover:text-indigo-400 transition-colors break-all ${
-                      darkMode ? "text-white" : "text-slate-900"
+                      darkMode ? "text-white" : "text-[#1c1917]"
                     }`}
                   >
                     parthdarji8825@gmail.com
@@ -211,7 +289,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <p className="text-xs uppercase tracking-wider font-semibold text-purple-400">Current Location</p>
-                  <p className={`text-base font-bold ${darkMode ? "text-white" : "text-slate-900"}`}>
+                  <p className={`text-base font-bold ${darkMode ? "text-white" : "text-[#1c1917]"}`}>
                     Ahmedabad, Gujarat, India
                   </p>
                 </div>
@@ -227,13 +305,15 @@ const Contact = () => {
             transition={{ duration: 0.6 }}
             className="lg:col-span-7"
           >
-            <div className={`p-5 sm:p-10 rounded-3xl border ${
-              darkMode ? "glass-panel border-slate-800" : "glass-panel-light border-slate-200 shadow-xl"
+            <div className={`p-5 sm:p-10 rounded-3xl border transition-all duration-300 ${
+              darkMode
+                ? "bg-slate-900/85 backdrop-blur-md hover:bg-slate-950/20 hover:backdrop-blur-none border-slate-700/60 hover:border-cyan-500/50 shadow-lg hover:shadow-cyan-500/10"
+                : "bg-[#fbf9f5]/90 backdrop-blur-md hover:bg-[#ede8df]/30 hover:backdrop-blur-none border-[#d6cebf] shadow-sm"
             }`}>
               <form ref={formRef} onSubmit={handleSubmit} noValidate autoComplete="off" className="space-y-6 text-left">
                 {/* Form Field: Name */}
                 <div className="space-y-2">
-                  <label htmlFor="userName" className={`block text-sm font-semibold ${darkMode ? "text-slate-200" : "text-slate-700"}`}>
+                  <label htmlFor="userName" className={`block text-sm font-semibold ${darkMode ? "text-slate-200" : "text-[#1c1917]"}`}>
                     Your Name *
                   </label>
                   <input
@@ -249,7 +329,7 @@ const Contact = () => {
                         ? "border-red-500/80 bg-red-500/5 text-red-200"
                         : darkMode
                         ? "bg-slate-900/90 border-slate-700 text-white placeholder-slate-500"
-                        : "bg-white border-slate-300 text-slate-900 placeholder-slate-400"
+                        : "bg-[#ede8df]/60 border-[#d6cebf] text-[#1c1917] placeholder-[#78716c] focus:bg-[#fbf9f5] focus:border-cyan-600 shadow-2xs"
                     }`}
                   />
                   {errors.userName && (
@@ -261,7 +341,7 @@ const Contact = () => {
 
                 {/* Form Field: Subject */}
                 <div className="space-y-2">
-                  <label htmlFor="userSubject" className={`block text-sm font-semibold ${darkMode ? "text-slate-200" : "text-slate-700"}`}>
+                  <label htmlFor="userSubject" className={`block text-sm font-semibold ${darkMode ? "text-slate-200" : "text-[#1c1917]"}`}>
                     Subject *
                   </label>
                   <input
@@ -277,7 +357,7 @@ const Contact = () => {
                         ? "border-red-500/80 bg-red-500/5 text-red-200"
                         : darkMode
                         ? "bg-slate-900/90 border-slate-700 text-white placeholder-slate-500"
-                        : "bg-white border-slate-300 text-slate-900 placeholder-slate-400"
+                        : "bg-[#ede8df]/60 border-[#d6cebf] text-[#1c1917] placeholder-[#78716c] focus:bg-[#fbf9f5] focus:border-cyan-600 shadow-2xs"
                     }`}
                   />
                   {errors.userSubject && (
@@ -289,7 +369,7 @@ const Contact = () => {
 
                 {/* Form Field: Email */}
                 <div className="space-y-2">
-                  <label htmlFor="userEmail" className={`block text-sm font-semibold ${darkMode ? "text-slate-200" : "text-slate-700"}`}>
+                  <label htmlFor="userEmail" className={`block text-sm font-semibold ${darkMode ? "text-slate-200" : "text-[#1c1917]"}`}>
                     Email Address *
                   </label>
                   <input
@@ -305,7 +385,7 @@ const Contact = () => {
                         ? "border-red-500/80 bg-red-500/5 text-red-200"
                         : darkMode
                         ? "bg-slate-900/90 border-slate-700 text-white placeholder-slate-500"
-                        : "bg-white border-slate-300 text-slate-900 placeholder-slate-400"
+                        : "bg-[#ede8df]/60 border-[#d6cebf] text-[#1c1917] placeholder-[#78716c] focus:bg-[#fbf9f5] focus:border-cyan-600 shadow-2xs"
                     }`}
                   />
                   {errors.userEmail && (
@@ -317,7 +397,7 @@ const Contact = () => {
 
                 {/* Form Field: Message */}
                 <div className="space-y-2">
-                  <label htmlFor="message" className={`block text-sm font-semibold ${darkMode ? "text-slate-200" : "text-slate-700"}`}>
+                  <label htmlFor="message" className={`block text-sm font-semibold ${darkMode ? "text-slate-200" : "text-[#1c1917]"}`}>
                     Your Message *
                   </label>
                   <textarea
@@ -333,7 +413,7 @@ const Contact = () => {
                         ? "border-red-500/80 bg-red-500/5 text-red-200"
                         : darkMode
                         ? "bg-slate-900/90 border-slate-700 text-white placeholder-slate-500"
-                        : "bg-white border-slate-300 text-slate-900 placeholder-slate-400"
+                        : "bg-[#ede8df]/60 border-[#d6cebf] text-[#1c1917] placeholder-[#78716c] focus:bg-[#fbf9f5] focus:border-cyan-600 shadow-2xs"
                     }`}
                   />
                   {errors.message && (
@@ -345,9 +425,20 @@ const Contact = () => {
 
                 {/* Submit Feedback Banners */}
                 {submitted && (
-                  <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm flex items-center gap-3">
-                    <CheckCircle size={20} className="shrink-0 text-emerald-400" />
-                    <span>Thank you! Your message has been sent successfully.</span>
+                  <div className="p-4 sm:p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm space-y-3">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle size={20} className="shrink-0 text-emerald-400" />
+                      <span className="font-semibold">Thank you! Your message has been sent successfully.</span>
+                    </div>
+                    <div className="pt-2 border-t border-emerald-500/20 flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => setSubmitted(false)}
+                        className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 transition-colors cursor-pointer"
+                      >
+                        Send another message
+                      </button>
+                    </div>
                   </div>
                 )}
 

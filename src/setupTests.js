@@ -35,3 +35,7 @@ Object.defineProperty(globalThis, 'IntersectionObserver', {
   value: IntersectionObserverMock,
 });
 
+// Mock window.scrollTo for jsdom
+window.scrollTo = () => {};
+
+

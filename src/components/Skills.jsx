@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { ThemeContext } from "../context";
 import { Server, Database, Layout, Wrench, Terminal } from "lucide-react";
 import { motion } from "framer-motion";
@@ -56,6 +56,105 @@ const skillCategories = [
   },
 ];
 
+// Interactive Spotlight Skill Card Component
+const SkillCard = ({ cat, idx, darkMode }) => {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  const handleTouchMove = (e) => {
+    if (e.touches && e.touches[0]) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      setMousePos({
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top,
+      });
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9, y: 35 }}
+      whileInView={{ opacity: 1, scale: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5, delay: idx * 0.12 }}
+      onMouseMove={handleMouseMove}
+      onTouchMove={handleTouchMove}
+      className={`group relative p-5 sm:p-8 rounded-3xl border overflow-hidden transition-all duration-300 hover:-translate-y-1.5 ${
+        darkMode
+          ? "bg-slate-900/85 backdrop-blur-md group-hover:bg-slate-950/15 group-hover:backdrop-blur-none border-slate-700/60 group-hover:border-cyan-500/60 shadow-lg group-hover:shadow-2xl group-hover:shadow-cyan-500/10"
+          : "bg-[#fbf9f5]/90 backdrop-blur-md group-hover:bg-[#ede8df]/25 group-hover:backdrop-blur-none border-[#d6cebf] group-hover:border-cyan-600/60 shadow-sm group-hover:shadow-lg"
+      }`}
+    >
+      {/* Interactive Cursor Spotlight */}
+      <div
+        className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"
+        style={{
+          background: `radial-gradient(360px circle at ${mousePos.x}px ${mousePos.y}px, ${
+            darkMode ? "rgba(6, 182, 212, 0.26)" : "rgba(14, 165, 233, 0.18)"
+          }, transparent 75%)`,
+        }}
+      />
+
+      {/* Illuminated Cyber Dots Reveal under Cursor on Hover */}
+      <div
+        className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"
+        style={{
+          backgroundImage: darkMode
+            ? "radial-gradient(rgba(6, 182, 212, 0.7) 1.5px, transparent 1.5px)"
+            : "radial-gradient(rgba(120, 113, 108, 0.45) 1.5px, transparent 1.5px)",
+          backgroundSize: "36px 36px",
+          WebkitMaskImage: `radial-gradient(320px circle at ${mousePos.x}px ${mousePos.y}px, black 30%, transparent 80%)`,
+          maskImage: `radial-gradient(320px circle at ${mousePos.x}px ${mousePos.y}px, black 30%, transparent 80%)`,
+        }}
+      />
+
+      <div className="relative z-10">
+        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-800/40">
+          <div className={`p-3 rounded-xl border ${
+            darkMode ? "bg-slate-950/40 border-slate-700/60" : "bg-[#ede8df] border-[#d6cebf] shadow-2xs"
+          }`}>
+            {cat.icon}
+          </div>
+          <h3 className={`text-xl font-extrabold ${darkMode ? "text-white" : "text-[#1c1917]"}`}>
+            {cat.category}
+          </h3>
+        </div>
+
+        {/* Skills Tags */}
+        <div className="flex flex-wrap gap-2.5">
+          {cat.skills.map((skill, sIdx) => (
+            <motion.div
+              key={sIdx}
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: idx * 0.1 + sIdx * 0.04 }}
+              whileHover={{ scale: 1.08 }}
+              className={`px-4 py-2 rounded-xl border text-sm font-medium transition-colors cursor-default ${
+                darkMode
+                  ? "bg-slate-950/60 border-slate-700/80 text-white font-medium hover:border-cyan-400"
+                  : "bg-[#ede8df] border-[#d6cebf] text-[#1c1917] font-semibold hover:border-cyan-600 shadow-2xs"
+              }`}
+            >
+              <span>{skill.name}</span>
+              <span className={`ml-2 text-xs font-mono ${darkMode ? "text-cyan-400 font-semibold" : "text-cyan-800 font-extrabold"}`}>
+                ({skill.level})
+              </span>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 const Skills = () => {
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
@@ -71,7 +170,9 @@ const Skills = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-4 mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-semibold tracking-wide uppercase shadow-sm">
+          <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold tracking-wide uppercase shadow-sm ${
+            darkMode ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400" : "border-cyan-300 bg-cyan-50 text-cyan-800"
+          }`}>
             <Terminal size={14} />
             Technical Toolkit
           </div>
@@ -83,52 +184,10 @@ const Skills = () => {
           </p>
         </motion.div>
 
-        {/* Skills Categories Grid */}
+        {/* Skills Categories Grid with Spotlight */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {skillCategories.map((cat, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, scale: 0.9, y: 35 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: idx * 0.12 }}
-              className={`p-5 sm:p-8 rounded-3xl border transition-all duration-300 hover:-translate-y-1.5 ${
-                darkMode
-                  ? "bg-slate-900/60 border-slate-800 hover:border-cyan-500/40 hover:shadow-2xl hover:shadow-cyan-500/5"
-                  : "bg-white border-slate-200 shadow-md hover:shadow-xl hover:border-cyan-400"
-              }`}
-            >
-              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-800/40">
-                <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700/60">
-                  {cat.icon}
-                </div>
-                <h3 className={`text-xl font-bold ${darkMode ? "text-white" : "text-slate-900"}`}>
-                  {cat.category}
-                </h3>
-              </div>
-
-              {/* Skills Tags */}
-              <div className="flex flex-wrap gap-2.5">
-                {cat.skills.map((skill, sIdx) => (
-                  <motion.div
-                    key={sIdx}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.3, delay: idx * 0.1 + sIdx * 0.04 }}
-                    whileHover={{ scale: 1.08 }}
-                    className={`px-4 py-2 rounded-xl border text-sm font-medium transition-colors cursor-default ${
-                      darkMode
-                        ? "bg-slate-800/80 border-slate-700/80 text-slate-200 hover:bg-slate-800 hover:border-cyan-500/50"
-                        : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-white hover:border-cyan-500/50 shadow-2xs"
-                    }`}
-                  >
-                    <span>{skill.name}</span>
-                    <span className="ml-2 text-xs text-cyan-400 font-mono opacity-80">({skill.level})</span>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
+            <SkillCard key={idx} cat={cat} idx={idx} darkMode={darkMode} />
           ))}
         </div>
       </div>

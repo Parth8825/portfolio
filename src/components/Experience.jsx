@@ -1,8 +1,124 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { ThemeContext } from "../context";
 import { experienceData } from "../data";
 import { Briefcase, GraduationCap, MapPin, Calendar, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
+
+// Frosted Glass Experience Card with Cursor & Touch Spotlight
+const ExperienceCard = ({ item, isEven, darkMode }) => {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  const handleTouchMove = (e) => {
+    if (e.touches && e.touches[0]) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      setMousePos({
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top,
+      });
+    }
+  };
+
+  return (
+    <div
+      onMouseMove={handleMouseMove}
+      onTouchMove={handleTouchMove}
+      className={`group relative w-full ml-13 md:ml-0 md:w-[calc(50%-3rem)] p-5 sm:p-8 rounded-3xl border transition-all duration-300 hover:-translate-y-1.5 overflow-hidden ${
+        darkMode
+          ? "bg-slate-900/85 backdrop-blur-md group-hover:bg-slate-950/15 group-hover:backdrop-blur-none border-slate-700/60 group-hover:border-cyan-500/60 shadow-lg group-hover:shadow-2xl group-hover:shadow-cyan-500/10"
+          : "bg-[#fbf9f5]/90 backdrop-blur-md group-hover:bg-[#ede8df]/25 group-hover:backdrop-blur-none border-[#d6cebf] group-hover:border-cyan-600/60 shadow-sm group-hover:shadow-lg"
+      } ${isEven ? "md:mr-auto" : "md:ml-auto"}`}
+    >
+      {/* Interactive Cursor Spotlight Glow */}
+      <div
+        className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"
+        style={{
+          background: `radial-gradient(380px circle at ${mousePos.x}px ${mousePos.y}px, ${
+            darkMode ? "rgba(6, 182, 212, 0.26)" : "rgba(14, 165, 233, 0.18)"
+          }, transparent 75%)`,
+        }}
+      />
+
+      {/* Illuminated Cyber Dots Reveal under Cursor on Hover */}
+      <div
+        className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"
+        style={{
+          backgroundImage: darkMode
+            ? "radial-gradient(rgba(6, 182, 212, 0.7) 1.5px, transparent 1.5px)"
+            : "radial-gradient(rgba(120, 113, 108, 0.45) 1.5px, transparent 1.5px)",
+          backgroundSize: "36px 36px",
+          WebkitMaskImage: `radial-gradient(320px circle at ${mousePos.x}px ${mousePos.y}px, black 30%, transparent 80%)`,
+          maskImage: `radial-gradient(320px circle at ${mousePos.x}px ${mousePos.y}px, black 30%, transparent 80%)`,
+        }}
+      />
+
+      <div className="relative z-10">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <span className={`px-3 py-0.5 sm:px-3.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold ${
+            darkMode ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" : "bg-cyan-900/10 text-cyan-900 border border-cyan-300"
+          }`}>
+            {item.type}
+          </span>
+          <div className={`flex items-center gap-1.5 text-xs font-semibold ${darkMode ? "text-slate-400" : "text-[#44403c]"}`}>
+            <Calendar size={13} className={darkMode ? "text-cyan-400" : "text-cyan-700"} />
+            {item.period}
+          </div>
+        </div>
+
+        <h3 className={`text-lg sm:text-2xl font-extrabold mb-1 transition-colors ${
+          darkMode ? "text-white group-hover:text-cyan-400" : "text-[#1c1917] group-hover:text-cyan-700"
+        }`}>
+          {item.role}
+        </h3>
+
+        <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 mb-4 text-xs sm:text-sm font-semibold ${darkMode ? "text-indigo-400" : "text-indigo-900"}`}>
+          <span>{item.company}</span>
+          <span className={`flex items-center gap-1 text-xs ${darkMode ? "text-slate-400" : "text-[#44403c]"}`}>
+            <MapPin size={13} className={darkMode ? "text-cyan-400" : "text-cyan-700"} />
+            {item.location}
+          </span>
+        </div>
+
+        <p className={`text-xs sm:text-sm leading-relaxed mb-4 italic border-l-2 border-cyan-500/50 pl-3 ${darkMode ? "text-slate-100 font-normal" : "text-[#3f3b35] font-medium"}`}>
+          &quot;{item.highlight}&quot;
+        </p>
+
+        {/* Bullet Points */}
+        <div className="space-y-2.5 mb-5">
+          {item.points.map((pt, pIdx) => (
+            <div key={pIdx} className="flex items-start gap-2.5 text-xs sm:text-sm">
+              <CheckCircle2 size={16} className={`${darkMode ? "text-cyan-400" : "text-cyan-700"} shrink-0 mt-0.5`} />
+              <span className={darkMode ? "text-slate-100 font-normal" : "text-[#3f3b35] font-medium"}>{pt}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Tech Stack Badges */}
+        <div className="flex flex-wrap gap-1.5 pt-3.5 border-t border-slate-800/40">
+          {item.tech.map((t, tIdx) => (
+            <span
+              key={tIdx}
+              className={`px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-lg text-[11px] sm:text-xs font-semibold transition-colors border ${
+                darkMode
+                  ? "bg-slate-950/60 text-cyan-300 border-slate-700/80 hover:border-cyan-500/40"
+                  : "bg-[#ede8df] text-cyan-800 border-[#d6cebf] font-semibold shadow-2xs"
+              }`}
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Experience = () => {
   const theme = useContext(ThemeContext);
@@ -26,7 +142,9 @@ const Experience = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-4 mb-16 sm:mb-20"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-semibold tracking-wide uppercase shadow-sm">
+          <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-semibold tracking-wide uppercase shadow-sm ${
+            darkMode ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400" : "border-cyan-300 bg-cyan-50 text-cyan-800"
+          }`}>
             <Briefcase size={14} />
             Career & Academic Journey
           </div>
@@ -38,8 +156,27 @@ const Experience = () => {
           </p>
         </motion.div>
 
-        {/* Pixel-Perfect Responsive Timeline */}
-        <div className="relative space-y-8 sm:space-y-12 before:absolute before:inset-0 before:left-5 md:before:left-1/2 before:-translate-x-px before:h-full before:w-1 before:bg-gradient-to-b before:from-cyan-500 before:via-indigo-500 before:to-purple-500">
+        {/* Pixel-Perfect Responsive Timeline with Animated Traveling Neon Beam */}
+        <div className="relative space-y-8 sm:space-y-12">
+          {/* Static Background Line */}
+          <div className="absolute top-0 bottom-0 left-5 md:left-1/2 -translate-x-1/2 w-1 bg-gradient-to-b from-cyan-500/30 via-indigo-500/30 to-purple-500/30 rounded-full pointer-events-none" />
+
+          {/* Traveling Neon Light Beam Traversing 100% of the Timeline Spine */}
+          <div className="absolute top-0 bottom-0 left-5 md:left-1/2 -translate-x-1/2 w-1.5 overflow-hidden pointer-events-none rounded-full">
+            <motion.div
+              style={{ position: "absolute", left: 0, right: 0 }}
+              animate={{
+                top: ["-10%", "105%"],
+              }}
+              transition={{
+                duration: 5.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="w-full h-52 bg-gradient-to-b from-transparent via-cyan-400 to-transparent shadow-lg shadow-cyan-400"
+            />
+          </div>
+
           {experienceData.map((item, index) => {
             const isEven = index % 2 === 0;
             const isEducation = item.type === "Education";
@@ -49,8 +186,8 @@ const Experience = () => {
                 key={item.id}
                 initial={{ opacity: 0, y: 45, x: isEven ? -25 : 25 }}
                 whileInView={{ opacity: 1, y: 0, x: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.6, delay: index * 0.12 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.55, delay: index * 0.08 }}
                 className="relative flex items-start md:items-center justify-start md:justify-normal md:odd:flex-row-reverse group"
               >
                 {/* Glowing Marker Badge */}
@@ -59,63 +196,7 @@ const Experience = () => {
                 </div>
 
                 {/* Timeline Content Card */}
-                <div
-                  className={`w-full ml-13 md:ml-0 md:w-[calc(50%-3rem)] p-5 sm:p-8 rounded-3xl border transition-all duration-300 hover:-translate-y-1.5 ${
-                    darkMode
-                      ? "bg-slate-900/80 border-slate-800 hover:border-cyan-500/50 hover:shadow-2xl hover:shadow-cyan-500/10"
-                      : "bg-white border-slate-200 shadow-lg hover:border-cyan-400 hover:shadow-2xl"
-                  } ${isEven ? "md:mr-auto" : "md:ml-auto"}`}
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                    <span className="px-3 py-0.5 sm:px-3.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                      {item.type}
-                    </span>
-                    <div className={`flex items-center gap-1.5 text-xs font-semibold ${darkMode ? "text-slate-400" : "text-slate-500"}`}>
-                      <Calendar size={13} className="text-cyan-400" />
-                      {item.period}
-                    </div>
-                  </div>
-
-                  <h3 className={`text-lg sm:text-2xl font-extrabold mb-1 group-hover:text-cyan-400 transition-colors ${
-                    darkMode ? "text-white" : "text-slate-900"
-                  }`}>
-                    {item.role}
-                  </h3>
-
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-4 text-xs sm:text-sm font-semibold text-indigo-400">
-                    <span>{item.company}</span>
-                    <span className="flex items-center gap-1 text-xs text-slate-400">
-                      <MapPin size={13} className="text-cyan-400" />
-                      {item.location}
-                    </span>
-                  </div>
-
-                  <p className={`text-xs sm:text-sm leading-relaxed mb-4 italic border-l-2 border-cyan-400/50 pl-3 ${darkMode ? "text-slate-300" : "text-slate-600"}`}>
-                    &quot;{item.highlight}&quot;
-                  </p>
-
-                  {/* Bullet Points */}
-                  <div className="space-y-2.5 mb-5">
-                    {item.points.map((pt, pIdx) => (
-                      <div key={pIdx} className="flex items-start gap-2.5 text-xs sm:text-sm">
-                        <CheckCircle2 size={16} className="text-cyan-400 shrink-0 mt-0.5" />
-                        <span className={darkMode ? "text-slate-300" : "text-slate-700"}>{pt}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Tech Stack Badges */}
-                  <div className="flex flex-wrap gap-1.5 pt-3.5 border-t border-slate-800/40">
-                    {item.tech.map((t, tIdx) => (
-                      <span
-                        key={tIdx}
-                        className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-lg text-[11px] sm:text-xs font-medium bg-slate-800/80 text-slate-200 border border-slate-700/60 hover:border-cyan-500/40 transition-colors"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                <ExperienceCard item={item} isEven={isEven} darkMode={darkMode} />
               </motion.div>
             );
           })}

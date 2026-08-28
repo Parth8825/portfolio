@@ -21,6 +21,7 @@ describe('CodeShowcase Component', () => {
     expect(screen.getByText('OAuth 2.0 Auth Wrapper')).toBeInTheDocument();
     expect(screen.getByText('EF Core LINQ Pattern')).toBeInTheDocument();
     expect(screen.getByText('SQL Stored Procedure')).toBeInTheDocument();
+    expect(screen.getByText('React Custom Hook')).toBeInTheDocument();
   });
 
   it('switches active snippet when tab is clicked', async () => {
@@ -32,7 +33,27 @@ describe('CodeShowcase Component', () => {
 
     const sqlTab = screen.getByText('SQL Stored Procedure');
     fireEvent.click(sqlTab);
+    expect(await screen.findByText(/sp_CalculateOrderDiscount/i)).toBeInTheDocument();
 
-    expect(await screen.findByText(/CREATE PROCEDURE/i)).toBeInTheDocument();
+    const reactTab = screen.getByText('React Custom Hook');
+    fireEvent.click(reactTab);
+    expect(await screen.findByText(/useMembershipValidation/i)).toBeInTheDocument();
+  });
+
+  it('toggles simulated execution drawer when Run Demo is clicked', async () => {
+    render(
+      <ThemeProvider>
+        <CodeShowcase />
+      </ThemeProvider>
+    );
+
+    const runBtn = screen.getByText('Run Demo');
+    fireEvent.click(runBtn);
+
+    expect(await screen.findByText('Simulated Runtime Output')).toBeInTheDocument();
+    expect(await screen.findByText('STATUS: 200 OK')).toBeInTheDocument();
+
+    const hideBtn = screen.getByText('Hide Output');
+    fireEvent.click(hideBtn);
   });
 });

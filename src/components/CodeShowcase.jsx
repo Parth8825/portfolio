@@ -1,7 +1,37 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { ThemeContext } from "../context";
-import { Code2, Copy, Check, Terminal, ShieldAlert, FileCode, Minus, Square, X } from "lucide-react";
+import { Code2, Copy, Check, Terminal, ShieldAlert, FileCode, Minus, Square, X, Play } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+const demoSimulations = {
+  api: [
+    { type: "info", text: "▶ HTTP POST /api/v1/OrderManagement/validate-discount" },
+    { type: "auth", text: "✓ Bearer JWT verified (Issuer: https://sts.windows.net/)" },
+    { type: "info", text: "🔍 Validating discount for Customer ID: 1048" },
+    { type: "success", text: "⚡ HTTP 200 OK — { isEligible: true, discountPercent: 15.00, customerTier: \"Gold\" }" },
+  ],
+  oauth: [
+    { type: "info", text: "▶ IOAuthTokenService.GetAccessTokenAsync([\"api://caa.enterprise/.default\"])" },
+    { type: "warn", text: "⚠️ In-memory cache miss for key 'CAA_APP_TOKEN'" },
+    { type: "auth", text: "🔑 ConfidentialClientApplication acquired Entra ID token in 82ms" },
+    { type: "success", text: "✓ Token cached (TTL: 55m) — Returned Bearer eyJhbGciOiJSUzI1NiIs..." },
+  ],
+  linq: [
+    { type: "info", text: "▶ Executing CustomerService.GetCustomersPagedAsync(filter, page=1, size=10)" },
+    { type: "info", text: "📊 SQL generated: SELECT TOP(10) [c].[Id], [c].[Name] FROM [Customers] WHERE [IsActive] = 1 ORDER BY [CreatedAt] DESC" },
+    { type: "success", text: "⚡ PagedResult<CustomerDto>: Returned 10 records (Total: 4,820) in 14ms" },
+  ],
+  sql: [
+    { type: "info", text: "▶ EXEC dbo.sp_CalculateOrderDiscount @CustomerId=412, @PromoCode='CAA2026', @OrderTotal=249.50" },
+    { type: "info", text: "🔍 Index seek on dbo.CustomerTiers matched Tier: Gold (Active)" },
+    { type: "success", text: "⚡ OUTPUT: @IsValid = 1, @DiscountPercent = 15.00 (Execution: 3ms)" },
+  ],
+  react: [
+    { type: "info", text: "▶ useMembershipValidation mounted with partnerId='CAA-REWARDS'" },
+    { type: "info", text: "📡 validateMember('CAA-882591') called — AbortController initialized" },
+    { type: "success", text: "⚡ Status updated -> { isValid: true, loading: false, tier: 'Premier' }" },
+  ],
+};
 
 const demoCodeSnippets = [
   {
@@ -158,7 +188,116 @@ BEGIN
     END CATCH
 END`,
   },
+  {
+    id: "react",
+    title: "React Custom Hook",
+    fileName: "useMembershipValidation.ts",
+    language: "typescript",
+    badge: "Demo React / TS Pattern",
+    code: `// Demo Code: Synthetic React Custom Hook with AbortController
+export function useMembershipValidation(partnerId: string) {
+  const [status, setStatus] = useState<ValidationState>({ isValid: false, loading: false });
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const validateMember = useCallback(async (membershipNumber: string): Promise<boolean> => {
+    if (!membershipNumber.trim()) return false;
+
+    // Abort previous in-flight validation requests
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+
+    setStatus(prev => ({ ...prev, loading: true, error: null }));
+
+    try {
+      const response = await fetch(\`/api/v1/partners/\${partnerId}/validate\`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ membershipNumber, timestamp: new Date().toISOString() }),
+        signal: abortControllerRef.current.signal,
+      });
+
+      if (!response.ok) throw new Error("Validation service unreachable");
+      const data: ValidationResponse = await response.json();
+
+      setStatus({ isValid: data.isEligible, loading: false, tier: data.tierName });
+      return data.isEligible;
+    } catch (err: unknown) {
+      if ((err as Error).name !== "AbortError") {
+        setStatus({ isValid: false, loading: false, error: (err as Error).message });
+      }
+      return false;
+    }
+  }, [partnerId]);
+
+  return { status, validateMember };
+}`,
+  },
 ];
+
+// Lightweight token highlighter for C#, SQL, and TypeScript
+const highlightTokens = (code) => {
+  if (!code) return null;
+  const lines = code.split("\n");
+
+  const tokenRegex = /(\/\/.*$|--.*$|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`[^`]*`|@"[^"]*"|\b(?:public|private|protected|internal|class|interface|async|await|return|new|var|if|else|using|namespace|static|readonly|typeof|void|const|function|export|import|from|try|catch|throw|finally|CREATE|PROCEDURE|SELECT|FROM|WHERE|INNER|JOIN|ON|BEGIN|END|SET|NOCOUNT|OUTPUT|VARCHAR|BIT|EXISTS|AND|OR|GETUTCDATE|ORDER|BY|GROUP|AS)\b|\b(?:Task|IActionResult|ControllerBase|OrderManagementController|ILogger|DiscountResultDto|DiscountCheckRequestDto|IOAuthTokenService|IConfidentialClientApplication|MemoryCache|CustomerDto|PagedResult|IQueryable|CustomerSearchFilter|Customer|MemoryCacheEntryOptions|ValidationState|ValidationResponse|AbortController|string|int|bool|decimal|unknown|Error|Promise)\b|\b(?:true|false|null|undefined)\b|\b\d+(?:\.\d+)?\b|[{}();,[\]]|=>|\s+|[^\s{}();,[\]]+)/g;
+
+  return lines.map((line, lineIdx) => {
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith("//") || trimmed.startsWith("--")) {
+      return (
+        <div key={lineIdx} className="table-row">
+          <span className="table-cell pr-4 text-right select-none text-slate-600 font-mono text-xs">{lineIdx + 1}</span>
+          <span className="table-cell text-slate-500 italic">{line}</span>
+        </div>
+      );
+    }
+
+    if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+      return (
+        <div key={lineIdx} className="table-row">
+          <span className="table-cell pr-4 text-right select-none text-slate-600 font-mono text-xs">{lineIdx + 1}</span>
+          <span className="table-cell text-amber-300 font-semibold">{line}</span>
+        </div>
+      );
+    }
+
+    const tokens = [];
+    let match;
+    while ((match = tokenRegex.exec(line)) !== null) {
+      tokens.push(match[0]);
+    }
+
+    return (
+      <div key={lineIdx} className="table-row hover:bg-slate-900/60 transition-colors">
+        <span className="table-cell pr-4 text-right select-none text-slate-600 font-mono text-xs">{lineIdx + 1}</span>
+        <span className="table-cell whitespace-pre">
+          {tokens.map((token, tIdx) => {
+            if (token.startsWith("//") || token.startsWith("--")) {
+              return <span key={tIdx} className="text-slate-500 italic">{token}</span>;
+            }
+            if (token.startsWith('"') || token.startsWith("'") || token.startsWith("`") || token.startsWith('@"')) {
+              return <span key={tIdx} className="text-emerald-400">{token}</span>;
+            }
+            if (/^\b(?:public|private|protected|internal|class|interface|async|await|return|new|var|if|else|using|namespace|static|readonly|typeof|void|const|function|export|import|from|try|catch|throw|finally|CREATE|PROCEDURE|SELECT|FROM|WHERE|INNER|JOIN|ON|BEGIN|END|SET|NOCOUNT|OUTPUT|VARCHAR|BIT|EXISTS|AND|OR|GETUTCDATE|ORDER|BY|GROUP|AS)\b$/.test(token)) {
+              return <span key={tIdx} className="text-cyan-400 font-semibold">{token}</span>;
+            }
+            if (/^\b(?:true|false|null|undefined)\b$/.test(token)) {
+              return <span key={tIdx} className="text-rose-400 font-semibold">{token}</span>;
+            }
+            if (/^\b(?:Task|IActionResult|ControllerBase|OrderManagementController|ILogger|DiscountResultDto|DiscountCheckRequestDto|IOAuthTokenService|IConfidentialClientApplication|MemoryCache|CustomerDto|PagedResult|IQueryable|CustomerSearchFilter|Customer|MemoryCacheEntryOptions|ValidationState|ValidationResponse|AbortController|string|int|bool|decimal|unknown|Error|Promise)\b$/.test(token)) {
+              return <span key={tIdx} className="text-yellow-300 font-semibold">{token}</span>;
+            }
+            if (/^\d+(\.\d+)?$/.test(token)) {
+              return <span key={tIdx} className="text-purple-400">{token}</span>;
+            }
+            return <span key={tIdx} className="text-slate-200">{token}</span>;
+          })}
+        </span>
+      </div>
+    );
+  });
+};
 
 const CodeShowcase = () => {
   const theme = useContext(ThemeContext);
@@ -167,6 +306,34 @@ const CodeShowcase = () => {
   const [activeTab, setActiveTab] = useState(demoCodeSnippets[0].id);
   const [copied, setCopied] = useState(false);
   const [isMac, setIsMac] = useState(true);
+  const [isRunningDemo, setIsRunningDemo] = useState(false);
+  const [isHighlighted, setIsHighlighted] = useState(false);
+  const drawerRef = useRef(null);
+  const highlightTimeoutRef = useRef(null);
+
+  const handleToggleDemo = () => {
+    setIsRunningDemo((prev) => {
+      const next = !prev;
+      if (next) {
+        setIsHighlighted(true);
+        if (highlightTimeoutRef.current) {
+          clearTimeout(highlightTimeoutRef.current);
+        }
+        highlightTimeoutRef.current = setTimeout(() => {
+          setIsHighlighted(false);
+        }, 2500);
+
+        setTimeout(() => {
+          if (typeof drawerRef.current?.scrollIntoView === "function") {
+            drawerRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }, 120);
+      } else {
+        setIsHighlighted(false);
+      }
+      return next;
+    });
+  };
 
   useEffect(() => {
     const checkMac =
@@ -180,7 +347,7 @@ const CodeShowcase = () => {
 
   const handleCopy = () => {
     if (currentSnippet) {
-      navigator.clipboard.writeText(currentSnippet.code);
+      navigator.clipboard.writeText(currentSnippet.code).catch(() => {});
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
@@ -197,20 +364,24 @@ const CodeShowcase = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-4 mb-10"
         >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-semibold tracking-wide uppercase shadow-sm">
+          <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold tracking-wide uppercase shadow-sm ${
+            darkMode ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400" : "border-cyan-300 bg-cyan-900/10 text-cyan-900"
+          }`}>
             <Terminal size={14} />
             Clean Architecture Patterns
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
             Synthetic Demo <span className="text-gradient">Code Patterns</span>
           </h2>
-          <p className={`max-w-2xl mx-auto text-sm sm:text-lg ${darkMode ? "text-slate-400" : "text-slate-600"}`}>
-            Demonstration C#, ASP.NET Core, OAuth 2.0, and SQL design patterns illustrating clean code standards and architecture practices.
+          <p className={`max-w-2xl mx-auto text-sm sm:text-lg ${darkMode ? "text-slate-400" : "text-[#44403c]"}`}>
+            Demonstration C#, ASP.NET Core, OAuth 2.0, SQL, and React design patterns illustrating clean code standards and architecture practices.
           </p>
 
           {/* Integrity & Demo Disclaimer Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs max-w-xl text-left">
-            <ShieldAlert size={18} className="text-amber-400 shrink-0" />
+          <div className={`inline-flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2 rounded-2xl border text-xs max-w-xl text-left ${
+            darkMode ? "bg-amber-500/10 border-amber-500/30 text-amber-300" : "bg-amber-900/10 border-amber-300 text-amber-950"
+          }`}>
+            <ShieldAlert size={18} className={darkMode ? "text-amber-400 shrink-0" : "text-amber-700 shrink-0"} />
             <span>
               <strong>Integrity Notice:</strong> All code examples below are synthetic, generic patterns created solely for technical demonstration. No proprietary company source code is used.
             </span>
@@ -230,7 +401,7 @@ const CodeShowcase = () => {
                     ? "text-slate-950"
                     : darkMode
                     ? "bg-slate-900/80 border border-slate-800 text-slate-300 hover:border-slate-700"
-                    : "bg-white border border-slate-200 text-slate-700 hover:border-cyan-400 shadow-xs"
+                    : "bg-[#fbf9f5] border border-[#d6cebf] text-[#1c1917] hover:border-cyan-600 shadow-2xs"
                 }`}
               >
                 {isActive && (
@@ -281,6 +452,22 @@ const CodeShowcase = () => {
             )}
 
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              {/* Interactive Run Demo Simulation Button with Auto-Scroll */}
+              <button
+                onClick={handleToggleDemo}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1.2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold transition-all border active:scale-95 cursor-pointer ${
+                  isRunningDemo
+                    ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/40 shadow-xs shadow-cyan-500/20 ring-1 ring-cyan-400/40"
+                    : "bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700"
+                }`}
+              >
+                <Play size={12} className={isRunningDemo ? "text-cyan-400 fill-cyan-400" : "text-emerald-400 fill-emerald-400"} />
+                <span>{isRunningDemo ? "Hide Output" : "Run Demo"}</span>
+                {!isRunningDemo && (
+                  <span className="text-[10px] text-cyan-400 font-mono hidden xs:inline">↓</span>
+                )}
+              </button>
+
               <button
                 onClick={handleCopy}
                 className="inline-flex items-center gap-1.5 px-2.5 py-1.2 sm:px-3 sm:py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-all border border-slate-700 active:scale-95 cursor-pointer"
@@ -309,21 +496,75 @@ const CodeShowcase = () => {
             </div>
           </div>
 
-          {/* Code Viewer Body with Tab Switch Animation */}
-          <div className="p-4 sm:p-6 overflow-x-auto text-left font-mono text-[11px] sm:text-sm leading-relaxed text-slate-200 bg-slate-950/90 min-h-[300px]">
+          {/* Code Viewer Body with Line Numbers and Syntax Highlighting */}
+          <div className="p-4 sm:p-6 overflow-x-auto text-left font-mono text-[11px] sm:text-xs md:text-sm leading-relaxed text-slate-200 bg-slate-950/95 min-h-[320px]">
             <AnimatePresence mode="wait">
-              <motion.pre
+              <motion.div
                 key={currentSnippet?.id}
                 initial={{ opacity: 0, x: 15 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -15 }}
                 transition={{ duration: 0.25 }}
-                className="whitespace-pre"
+                className="table w-full border-collapse"
               >
-                <code>{currentSnippet?.code}</code>
-              </motion.pre>
+                {highlightTokens(currentSnippet?.code)}
+              </motion.div>
             </AnimatePresence>
           </div>
+
+          {/* Simulated Interactive Execution Terminal Drawer with Auto-Scroll */}
+          <AnimatePresence>
+            {isRunningDemo && (
+              <motion.div
+                ref={drawerRef}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className={`border-t bg-slate-900/95 p-4 sm:p-5 font-mono text-xs overflow-hidden transition-all duration-500 ${
+                  isHighlighted
+                    ? "border-cyan-400 ring-2 ring-cyan-400/50 shadow-xl shadow-cyan-500/20"
+                    : "border-slate-800"
+                }`}
+              >
+                <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-800/80 text-[11px] text-slate-400">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="font-semibold text-slate-200">Simulated Runtime Output</span>
+                    {isHighlighted && (
+                      <span className="text-[10px] text-cyan-300 bg-cyan-950/80 px-2 py-0.5 rounded border border-cyan-700/80 animate-pulse font-mono">
+                        Active Output
+                      </span>
+                    )}
+                    <span className="text-[10px] text-slate-500">({currentSnippet?.title})</span>
+                  </div>
+                  <span className="text-[10px] text-slate-500 font-mono">STATUS: 200 OK</span>
+                </div>
+                <div className="space-y-1.5 pt-0.5">
+                  {demoSimulations[activeTab]?.map((log, lIdx) => (
+                    <motion.div
+                      key={`${activeTab}-${lIdx}`}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: lIdx * 0.12, duration: 0.2 }}
+                      className={`flex items-start gap-2 text-[11px] sm:text-xs leading-relaxed ${
+                        log.type === "success"
+                          ? "text-emerald-400 font-medium"
+                          : log.type === "warn"
+                          ? "text-amber-300"
+                          : log.type === "auth"
+                          ? "text-indigo-300"
+                          : "text-slate-300"
+                      }`}
+                    >
+                      <span className="select-none text-slate-600 font-mono text-[10px] pt-0.5">❯</span>
+                      <span className="break-all">{log.text}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
     </section>

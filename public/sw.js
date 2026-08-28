@@ -1,4 +1,4 @@
-const CACHE_NAME = 'parth-portfolio-v1';
+const CACHE_NAME = 'parth-portfolio-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -39,8 +39,8 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Clone response to put in cache if valid
-        if (response && response.status === 200 && response.type === 'basic') {
+        // Clone response to put in cache if valid (including CORS/opaque for Google fonts)
+        if (response && (response.status === 200 || response.type === 'opaque' || response.type === 'cors')) {
           const responseToCache = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
