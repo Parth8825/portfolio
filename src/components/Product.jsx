@@ -7,8 +7,6 @@ const Product = ({ title, company, desc, architecture, tags, onOpenModal, index 
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
 
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
   // 3D Perspective Tilt Values
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -21,30 +19,14 @@ const Product = ({ title, company, desc, architecture, tags, onOpenModal, index 
 
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-    const mouseX = (e.clientX - rect.left) / rect.width - 0.5;
-    const mouseY = (e.clientY - rect.top) / rect.height - 0.5;
+    const posX = e.clientX - rect.left;
+    const posY = e.clientY - rect.top;
+    e.currentTarget.style.setProperty("--mouse-x", `${posX}px`);
+    e.currentTarget.style.setProperty("--mouse-y", `${posY}px`);
+    const mouseX = posX / rect.width - 0.5;
+    const mouseY = posY / rect.height - 0.5;
     x.set(mouseX);
     y.set(mouseY);
-  };
-
-  const handleTouchMove = (e) => {
-    if (e.touches && e.touches[0]) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const clientX = e.touches[0].clientX;
-      const clientY = e.touches[0].clientY;
-      setMousePos({
-        x: clientX - rect.left,
-        y: clientY - rect.top,
-      });
-      const mouseX = (clientX - rect.left) / rect.width - 0.5;
-      const mouseY = (clientY - rect.top) / rect.height - 0.5;
-      x.set(mouseX);
-      y.set(mouseY);
-    }
   };
 
   const handleMouseLeave = () => {
@@ -71,8 +53,6 @@ const Product = ({ title, company, desc, architecture, tags, onOpenModal, index 
         onClick={onOpenModal}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleMouseLeave}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
@@ -89,7 +69,7 @@ const Product = ({ title, company, desc, architecture, tags, onOpenModal, index 
       <div
         className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
         style={{
-          background: `radial-gradient(380px circle at ${mousePos.x}px ${mousePos.y}px, ${
+          background: `radial-gradient(380px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), ${
             darkMode ? "rgba(6, 182, 212, 0.26)" : "rgba(14, 165, 233, 0.18)"
           }, transparent 75%)`,
         }}
@@ -103,8 +83,8 @@ const Product = ({ title, company, desc, architecture, tags, onOpenModal, index 
             ? "radial-gradient(rgba(6, 182, 212, 0.7) 1.5px, transparent 1.5px)"
             : "radial-gradient(rgba(120, 113, 108, 0.45) 1.5px, transparent 1.5px)",
           backgroundSize: "36px 36px",
-          WebkitMaskImage: `radial-gradient(320px circle at ${mousePos.x}px ${mousePos.y}px, black 30%, transparent 80%)`,
-          maskImage: `radial-gradient(320px circle at ${mousePos.x}px ${mousePos.y}px, black 30%, transparent 80%)`,
+          WebkitMaskImage: "radial-gradient(320px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), black 30%, transparent 80%)",
+          maskImage: "radial-gradient(320px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), black 30%, transparent 80%)",
         }}
       />
       <div>

@@ -6,30 +6,15 @@ import { motion } from "framer-motion";
 
 // Frosted Glass Experience Card with Cursor & Touch Spotlight
 const ExperienceCard = ({ item, isEven, darkMode }) => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  };
-
-  const handleTouchMove = (e) => {
-    if (e.touches && e.touches[0]) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      setMousePos({
-        x: e.touches[0].clientX - rect.left,
-        y: e.touches[0].clientY - rect.top,
-      });
-    }
+    e.currentTarget.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+    e.currentTarget.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
   };
 
   return (
     <div
       onMouseMove={handleMouseMove}
-      onTouchMove={handleTouchMove}
       className={`group relative w-full ml-13 md:ml-0 md:w-[calc(50%-3rem)] p-5 sm:p-8 rounded-3xl border transition-all duration-300 hover:-translate-y-1.5 overflow-hidden ${
         darkMode
           ? "bg-slate-900/85 backdrop-blur-md group-hover:bg-slate-950/15 group-hover:backdrop-blur-none border-slate-700/60 group-hover:border-cyan-500/60 shadow-lg group-hover:shadow-2xl group-hover:shadow-cyan-500/10"
@@ -40,7 +25,7 @@ const ExperienceCard = ({ item, isEven, darkMode }) => {
       <div
         className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"
         style={{
-          background: `radial-gradient(380px circle at ${mousePos.x}px ${mousePos.y}px, ${
+          background: `radial-gradient(380px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), ${
             darkMode ? "rgba(6, 182, 212, 0.26)" : "rgba(14, 165, 233, 0.18)"
           }, transparent 75%)`,
         }}
@@ -54,8 +39,8 @@ const ExperienceCard = ({ item, isEven, darkMode }) => {
             ? "radial-gradient(rgba(6, 182, 212, 0.7) 1.5px, transparent 1.5px)"
             : "radial-gradient(rgba(120, 113, 108, 0.45) 1.5px, transparent 1.5px)",
           backgroundSize: "36px 36px",
-          WebkitMaskImage: `radial-gradient(320px circle at ${mousePos.x}px ${mousePos.y}px, black 30%, transparent 80%)`,
-          maskImage: `radial-gradient(320px circle at ${mousePos.x}px ${mousePos.y}px, black 30%, transparent 80%)`,
+          WebkitMaskImage: "radial-gradient(320px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), black 30%, transparent 80%)",
+          maskImage: "radial-gradient(320px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), black 30%, transparent 80%)",
         }}
       />
 
