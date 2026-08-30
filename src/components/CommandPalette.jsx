@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { ThemeContext } from "../context";
-import { Search, Home, Briefcase, Wrench, FolderCode, Mail, Copy, Check, Terminal, CornerDownLeft } from "lucide-react";
+import { Search, Home, Briefcase, Wrench, FolderCode, Mail, Copy, Check, Terminal, CornerDownLeft, X } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "./Icons";
 import { motion } from "framer-motion";
 
@@ -11,7 +11,23 @@ const CommandPalette = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
   const itemRefs = useRef([]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const checkTouch = () => {
+        setIsTouchDevice(
+          window.matchMedia("(pointer: coarse)").matches ||
+          "ontouchstart" in window ||
+          (navigator.maxTouchPoints > 0 && window.innerWidth < 768)
+        );
+      };
+      checkTouch();
+      window.addEventListener("resize", checkTouch);
+      return () => window.removeEventListener("resize", checkTouch);
+    }
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -243,13 +259,30 @@ const CommandPalette = ({ isOpen, onClose }) => {
             aria-activedescendant={filteredCommands[selectedIndex] ? `cmd-${filteredCommands[selectedIndex].id}` : undefined}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Type a command or navigate with ↑↓..."
+            placeholder={isTouchDevice ? "Search portfolio or tap an option..." : "Type a command or navigate with ↑↓..."}
             autoFocus
             className={`w-full bg-transparent text-base sm:text-base outline-hidden font-medium text-[16px] ${
               darkMode ? "text-white placeholder-slate-500" : "text-[#1c1917] placeholder-[#78716c]"
             }`}
           />
-          <kbd className="px-2 py-1 rounded-md text-[10px] font-mono uppercase bg-slate-800 text-slate-400 border border-slate-700 shrink-0">
+          {/* Mobile Touch-Friendly Close Button */}
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close search"
+            className={`sm:hidden p-1.5 rounded-xl transition-colors cursor-pointer shrink-0 ${
+              darkMode ? "text-slate-400 hover:text-white hover:bg-slate-800" : "text-[#78716c] hover:text-[#1c1917] hover:bg-[#ede8df]"
+            }`}
+          >
+            <X size={18} />
+          </button>
+
+          {/* Desktop Keyboard Badge */}
+          <kbd
+            onClick={onClose}
+            className="hidden sm:inline-flex items-center px-2 py-1 rounded-md text-[10px] font-mono uppercase bg-slate-800 text-slate-400 border border-slate-700 shrink-0 cursor-pointer hover:bg-slate-700 hover:text-slate-200 transition-colors"
+            title="Press Escape to close"
+          >
             ESC
           </kbd>
         </div>
@@ -289,7 +322,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
                       {cmd.category}
                     </span>
                     {isSelected && (
-                      <CornerDownLeft size={13} className={darkMode ? "text-cyan-400" : "text-cyan-700"} />
+                      <CornerDownLeft size={13} className={`hidden sm:inline-block ${darkMode ? "text-cyan-400" : "text-cyan-700"}`} />
                     )}
                   </div>
                 </button>
@@ -300,6 +333,33 @@ const CommandPalette = ({ isOpen, onClose }) => {
               No matching commands found for &quot;{query}&quot;
             </div>
           )}
+        </div>
+
+        {/* Device-Specific Bottom Helper Guidance */}
+        <div className={`px-4 sm:px-5 py-2.5 border-t text-[11px] font-mono flex items-center justify-between transition-colors ${
+          darkMode ? "bg-slate-950/60 border-slate-800/60 text-slate-400" : "bg-[#ede8df]/60 border-[#d6cebf]/60 text-[#78716c]"
+        }`}>
+          {/* Desktop keyboard tips */}
+          <div className="hidden sm:flex items-center gap-3">
+            <span className="flex items-center gap-1">
+              <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] border border-slate-700">↑↓</kbd> Navigate
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] border border-slate-700">↵</kbd> Select
+            </span>
+            <span className="flex items-center gap-1">
+              <kbd className="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] border border-slate-700">ESC</kbd> Close
+            </span>
+          </div>
+
+          {/* Mobile touch tips */}
+          <div className="sm:hidden flex items-center gap-1.5 text-[11px]">
+            <span>Tap any option to select</span>
+          </div>
+
+          <span className="text-[10px]">
+            {filteredCommands.length} {filteredCommands.length === 1 ? "result" : "results"}
+          </span>
         </div>
       </motion.div>
     </motion.div>

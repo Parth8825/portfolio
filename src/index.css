@@ -15,6 +15,10 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', system-ui, -apple-system, sans-serif;
   }
+
+  section[id] {
+    scroll-margin-top: 5.5rem;
+  }
 }
 
 /* Custom Utilities & Glow Animations */

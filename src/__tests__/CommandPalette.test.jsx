@@ -77,4 +77,18 @@ describe('CommandPalette Component', () => {
     fireEvent.keyDown(window, { key: 'Escape' });
     expect(handleClose).toHaveBeenCalledTimes(1);
   });
+
+  it('calls onClose when mobile close button is clicked', () => {
+    const handleClose = vi.fn();
+    render(
+      <ThemeProvider>
+        <CommandPalette isOpen={true} onClose={handleClose} />
+      </ThemeProvider>
+    );
+
+    const closeBtn = screen.getByLabelText('Close search');
+    expect(closeBtn).toBeInTheDocument();
+    fireEvent.click(closeBtn);
+    expect(handleClose).toHaveBeenCalledTimes(1);
+  });
 });

@@ -60,16 +60,41 @@ const Navbar = ({ onOpenCommandPalette }) => {
     theme.dispatch({ type: "TOGGLE" });
   };
 
+  const handleNavClick = (e, href) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+
+    const targetId = href.replace(/^#/, "");
+    const targetElement = document.getElementById(targetId);
+
+    if (targetElement) {
+      setTimeout(() => {
+        const navOffset = 80;
+        const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition - navOffset;
+
+        window.scrollTo({
+          top: Math.max(0, offsetPosition),
+          behavior: "smooth",
+        });
+
+        if (typeof window !== "undefined" && window.history?.pushState) {
+          window.history.pushState(null, "", href);
+        }
+      }, 50);
+    }
+  };
+
   return (
     <motion.header
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
+        scrolled || mobileMenuOpen
           ? darkMode
-            ? "glass-panel bg-slate-950/80 shadow-lg shadow-black/20 py-3"
-            : "glass-panel-light bg-[#ede8df]/85 border-b border-[#d6cebf]/80 shadow-xs py-3"
+            ? "glass-panel bg-slate-950/90 shadow-lg shadow-black/20 py-3"
+            : "glass-panel-light bg-[#ede8df]/95 border-b border-[#d6cebf]/80 shadow-xs py-3"
           : "bg-transparent py-5"
       }`}
     >
@@ -77,7 +102,8 @@ const Navbar = ({ onOpenCommandPalette }) => {
         {/* Brand Logo */}
         <a
           href="#home"
-          className="flex items-center gap-2 group text-xl font-bold tracking-tight"
+          onClick={(e) => handleNavClick(e, "#home")}
+          className="flex items-center gap-2 group text-xl font-bold tracking-tight cursor-pointer"
         >
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/25 group-hover:scale-105 transition-transform">
             <Code2 size={20} />
@@ -101,7 +127,8 @@ const Navbar = ({ onOpenCommandPalette }) => {
               <a
                 key={link.name}
                 href={link.href}
-                className={`relative text-sm font-medium transition-colors ${
+                onClick={(e) => handleNavClick(e, link.href)}
+                className={`relative text-sm font-medium transition-colors cursor-pointer ${
                   isActive
                     ? darkMode
                       ? "text-cyan-400 font-semibold"
@@ -188,8 +215,8 @@ const Navbar = ({ onOpenCommandPalette }) => {
                 <a
                   key={link.name}
                   href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`block px-3 py-2 rounded-lg text-base font-medium transition-colors ${
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  className={`block px-3 py-2.5 rounded-xl text-base font-medium transition-colors cursor-pointer active:scale-[0.98] ${
                     isActive
                       ? darkMode
                         ? "bg-cyan-500/15 text-cyan-400 font-semibold"

@@ -78,6 +78,7 @@ function App() {
   // Smooth scroll to sections when anchor links are clicked, without forcing global scroll-behavior: smooth on trackpads
   useEffect(() => {
     const handleAnchorClick = (e) => {
+      if (e.defaultPrevented) return;
       const anchor = e.target.closest('a[href^="#"]');
       if (!anchor) return;
       const targetId = anchor.getAttribute("href")?.slice(1);
@@ -85,9 +86,12 @@ function App() {
       const targetElem = document.getElementById(targetId);
       if (targetElem) {
         e.preventDefault();
-        if (typeof targetElem.scrollIntoView === "function") {
-          targetElem.scrollIntoView({ behavior: "smooth" });
-        }
+        const navOffset = 80;
+        const elementPosition = targetElem.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo({
+          top: Math.max(0, elementPosition - navOffset),
+          behavior: "smooth",
+        });
         if (typeof window !== "undefined" && window.history?.pushState) {
           window.history.pushState(null, "", `#${targetId}`);
         }
