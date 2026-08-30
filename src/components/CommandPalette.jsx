@@ -32,8 +32,15 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to Home / Hero",
       category: "Navigation",
       action: () => {
-        window.location.hash = "#home";
         onClose();
+        setTimeout(() => {
+          const el = document.getElementById("home");
+          if (typeof el?.scrollIntoView === "function") {
+            el.scrollIntoView({ behavior: "smooth" });
+          } else {
+            window.location.hash = "#home";
+          }
+        }, 80);
       },
     },
     {
@@ -42,8 +49,15 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to Enterprise Projects",
       category: "Navigation",
       action: () => {
-        window.location.hash = "#projects";
         onClose();
+        setTimeout(() => {
+          const el = document.getElementById("projects");
+          if (typeof el?.scrollIntoView === "function") {
+            el.scrollIntoView({ behavior: "smooth" });
+          } else {
+            window.location.hash = "#projects";
+          }
+        }, 80);
       },
     },
     {
@@ -52,8 +66,15 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to Career Experience & Education",
       category: "Navigation",
       action: () => {
-        window.location.hash = "#experience";
         onClose();
+        setTimeout(() => {
+          const el = document.getElementById("experience");
+          if (typeof el?.scrollIntoView === "function") {
+            el.scrollIntoView({ behavior: "smooth" });
+          } else {
+            window.location.hash = "#experience";
+          }
+        }, 80);
       },
     },
     {
@@ -62,8 +83,15 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to Technical Toolkit",
       category: "Navigation",
       action: () => {
-        window.location.hash = "#skills";
         onClose();
+        setTimeout(() => {
+          const el = document.getElementById("skills");
+          if (typeof el?.scrollIntoView === "function") {
+            el.scrollIntoView({ behavior: "smooth" });
+          } else {
+            window.location.hash = "#skills";
+          }
+        }, 80);
       },
     },
     {
@@ -72,8 +100,15 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to C# & SQL Code Showcase",
       category: "Navigation",
       action: () => {
-        window.location.hash = "#code-showcase";
         onClose();
+        setTimeout(() => {
+          const el = document.getElementById("code-showcase");
+          if (typeof el?.scrollIntoView === "function") {
+            el.scrollIntoView({ behavior: "smooth" });
+          } else {
+            window.location.hash = "#code-showcase";
+          }
+        }, 80);
       },
     },
     {
@@ -82,8 +117,15 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to Contact Form",
       category: "Navigation",
       action: () => {
-        window.location.hash = "#contact";
         onClose();
+        setTimeout(() => {
+          const el = document.getElementById("contact");
+          if (typeof el?.scrollIntoView === "function") {
+            el.scrollIntoView({ behavior: "smooth" });
+          } else {
+            window.location.hash = "#contact";
+          }
+        }, 80);
       },
     },
     {

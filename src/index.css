@@ -1,6 +1,13 @@
 @import "tailwindcss";
 
 @layer base {
+  @media (pointer: coarse) {
+    html, body {
+      touch-action: pan-y;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   }

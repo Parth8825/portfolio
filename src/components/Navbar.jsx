@@ -12,18 +12,25 @@ const Navbar = ({ onOpenCommandPalette }) => {
   const [activeSection, setActiveSection] = useState("home");
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 20);
 
-      const sectionIds = ["home", "experience", "skills", "code-showcase", "projects", "contact"];
-      const scrollPosition = window.scrollY + 140;
+          const sectionIds = ["home", "experience", "skills", "code-showcase", "projects", "contact"];
+          const scrollPosition = window.scrollY + 140;
 
-      for (let i = sectionIds.length - 1; i >= 0; i--) {
-        const section = document.getElementById(sectionIds[i]);
-        if (section && section.offsetTop <= scrollPosition) {
-          setActiveSection(sectionIds[i]);
-          break;
-        }
+          for (let i = sectionIds.length - 1; i >= 0; i--) {
+            const section = document.getElementById(sectionIds[i]);
+            if (section && section.offsetTop <= scrollPosition) {
+              setActiveSection((prev) => (prev !== sectionIds[i] ? sectionIds[i] : prev));
+              break;
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 

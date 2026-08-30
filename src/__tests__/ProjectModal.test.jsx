@@ -51,4 +51,23 @@ describe('ProjectModal Component', () => {
     fireEvent.keyDown(window, { key: 'Escape' });
     expect(handleClose).toHaveBeenCalledTimes(2);
   });
+
+  it('renders into document.body with z-[70], overflow-y-auto, and safe-area padding', () => {
+    const handleClose = vi.fn();
+
+    render(
+      <ThemeProvider>
+        <ProjectModal project={dummyProject} onClose={handleClose} />
+      </ThemeProvider>
+    );
+
+    const dialog = screen.getByRole('dialog');
+    const container = dialog.parentElement;
+
+    expect(container).toBeInTheDocument();
+    expect(container.classList.contains('z-[70]')).toBe(true);
+    expect(container.classList.contains('overflow-y-auto')).toBe(true);
+    expect(container.classList.contains('overflow-hidden')).toBe(false);
+    expect(document.body.contains(container)).toBe(true);
+  });
 });

@@ -52,12 +52,6 @@ const TiltAvatar = () => {
     handleUpdate(e.clientX, e.clientY, e.currentTarget.getBoundingClientRect());
   };
 
-  const handleTouchMove = (e) => {
-    if (e.touches && e.touches[0]) {
-      handleUpdate(e.touches[0].clientX, e.touches[0].clientY, e.currentTarget.getBoundingClientRect());
-    }
-  };
-
   const handleLeave = () => {
     x.set(0);
     y.set(0);
@@ -77,8 +71,6 @@ const TiltAvatar = () => {
       <motion.div
         onMouseMove={handleMouseMove}
         onMouseLeave={handleLeave}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleLeave}
         style={{
           rotateX,
           rotateY,

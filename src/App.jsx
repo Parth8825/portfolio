@@ -23,35 +23,46 @@ function App() {
     restDelta: 0.001,
   });
 
-  // Global Site-Wide Ambient Cursor Spotlight Aura with Touch Support
+  // Fine pointer detection (desktop mouse vs mobile touch screens)
+  const [isFinePointer, setIsFinePointer] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(pointer: fine)");
+    setIsFinePointer(mediaQuery.matches);
+
+    const handleChange = (e) => setIsFinePointer(e.matches);
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", handleChange);
+      return () => mediaQuery.removeEventListener("change", handleChange);
+    }
+  }, []);
+
+  // Global Site-Wide Ambient Cursor Spotlight Aura (Enabled exclusively on fine-pointer devices)
   const mouseX = useMotionValue(typeof window !== "undefined" ? window.innerWidth / 2 : 500);
   const mouseY = useMotionValue(typeof window !== "undefined" ? window.innerHeight / 3 : 300);
   const smoothMouseX = useSpring(mouseX, { stiffness: 100, damping: 20, mass: 0.1 });
   const smoothMouseY = useSpring(mouseY, { stiffness: 100, damping: 20, mass: 0.1 });
 
   useEffect(() => {
-    const updatePosition = (clientX, clientY) => {
-      mouseX.set(clientX);
-      mouseY.set(clientY);
-    };
+    if (!isFinePointer) return;
 
-    const handleMouseMove = (e) => updatePosition(e.clientX, e.clientY);
-    const handleTouch = (e) => {
-      if (e.touches && e.touches[0]) {
-        updatePosition(e.touches[0].clientX, e.touches[0].clientY);
-      }
+    let rafId = null;
+    const handleMouseMove = (e) => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        mouseX.set(e.clientX);
+        mouseY.set(e.clientY);
+        rafId = null;
+      });
     };
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
-    window.addEventListener("touchstart", handleTouch, { passive: true });
-    window.addEventListener("touchmove", handleTouch, { passive: true });
-
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("touchstart", handleTouch);
-      window.removeEventListener("touchmove", handleTouch);
+      if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [mouseX, mouseY]);
+  }, [isFinePointer, mouseX, mouseY]);
 
   useEffect(() => {
     const handleGlobalKeyDown = (e) => {
@@ -64,9 +75,31 @@ function App() {
     return () => window.removeEventListener("keydown", handleGlobalKeyDown);
   }, []);
 
+  // Smooth scroll to sections when anchor links are clicked, without forcing global scroll-behavior: smooth on trackpads
+  useEffect(() => {
+    const handleAnchorClick = (e) => {
+      const anchor = e.target.closest('a[href^="#"]');
+      if (!anchor) return;
+      const targetId = anchor.getAttribute("href")?.slice(1);
+      if (!targetId) return;
+      const targetElem = document.getElementById(targetId);
+      if (targetElem) {
+        e.preventDefault();
+        if (typeof targetElem.scrollIntoView === "function") {
+          targetElem.scrollIntoView({ behavior: "smooth" });
+        }
+        if (typeof window !== "undefined" && window.history?.pushState) {
+          window.history.pushState(null, "", `#${targetId}`);
+        }
+      }
+    };
+    document.addEventListener("click", handleAnchorClick);
+    return () => document.removeEventListener("click", handleAnchorClick);
+  }, []);
+
   return (
     <div
-      className={`min-h-screen relative transition-colors duration-300 overflow-x-hidden ${
+      className={`min-h-screen relative transition-colors duration-300 overflow-x-clip ${
         darkMode ? "bg-slate-950 text-slate-100" : "bg-[#ede8df] text-[#1c1917]"
       }`}
     >
@@ -88,23 +121,35 @@ function App() {
         }}
       />
 
-      {/* Site-Wide Interactive Cursor & Touch Spotlight Glow (Works in BOTH Dark & Light Mode) */}
-      <motion.div
-        className="fixed pointer-events-none z-0 rounded-full transition-opacity duration-300"
-        style={{
-          x: smoothMouseX,
-          y: smoothMouseY,
-          translateX: "-50%",
-          translateY: "-50%",
-          width: 650,
-          height: 650,
-          mixBlendMode: darkMode ? "screen" : "multiply",
-          background: darkMode
-            ? "radial-gradient(circle, rgba(6, 182, 212, 0.28) 0%, rgba(99, 102, 241, 0.15) 45%, transparent 75%)"
-            : "radial-gradient(circle, rgba(14, 165, 233, 0.18) 0%, rgba(99, 102, 241, 0.12) 45%, transparent 75%)",
-          filter: "blur(40px)",
-        }}
-      />
+      {/* Site-Wide Ambient Spotlight: Animated for mouse devices, stationary & zero-cost on touch */}
+      {isFinePointer ? (
+        <motion.div
+          className="fixed pointer-events-none z-0 rounded-full transition-opacity duration-300"
+          style={{
+            x: smoothMouseX,
+            y: smoothMouseY,
+            translateX: "-50%",
+            translateY: "-50%",
+            width: 650,
+            height: 650,
+            background: darkMode
+              ? "radial-gradient(circle, rgba(6, 182, 212, 0.16) 0%, rgba(99, 102, 241, 0.08) 45%, transparent 75%)"
+              : "radial-gradient(circle, rgba(14, 165, 233, 0.12) 0%, rgba(99, 102, 241, 0.06) 45%, transparent 75%)",
+            filter: "blur(40px)",
+            willChange: "transform",
+          }}
+        />
+      ) : (
+        <div
+          className="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] rounded-full pointer-events-none z-0 transition-opacity duration-300"
+          style={{
+            background: darkMode
+              ? "radial-gradient(circle, rgba(6, 182, 212, 0.22) 0%, rgba(99, 102, 241, 0.1) 50%, transparent 75%)"
+              : "radial-gradient(circle, rgba(14, 165, 233, 0.16) 0%, rgba(99, 102, 241, 0.08) 50%, transparent 75%)",
+            filter: "blur(50px)",
+          }}
+        />
+      )}
 
       <Navbar onOpenCommandPalette={() => setCommandPaletteOpen(true)} />
       <main className="relative z-10">

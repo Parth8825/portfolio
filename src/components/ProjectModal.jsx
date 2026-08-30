@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { ThemeContext } from "../context";
 import { X, Cpu, CheckCircle2, Building2 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -24,13 +25,18 @@ const ProjectModal = ({ project, onClose }) => {
 
   if (!project) return null;
 
-  return (
+  const modalNode = (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-slate-950/80 backdrop-blur-xl [perspective:1000px] overflow-hidden"
+      className="fixed inset-0 z-[70] flex items-start sm:items-center justify-center p-3.5 sm:p-6 overflow-y-auto bg-slate-950/85 backdrop-blur-xl [perspective:1000px] touch-pan-y"
+      style={{
+        paddingTop: "max(5.5rem, calc(env(safe-area-inset-top, 0px) + 5rem))",
+        paddingBottom: "max(2.5rem, calc(env(safe-area-inset-bottom, 0px) + 2rem))",
+        WebkitOverflowScrolling: "touch",
+      }}
     >
       {/* Click backdrop to close */}
       <div
@@ -48,22 +54,22 @@ const ProjectModal = ({ project, onClose }) => {
         animate={{ opacity: 1, rotateY: 0, scale: 1 }}
         exit={{ opacity: 0, rotateY: 65, scale: 0.88 }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className={`relative w-full max-w-2xl rounded-3xl p-6 sm:p-8 shadow-2xl z-10 space-y-6 text-left my-auto [backface-visibility:hidden] [transform-style:preserve-3d] ${
+        className={`relative w-full max-w-2xl rounded-3xl p-5 sm:p-8 shadow-2xl z-10 space-y-5 sm:space-y-6 text-left my-auto [backface-visibility:hidden] [transform-style:preserve-3d] ${
           darkMode
             ? "glass-panel border border-cyan-500/30 text-slate-100 shadow-cyan-500/10"
             : "bg-[#fbf9f5] border border-[#d6cebf] text-[#1c1917] shadow-2xl"
         }`}
       >
         {/* Header Bar */}
-        <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-800/40">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Building2 size={16} className={darkMode ? "text-cyan-400 shrink-0" : "text-cyan-700 shrink-0"} />
-              <span className={`text-xs font-bold uppercase tracking-wider ${darkMode ? "text-cyan-400" : "text-cyan-800"}`}>
+        <div className="flex items-start justify-between gap-3 sm:gap-4 pb-4 border-b border-slate-800/40">
+          <div className="min-w-0 pr-2">
+            <div className="flex items-center gap-2 mb-1.5">
+              <Building2 size={15} className={darkMode ? "text-cyan-400 shrink-0" : "text-cyan-700 shrink-0"} />
+              <span className={`text-[11px] sm:text-xs font-bold uppercase tracking-wider truncate ${darkMode ? "text-cyan-400" : "text-cyan-800"}`}>
                 {project.company}
               </span>
             </div>
-            <h3 id="project-modal-title" className="text-2xl sm:text-3xl font-extrabold">{project.title}</h3>
+            <h3 id="project-modal-title" className="text-xl sm:text-3xl font-extrabold leading-snug break-words">{project.title}</h3>
           </div>
 
           <button
@@ -144,6 +150,8 @@ const ProjectModal = ({ project, onClose }) => {
       </motion.div>
     </motion.div>
   );
+
+  return typeof document !== "undefined" ? createPortal(modalNode, document.body) : modalNode;
 };
 
 export default ProjectModal;
