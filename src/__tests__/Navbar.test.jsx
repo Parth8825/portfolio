@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import Navbar from '../components/Navbar';
@@ -25,5 +25,30 @@ describe('Navbar Component', () => {
     // Toggle theme button interaction test
     fireEvent.click(themeButton);
     expect(localStorage.getItem('portfolio_theme')).toBeDefined();
+  });
+
+  it('opens mobile drawer and handles link click', () => {
+    // Mock window.scrollTo
+    window.scrollTo = vi.fn();
+
+    render(
+      <ThemeProvider>
+        <Navbar />
+      </ThemeProvider>
+    );
+
+    const toggleButton = screen.getByLabelText('Toggle Navigation Menu');
+    expect(toggleButton).toBeInTheDocument();
+
+    // Open mobile drawer
+    fireEvent.click(toggleButton);
+
+    // There should now be multiple links (desktop and mobile)
+    const projectLinks = screen.getAllByText('Projects');
+    expect(projectLinks.length).toBeGreaterThan(1);
+
+    // Click on mobile link
+    fireEvent.click(projectLinks[projectLinks.length - 1]);
+    expect(toggleButton).toBeInTheDocument();
   });
 });
