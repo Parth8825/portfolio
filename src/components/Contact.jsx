@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState, useEffect } from "react";
 import { ThemeContext } from "../context";
 import emailjs from "@emailjs/browser";
-import { Mail, MapPin, Send, CheckCircle, AlertCircle, Loader2, ExternalLink } from "lucide-react";
+import { Mail, MapPin, Send, CheckCircle, AlertCircle, Loader2, ExternalLink, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 
 // Security utility function to escape HTML special characters
@@ -31,7 +31,12 @@ const triggerConfetti = () => {
   canvas.style.zIndex = "9999";
   document.body.appendChild(canvas);
 
-  const ctx = canvas.getContext ? canvas.getContext("2d") : null;
+  let ctx = null;
+  try {
+    ctx = canvas.getContext ? canvas.getContext("2d") : null;
+  } catch {
+    ctx = null;
+  }
   if (!ctx) {
     canvas.remove();
     return;
@@ -96,18 +101,29 @@ const Contact = () => {
     userSubject: "",
     userEmail: "",
     message: "",
+    website: "", // Honeypot field
   });
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
     if (submitted) {
       triggerConfetti();
     }
   }, [submitted]);
+
+  // Submission cooldown countdown timer (prevents accidental / repeated sends)
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => {
+      setCooldown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -150,7 +166,20 @@ const Contact = () => {
     setSubmitError("");
     setSubmitted(false);
 
+    if (cooldown > 0) {
+      setSubmitError(`Please wait ${cooldown} seconds before sending another message.`);
+      return;
+    }
+
     if (!validate()) {
+      return;
+    }
+
+    // Honeypot check: silently drop automated bot spam submissions
+    if (formData.website && formData.website.trim()) {
+      setSubmitted(true);
+      setCooldown(30);
+      setFormData({ userName: "", userSubject: "", userEmail: "", message: "", website: "" });
       return;
     }
 
@@ -199,7 +228,8 @@ const Contact = () => {
       );
 
       setSubmitted(true);
-      setFormData({ userName: "", userSubject: "", userEmail: "", message: "" });
+      setCooldown(30);
+      setFormData({ userName: "", userSubject: "", userEmail: "", message: "", website: "" });
     } catch {
       setSubmitError(
         "Unable to send your message automatically right now. Please try again or click below to send directly via your email app."
@@ -311,6 +341,20 @@ const Contact = () => {
                 : "bg-[#fbf9f5]/90 backdrop-blur-md hover:bg-[#ede8df]/30 hover:backdrop-blur-none border-[#d6cebf] shadow-sm"
             }`}>
               <form ref={formRef} onSubmit={handleSubmit} noValidate autoComplete="off" className="space-y-6 text-left">
+                {/* Hidden Honeypot Field for Spam Bot Protection */}
+                <div className="hidden" aria-hidden="true">
+                  <label htmlFor="contact_website">Website</label>
+                  <input
+                    id="contact_website"
+                    type="text"
+                    name="website"
+                    value={formData.website || ""}
+                    onChange={handleChange}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
+
                 {/* Form Field: Name */}
                 <div className="space-y-2">
                   <label htmlFor="userName" className={`block text-sm font-semibold ${darkMode ? "text-slate-200" : "text-[#1c1917]"}`}>
@@ -467,13 +511,18 @@ const Contact = () => {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="w-full py-4 px-6 bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-bold text-base rounded-xl transition-all duration-200 shadow-lg shadow-cyan-500/25 active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2"
+                  disabled={loading || cooldown > 0}
+                  className="w-full py-4 px-6 bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-bold text-base rounded-xl transition-all duration-200 shadow-lg shadow-cyan-500/25 active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
                       <Loader2 size={20} className="animate-spin" />
                       Sending Message...
+                    </>
+                  ) : cooldown > 0 ? (
+                    <>
+                      <Clock size={18} />
+                      Please wait {cooldown}s
                     </>
                   ) : (
                     <>

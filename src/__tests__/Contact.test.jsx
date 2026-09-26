@@ -47,4 +47,31 @@ describe('Contact Component Form Validation', () => {
       expect(screen.getByText('Please enter a valid email address.')).toBeInTheDocument();
     });
   });
+
+  it('triggers honeypot protection when bot field is populated', async () => {
+    render(
+      <ThemeProvider>
+        <Contact />
+      </ThemeProvider>
+    );
+
+    const nameInput = screen.getByPlaceholderText('John Doe');
+    const subjectInput = screen.getByPlaceholderText('Project Inquiry / Job Opportunity');
+    const emailInput = screen.getByPlaceholderText('john@example.com');
+    const messageInput = screen.getByPlaceholderText('Tell me about your project details or message...');
+    const botInput = screen.getByLabelText('Website');
+
+    fireEvent.change(nameInput, { target: { value: 'Spam Bot' } });
+    fireEvent.change(subjectInput, { target: { value: 'Spam Subject' } });
+    fireEvent.change(emailInput, { target: { value: 'bot@spam.com' } });
+    fireEvent.change(messageInput, { target: { value: 'Spam text' } });
+    fireEvent.change(botInput, { target: { value: 'http://spam-site.com' } });
+
+    const submitButton = screen.getByRole('button', { name: /Send Message/i });
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Thank you! Your message has been sent successfully./i)).toBeInTheDocument();
+    });
+  });
 });

@@ -70,4 +70,35 @@ describe('ProjectModal Component', () => {
     expect(container.classList.contains('overflow-hidden')).toBe(false);
     expect(document.body.contains(container)).toBe(true);
   });
+
+  it('traps focus inside modal and restores previous focus on close', () => {
+    const triggerBtn = document.createElement('button');
+    triggerBtn.textContent = 'Trigger';
+    document.body.appendChild(triggerBtn);
+    triggerBtn.focus();
+    expect(document.activeElement).toBe(triggerBtn);
+
+    const handleClose = vi.fn();
+    const { unmount } = render(
+      <ThemeProvider>
+        <ProjectModal project={dummyProject} onClose={handleClose} />
+      </ThemeProvider>
+    );
+
+    const closeBtn = screen.getByLabelText('Close modal');
+    closeBtn.focus();
+    expect(document.activeElement).toBe(closeBtn);
+
+    // Tab press on the only focusable element should cycle back to it
+    fireEvent.keyDown(window, { key: 'Tab' });
+    expect(document.activeElement).toBe(closeBtn);
+
+    // Shift+Tab press should also cycle
+    fireEvent.keyDown(window, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toBe(closeBtn);
+
+    unmount();
+    expect(document.activeElement).toBe(triggerBtn);
+    document.body.removeChild(triggerBtn);
+  });
 });

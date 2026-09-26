@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { ThemeContext } from "../context";
 import { Server, Database, Layout, Wrench, Terminal } from "lucide-react";
 import { motion } from "framer-motion";

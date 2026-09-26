@@ -91,4 +91,32 @@ describe('CommandPalette Component', () => {
     fireEvent.click(closeBtn);
     expect(handleClose).toHaveBeenCalledTimes(1);
   });
+
+  it('traps focus inside dialog and restores focus when closed', () => {
+    const triggerBtn = document.createElement('button');
+    triggerBtn.textContent = 'Open Search';
+    document.body.appendChild(triggerBtn);
+    triggerBtn.focus();
+    expect(document.activeElement).toBe(triggerBtn);
+
+    const handleClose = vi.fn();
+    const { unmount } = render(
+      <ThemeProvider>
+        <CommandPalette isOpen={true} onClose={handleClose} />
+      </ThemeProvider>
+    );
+
+    const input = screen.getByRole('combobox');
+    input.focus();
+    expect(document.activeElement).toBe(input);
+
+    // Tab key handling
+    fireEvent.keyDown(window, { key: 'Tab' });
+    // Shift+Tab key handling
+    fireEvent.keyDown(window, { key: 'Tab', shiftKey: true });
+
+    unmount();
+    expect(document.activeElement).toBe(triggerBtn);
+    document.body.removeChild(triggerBtn);
+  });
 });

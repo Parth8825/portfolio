@@ -2,6 +2,28 @@ import { createContext, useReducer, useEffect } from "react";
 
 export const ThemeContext = createContext();
 
+// Safe localStorage helpers that gracefully handle privacy restrictions and quota errors
+const safeGetStorage = (key) => {
+  try {
+    if (typeof window !== "undefined" && window.localStorage) {
+      return window.localStorage.getItem(key);
+    }
+  } catch {
+    // Storage access blocked or restricted in private mode
+  }
+  return null;
+};
+
+const safeSetStorage = (key, value) => {
+  try {
+    if (typeof window !== "undefined" && window.localStorage) {
+      window.localStorage.setItem(key, value);
+    }
+  } catch {
+    // Storage write blocked or quota exceeded
+  }
+};
+
 // Check system color scheme preference
 const getSystemTheme = () => {
   if (typeof window !== "undefined" && window.matchMedia) {
@@ -11,25 +33,23 @@ const getSystemTheme = () => {
 };
 
 const getInitialTheme = () => {
-  if (typeof window !== "undefined") {
-    const savedTheme = localStorage.getItem("portfolio_theme");
-    if (savedTheme === "dark" || savedTheme === "light") {
-      return savedTheme === "dark";
-    }
+  const savedTheme = safeGetStorage("portfolio_theme");
+  if (savedTheme === "dark" || savedTheme === "light") {
+    return savedTheme === "dark";
   }
   return getSystemTheme();
 };
 
 const INITIAL_STATE = {
   darkMode: getInitialTheme(),
-  userOverride: typeof window !== "undefined" && localStorage.getItem("portfolio_theme") !== null,
+  userOverride: safeGetStorage("portfolio_theme") !== null,
 };
 
 const themeReducer = (state, action) => {
   switch (action.type) {
     case "TOGGLE": {
       const nextMode = !state.darkMode;
-      localStorage.setItem("portfolio_theme", nextMode ? "dark" : "light");
+      safeSetStorage("portfolio_theme", nextMode ? "dark" : "light");
       return { darkMode: nextMode, userOverride: true };
     }
     case "SET_THEME": {

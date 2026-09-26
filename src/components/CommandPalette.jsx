@@ -13,6 +13,13 @@ const CommandPalette = ({ isOpen, onClose }) => {
   const [copied, setCopied] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const itemRefs = useRef([]);
+  const dialogRef = useRef(null);
+  const inputRef = useRef(null);
+  const previousActiveElementRef = useRef(
+    typeof document !== "undefined" && document.activeElement && document.activeElement !== document.body
+      ? document.activeElement
+      : null
+  );
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -31,12 +38,24 @@ const CommandPalette = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     if (isOpen) {
+      if (!previousActiveElementRef.current && typeof document !== "undefined" && document.activeElement !== document.body) {
+        previousActiveElementRef.current = document.activeElement;
+      }
       const originalStyle = window.getComputedStyle(document.body).overflow;
       document.body.style.overflow = "hidden";
       setQuery("");
       setSelectedIndex(0);
+
+      const focusTimer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+
       return () => {
+        clearTimeout(focusTimer);
         document.body.style.overflow = originalStyle;
+        if (previousActiveElementRef.current && typeof previousActiveElementRef.current.focus === "function") {
+          previousActiveElementRef.current.focus();
+        }
       };
     }
   }, [isOpen]);
@@ -199,11 +218,39 @@ const CommandPalette = ({ isOpen, onClose }) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         if (isOpen) onClose();
+        return;
       }
       if (e.key === "Escape" && isOpen) {
+        e.preventDefault();
         onClose();
+        return;
       }
-      if (!isOpen || filteredCommands.length === 0) return;
+      if (!isOpen) return;
+
+      // Focus trap within command palette dialog
+      if (e.key === "Tab" && dialogRef.current) {
+        const focusableElements = dialogRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusableElements.length > 0) {
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements[focusableElements.length - 1];
+
+          if (e.shiftKey) {
+            if (document.activeElement === firstElement || !dialogRef.current.contains(document.activeElement)) {
+              e.preventDefault();
+              lastElement.focus();
+            }
+          } else {
+            if (document.activeElement === lastElement || !dialogRef.current.contains(document.activeElement)) {
+              e.preventDefault();
+              firstElement.focus();
+            }
+          }
+        }
+      }
+
+      if (filteredCommands.length === 0) return;
 
       if (e.key === "ArrowDown") {
         e.preventDefault();
@@ -236,6 +283,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
       <div className="fixed inset-0" onClick={onClose} aria-label="Close command palette background" />
 
       <motion.div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label="Command Palette"
@@ -251,6 +299,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
         <div className="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-slate-800/40 flex items-center gap-3">
           <Search size={20} className={darkMode ? "text-cyan-400 shrink-0" : "text-cyan-700 shrink-0"} />
           <input
+            ref={inputRef}
             type="text"
             role="combobox"
             aria-expanded="true"
@@ -260,7 +309,6 @@ const CommandPalette = ({ isOpen, onClose }) => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={isTouchDevice ? "Search portfolio or tap an option..." : "Type a command or navigate with ↑↓..."}
-            autoFocus
             className={`w-full bg-transparent text-base sm:text-base outline-hidden font-medium text-[16px] ${
               darkMode ? "text-white placeholder-slate-500" : "text-[#1c1917] placeholder-[#78716c]"
             }`}

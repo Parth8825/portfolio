@@ -1,11 +1,27 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, lazy, Suspense } from "react";
+import { createPortal } from "react-dom";
 import { ThemeContext } from "../context";
 import Product from "./Product";
-import ProjectModal from "./ProjectModal";
 import { enterpriseProjects } from "../data";
 import { FolderCode, Mail } from "lucide-react";
 import { LinkedinIcon } from "./Icons";
 import { motion, AnimatePresence } from "framer-motion";
+
+const ProjectModal = lazy(() => import("./ProjectModal"));
+
+const ModalFallback = () => {
+  if (typeof document === "undefined") return null;
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/85 backdrop-blur-xl"
+      aria-busy="true"
+      aria-label="Loading project details"
+    >
+      <div className="w-8 h-8 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
+    </div>,
+    document.body
+  );
+};
 
 const ProductList = () => {
   const theme = useContext(ThemeContext);
@@ -98,10 +114,12 @@ const ProductList = () => {
       {/* Case Study Detail Modal with AnimatePresence for 3D Flip */}
       <AnimatePresence>
         {selectedProject && (
-          <ProjectModal
-            project={selectedProject}
-            onClose={() => setSelectedProject(null)}
-          />
+          <Suspense fallback={<ModalFallback />}>
+            <ProjectModal
+              project={selectedProject}
+              onClose={() => setSelectedProject(null)}
+            />
+          </Suspense>
         )}
       </AnimatePresence>
     </section>
