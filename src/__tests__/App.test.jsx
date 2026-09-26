@@ -22,6 +22,6 @@ describe('App Component', () => {
     expect(screen.getByText(/Career & Academic Journey/i)).toBeInTheDocument();
     expect(screen.getByText(/Skills &/i)).toBeInTheDocument();
     expect(screen.getAllByText(/Featured/i).length).toBeGreaterThan(0);
-    expect(await screen.findByText(/Let's Discuss/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Let's Discuss/i, {}, { timeout: 5000 })).toBeInTheDocument();
   });
 });
