@@ -1,15 +1,17 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, lazy, Suspense } from "react";
 import Navbar from "./components/Navbar";
 import Intro from "./components/Intro";
 import Experience from "./components/Experience";
 import Skills from "./components/Skills";
-import CodeShowcase from "./components/CodeShowcase";
 import ProductList from "./components/ProductList";
-import Contact from "./components/Contact";
 import Footer from "./components/Footer";
-import CommandPalette from "./components/CommandPalette";
+import LazySection from "./components/LazySection";
 import { ThemeContext } from "./context";
 import { AnimatePresence, motion, useMotionValue, useScroll, useSpring } from "framer-motion";
+
+const CodeShowcase = lazy(() => import("./components/CodeShowcase"));
+const Contact = lazy(() => import("./components/Contact"));
+const CommandPalette = lazy(() => import("./components/CommandPalette"));
 
 function App() {
   const theme = useContext(ThemeContext);
@@ -160,18 +162,24 @@ function App() {
         <Intro />
         <Experience />
         <Skills />
-        <CodeShowcase />
+        <LazySection id="code-showcase" minHeight="min-h-[500px]">
+          <CodeShowcase />
+        </LazySection>
         <ProductList />
-        <Contact />
+        <LazySection id="contact" minHeight="min-h-[600px]">
+          <Contact />
+        </LazySection>
       </main>
       <Footer />
 
       <AnimatePresence>
         {commandPaletteOpen && (
-          <CommandPalette
-            isOpen={commandPaletteOpen}
-            onClose={() => setCommandPaletteOpen(false)}
-          />
+          <Suspense fallback={null}>
+            <CommandPalette
+              isOpen={commandPaletteOpen}
+              onClose={() => setCommandPaletteOpen(false)}
+            />
+          </Suspense>
         )}
       </AnimatePresence>
     </div>

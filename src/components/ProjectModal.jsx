@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { ThemeContext } from "../context";
 import { X, Cpu, CheckCircle2, Building2 } from "lucide-react";
@@ -7,19 +7,71 @@ import { motion } from "framer-motion";
 const ProjectModal = ({ project, onClose }) => {
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
+  const dialogRef = useRef(null);
+  const previousActiveElementRef = useRef(null);
 
   useEffect(() => {
+    // Remember currently focused element to restore upon close
+    previousActiveElementRef.current = document.activeElement;
+
     // Lock background page scroll on mount
     const originalStyle = window.getComputedStyle(document.body).overflow;
     document.body.style.overflow = "hidden";
 
+    // Move initial focus to dialog or first focusable element
+    const focusTimer = setTimeout(() => {
+      if (dialogRef.current) {
+        const focusable = dialogRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length > 0) {
+          focusable[0].focus();
+        } else {
+          dialogRef.current.focus();
+        }
+      }
+    }, 50);
+
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+        return;
+      }
+
+      // Focus trap within modal
+      if (e.key === "Tab" && dialogRef.current) {
+        const focusableElements = dialogRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement || !dialogRef.current.contains(document.activeElement)) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement || !dialogRef.current.contains(document.activeElement)) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
     };
+
     window.addEventListener("keydown", handleKeyDown);
     return () => {
+      clearTimeout(focusTimer);
       document.body.style.overflow = originalStyle;
       window.removeEventListener("keydown", handleKeyDown);
+      // Restore focus to caller
+      if (previousActiveElementRef.current && typeof previousActiveElementRef.current.focus === "function") {
+        previousActiveElementRef.current.focus();
+      }
     };
   }, [onClose]);
 
@@ -47,6 +99,8 @@ const ProjectModal = ({ project, onClose }) => {
 
       {/* 3D Flip Animated Modal Body */}
       <motion.div
+        ref={dialogRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby="project-modal-title"
@@ -54,7 +108,7 @@ const ProjectModal = ({ project, onClose }) => {
         animate={{ opacity: 1, rotateY: 0, scale: 1 }}
         exit={{ opacity: 0, rotateY: 65, scale: 0.88 }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className={`relative w-full max-w-2xl rounded-3xl p-5 sm:p-8 shadow-2xl z-10 space-y-5 sm:space-y-6 text-left my-auto [backface-visibility:hidden] [transform-style:preserve-3d] ${
+        className={`relative w-full max-w-2xl rounded-3xl p-5 sm:p-8 shadow-2xl z-10 space-y-5 sm:space-y-6 text-left my-auto [backface-visibility:hidden] [transform-style:preserve-3d] outline-hidden ${
           darkMode
             ? "glass-panel border border-cyan-500/30 text-slate-100 shadow-cyan-500/10"
             : "bg-[#fbf9f5] border border-[#d6cebf] text-[#1c1917] shadow-2xl"

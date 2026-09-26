@@ -97,6 +97,8 @@ const TiltAvatar = () => {
           <img
             src={developerAvatar}
             alt="Parth Darji - Software Developer"
+            fetchPriority="high"
+            decoding="async"
             draggable={false}
             onContextMenu={(e) => e.preventDefault()}
             className="w-full h-full object-cover object-[50%_15%]"
@@ -179,28 +181,38 @@ const Intro = () => {
   const [typingSpeed, setTypingSpeed] = useState(85);
 
   useEffect(() => {
+    let pauseTimer = null;
     const currentTitle = titles[loopNum % titles.length];
 
-    const handleType = () => {
-      if (isDeleting) {
-        setDisplayText((prev) => currentTitle.substring(0, prev.length - 1));
+    if (!isDeleting && displayText === currentTitle) {
+      pauseTimer = setTimeout(() => {
+        setIsDeleting(true);
         setTypingSpeed(45);
-      } else {
-        setDisplayText((prev) => currentTitle.substring(0, prev.length + 1));
-        setTypingSpeed(85);
-      }
+      }, 1800);
+      return () => {
+        if (pauseTimer) clearTimeout(pauseTimer);
+      };
+    }
 
-      if (!isDeleting && displayText === currentTitle) {
-        setTimeout(() => setIsDeleting(true), 1800);
-      } else if (isDeleting && displayText === "") {
-        setIsDeleting(false);
-        setLoopNum((prev) => prev + 1);
-        setTypingSpeed(200);
-      }
+    if (isDeleting && displayText === "") {
+      setIsDeleting(false);
+      setLoopNum((prev) => prev + 1);
+      setTypingSpeed(200);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setDisplayText((prev) =>
+        isDeleting
+          ? currentTitle.substring(0, prev.length - 1)
+          : currentTitle.substring(0, prev.length + 1)
+      );
+    }, typingSpeed);
+
+    return () => {
+      clearTimeout(timer);
+      if (pauseTimer) clearTimeout(pauseTimer);
     };
-
-    const timer = setTimeout(handleType, typingSpeed);
-    return () => clearTimeout(timer);
   }, [displayText, isDeleting, loopNum, typingSpeed]);
 
   const stats = [
@@ -291,10 +303,7 @@ const Intro = () => {
           </motion.div>
 
           {/* Dynamic Description */}
-          <motion.p
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.45 }}
+          <p
             className={`max-w-2xl text-sm sm:text-lg leading-relaxed ${
               darkMode ? "text-slate-300" : "text-slate-600"
             }`}
@@ -302,7 +311,7 @@ const Intro = () => {
             Result-driven Azure & .NET Developer with {yearsExp} of experience designing, developing, and deploying scalable web applications and APIs. Expertise in
             <strong className={`font-semibold ${darkMode ? "text-cyan-400" : "text-cyan-800"}`}> ASP.NET Core, Azure Services, RESTful & GraphQL APIs, OAuth 2.0, SQL Server, </strong>
             and modern frontend frameworks like React & TypeScript.
-          </motion.p>
+          </p>
 
           {/* CTA Action Buttons */}
           <motion.div

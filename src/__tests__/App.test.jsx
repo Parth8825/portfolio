@@ -5,7 +5,7 @@ import App from '../App';
 import { ThemeProvider } from '../context';
 
 describe('App Component', () => {
-  it('renders portfolio sections correctly', () => {
+  it('renders portfolio sections correctly', async () => {
     render(
       <ThemeProvider>
         <App />
@@ -22,6 +22,6 @@ describe('App Component', () => {
     expect(screen.getByText(/Career & Academic Journey/i)).toBeInTheDocument();
     expect(screen.getByText(/Skills &/i)).toBeInTheDocument();
     expect(screen.getAllByText(/Featured/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/Let's Discuss/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Let's Discuss/i)).toBeInTheDocument();
   });
 });
