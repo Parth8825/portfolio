@@ -69,12 +69,12 @@ const SkillCard = ({ cat, idx, darkMode }) => {
       initial={{ opacity: 0, scale: 0.9, y: 35 }}
       whileInView={{ opacity: 1, scale: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, delay: idx * 0.12 }}
+      transition={{ duration: 0.5, delay: idx * 0.06 }}
       onMouseMove={handleMouseMove}
-      className={`group relative p-5 sm:p-8 rounded-3xl border overflow-hidden transition-all duration-300 hover:-translate-y-1.5 ${
+      className={`portfolio-card group relative p-5 sm:p-8 rounded-3xl border overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
         darkMode
-          ? "bg-slate-900/85 backdrop-blur-md group-hover:bg-slate-950/15 group-hover:backdrop-blur-none border-slate-700/60 group-hover:border-cyan-500/60 shadow-lg group-hover:shadow-2xl group-hover:shadow-cyan-500/10"
-          : "bg-[#fbf9f5]/90 backdrop-blur-md group-hover:bg-[#ede8df]/25 group-hover:backdrop-blur-none border-[#d6cebf] group-hover:border-cyan-600/60 shadow-sm group-hover:shadow-lg"
+          ? "bg-slate-900/95 hover:bg-slate-900 border-slate-700/60 hover:border-cyan-500/40 shadow-lg group-hover:shadow-2xl group-hover:shadow-cyan-500/10"
+          : "bg-[#fbf9f5]/95 hover:bg-[#fbf9f5] border-[#d6cebf] hover:border-cyan-600/40 shadow-sm group-hover:shadow-lg"
       }`}
     >
       {/* Interactive Cursor Spotlight */}
@@ -120,9 +120,9 @@ const SkillCard = ({ cat, idx, darkMode }) => {
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.3, delay: idx * 0.1 + sIdx * 0.04 }}
+              transition={{ duration: 0.3, delay: sIdx * 0.025 }}
               whileHover={{ scale: 1.08 }}
-              className={`px-4 py-2 rounded-xl border text-sm font-medium transition-colors cursor-default ${
+              className={`px-3 py-2 rounded-xl border text-xs sm:text-sm font-medium transition-colors cursor-default ${
                 darkMode
                   ? "bg-slate-950/60 border-slate-700/80 text-white font-medium hover:border-cyan-400"
                   : "bg-[#ede8df] border-[#d6cebf] text-[#1c1917] font-semibold hover:border-cyan-600 shadow-2xs"

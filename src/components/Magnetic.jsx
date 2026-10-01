@@ -1,3 +1,4 @@
+import useReducedMotion from "../hooks/useReducedMotion";
 import React, { useRef } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
@@ -5,6 +6,7 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
  * Magnetic component that gently pulls children toward the cursor on hover.
  */
 const Magnetic = ({ children, strength = 0.35, className = "" }) => {
+  const reduceMotion = useReducedMotion();
   const ref = useRef(null);
 
   const x = useMotionValue(0);
@@ -31,9 +33,9 @@ const Magnetic = ({ children, strength = 0.35, className = "" }) => {
   return (
     <motion.div
       ref={ref}
-      onMouseMove={handleMouseMove}
+      onMouseMove={reduceMotion ? undefined : handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{ x: springX, y: springY }}
+      style={{ x: reduceMotion ? 0 : springX, y: reduceMotion ? 0 : springY }}
       className={`inline-block ${className}`}
     >
       {children}

@@ -1,9 +1,11 @@
+import useReducedMotion from "../hooks/useReducedMotion";
 import React, { useContext } from "react";
 import { ThemeContext } from "../context";
 import { Cpu, ShieldCheck, ArrowRight } from "lucide-react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 const Product = ({ title, company, desc, architecture, tags, onOpenModal, index = 0 }) => {
+  const reduceMotion = useReducedMotion();
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
 
@@ -43,15 +45,15 @@ const Product = ({ title, company, desc, architecture, tags, onOpenModal, index 
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.5, delay: index * 0.12 }}
-        whileHover={{ y: -6, scale: 1.01 }}
+        transition={{ duration: 0.5, delay: index * 0.06 }}
+        whileHover={reduceMotion ? undefined : { y: -4 }}
         style={{
-          rotateX,
-          rotateY,
+          rotateX: reduceMotion ? 0 : rotateX,
+          rotateY: reduceMotion ? 0 : rotateY,
           transformStyle: "preserve-3d",
         }}
         onClick={onOpenModal}
-        onMouseMove={handleMouseMove}
+        onMouseMove={reduceMotion ? undefined : handleMouseMove}
         onMouseLeave={handleMouseLeave}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -59,10 +61,10 @@ const Product = ({ title, company, desc, architecture, tags, onOpenModal, index 
             onOpenModal();
           }
         }}
-        className={`group relative h-full rounded-3xl border overflow-hidden transition-all duration-300 flex flex-col justify-between cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-cyan-500 ${
+        className={`portfolio-card group relative h-full rounded-3xl border overflow-hidden transition-all duration-300 flex flex-col justify-between cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-cyan-500 ${
           darkMode
-            ? "bg-slate-900/85 backdrop-blur-md group-hover:bg-slate-950/15 group-hover:backdrop-blur-none border-slate-700/60 group-hover:border-cyan-500/60 shadow-lg group-hover:shadow-2xl group-hover:shadow-cyan-500/10"
-            : "bg-[#fbf9f5]/90 backdrop-blur-md group-hover:bg-[#ede8df]/25 group-hover:backdrop-blur-none border-[#d6cebf] group-hover:border-cyan-600/60 shadow-sm group-hover:shadow-lg"
+            ? "bg-slate-900/95 hover:bg-slate-900 border-slate-700/60 hover:border-cyan-500/40 shadow-lg group-hover:shadow-2xl group-hover:shadow-cyan-500/10"
+            : "bg-[#fbf9f5]/95 hover:bg-[#fbf9f5] border-[#d6cebf] hover:border-cyan-600/40 shadow-sm group-hover:shadow-lg"
         }`}
       >
       {/* Interactive Cursor Spotlight Glow on Hover */}

@@ -105,3 +105,40 @@
   }
 }
 
+
+/* Keep the neon identity while giving text and interactive surfaces more clarity. */
+@layer base {
+  h1, h2, h3 { text-wrap: balance; }
+  button, a, [role="button"] { -webkit-tap-highlight-color: transparent; }
+  :focus-visible { outline: 2px solid #0891b2; outline-offset: 4px; }
+  html { scrollbar-color: #a8a29e #ede8df; }
+  html.dark { scrollbar-color: #475569 #020617; }
+}
+
+html:not(.dark) .text-gradient {
+  background-image: linear-gradient(120deg, #0e7490, #4338ca 60%, #7e22ce);
+}
+html:not(.dark) ::-webkit-scrollbar-track { background: #ede8df; }
+html:not(.dark) ::-webkit-scrollbar-thumb { background: #a8a29e; }
+
+.portfolio-card {
+  transition-property: background-color, border-color, box-shadow, translate;
+  transition-duration: 220ms;
+}
+
+/* Isolate fixed decoration layers so scrolling does not repaint the page behind them. */
+.site-backdrop,
+.site-spotlight {
+  contain: strict;
+}
+
+/* CSS decorations and hover effects also respect the system motion preference. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .portfolio-card:hover { translate: none; }
+}

@@ -1,3 +1,4 @@
+import { getScrollBehavior } from "../hooks/useReducedMotion";
 import React, { useContext } from "react";
 import { ThemeContext } from "../context";
 import { Code2, ArrowUp } from "lucide-react";
@@ -8,7 +9,7 @@ const Footer = () => {
   const darkMode = theme.state.darkMode;
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: getScrollBehavior() });
   };
 
   return (

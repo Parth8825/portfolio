@@ -1,3 +1,4 @@
+import useReducedMotion from "./hooks/useReducedMotion";
 import React, { useContext, useState, useEffect, lazy, Suspense } from "react";
 import Navbar from "./components/Navbar";
 import Intro from "./components/Intro";
@@ -8,12 +9,14 @@ import Footer from "./components/Footer";
 import LazySection from "./components/LazySection";
 import { ThemeContext } from "./context";
 import { AnimatePresence, motion, useMotionValue, useScroll, useSpring } from "framer-motion";
+import { scrollToSection } from "./utils/scroll";
 
 const CodeShowcase = lazy(() => import("./components/CodeShowcase"));
 const Contact = lazy(() => import("./components/Contact"));
 const CommandPalette = lazy(() => import("./components/CommandPalette"));
 
 function App() {
+  const reduceMotion = useReducedMotion();
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
@@ -47,7 +50,7 @@ function App() {
   const smoothMouseY = useSpring(mouseY, { stiffness: 100, damping: 20, mass: 0.1 });
 
   useEffect(() => {
-    if (!isFinePointer) return;
+    if (!isFinePointer || reduceMotion) return;
 
     let rafId = null;
     const handleMouseMove = (e) => {
@@ -64,7 +67,7 @@ function App() {
       window.removeEventListener("mousemove", handleMouseMove);
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [isFinePointer, mouseX, mouseY]);
+  }, [isFinePointer, reduceMotion, mouseX, mouseY]);
 
   useEffect(() => {
     const handleGlobalKeyDown = (e) => {
@@ -88,12 +91,7 @@ function App() {
       const targetElem = document.getElementById(targetId);
       if (targetElem) {
         e.preventDefault();
-        const navOffset = 80;
-        const elementPosition = targetElem.getBoundingClientRect().top + window.pageYOffset;
-        window.scrollTo({
-          top: Math.max(0, elementPosition - navOffset),
-          behavior: "smooth",
-        });
+        scrollToSection(targetId);
         if (typeof window !== "undefined" && window.history?.pushState) {
           window.history.pushState(null, "", `#${targetId}`);
         }
@@ -112,47 +110,45 @@ function App() {
       {/* Top Neon Scroll Reading Progress Bar */}
       <motion.div
         style={{ scaleX }}
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-500 origin-left z-[60] pointer-events-none shadow-sm shadow-cyan-500/50"
+        className="fixed top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-500 origin-left z-[60] pointer-events-none shadow-sm shadow-cyan-500/50"
       />
 
       {/* Balanced, Spacious Cyber Dot-Grid (Warm Tone in Light Mode for Zero Eye Strain) */}
       <div
-        className="fixed inset-0 pointer-events-none z-0 transition-opacity duration-500"
+        className="site-backdrop fixed inset-0 pointer-events-none z-0 transition-opacity duration-500"
         style={{
           backgroundImage: darkMode
             ? "radial-gradient(rgba(148, 163, 184, 0.38) 1.5px, transparent 1.5px)"
             : "radial-gradient(rgba(120, 113, 108, 0.3) 1.5px, transparent 1.5px)",
           backgroundSize: "36px 36px",
-          opacity: darkMode ? 0.9 : 0.7,
+          opacity: darkMode ? 0.28 : 0.22,
         }}
       />
 
       {/* Site-Wide Ambient Spotlight: Animated for mouse devices, stationary & zero-cost on touch */}
-      {isFinePointer ? (
+      {isFinePointer && !reduceMotion ? (
         <motion.div
-          className="fixed pointer-events-none z-0 rounded-full transition-opacity duration-300"
+          className="site-spotlight fixed pointer-events-none z-0 rounded-full transition-opacity duration-300"
           style={{
             x: smoothMouseX,
             y: smoothMouseY,
             translateX: "-50%",
             translateY: "-50%",
-            width: 650,
-            height: 650,
+            width: 720,
+            height: 720,
             background: darkMode
-              ? "radial-gradient(circle, rgba(6, 182, 212, 0.16) 0%, rgba(99, 102, 241, 0.08) 45%, transparent 75%)"
-              : "radial-gradient(circle, rgba(14, 165, 233, 0.12) 0%, rgba(99, 102, 241, 0.06) 45%, transparent 75%)",
-            filter: "blur(40px)",
+              ? "radial-gradient(circle, rgba(6, 182, 212, 0.13) 0%, rgba(99, 102, 241, 0.06) 34%, transparent 70%)"
+              : "radial-gradient(circle, rgba(14, 165, 233, 0.1) 0%, rgba(99, 102, 241, 0.05) 34%, transparent 70%)",
             willChange: "transform",
           }}
         />
       ) : (
         <div
-          className="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] rounded-full pointer-events-none z-0 transition-opacity duration-300"
+          className="site-spotlight fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] rounded-full pointer-events-none z-0 transition-opacity duration-300"
           style={{
             background: darkMode
-              ? "radial-gradient(circle, rgba(6, 182, 212, 0.22) 0%, rgba(99, 102, 241, 0.1) 50%, transparent 75%)"
-              : "radial-gradient(circle, rgba(14, 165, 233, 0.16) 0%, rgba(99, 102, 241, 0.08) 50%, transparent 75%)",
-            filter: "blur(50px)",
+              ? "radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, rgba(99, 102, 241, 0.07) 38%, transparent 72%)"
+              : "radial-gradient(circle, rgba(14, 165, 233, 0.11) 0%, rgba(99, 102, 241, 0.05) 38%, transparent 72%)",
           }}
         />
       )}

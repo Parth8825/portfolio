@@ -1,3 +1,4 @@
+import useReducedMotion from "../hooks/useReducedMotion";
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { ThemeContext } from "../context";
 import { ArrowRight, Mail, Sparkles, Code2, Globe2, Award, Zap } from "lucide-react";
@@ -18,15 +19,19 @@ const titles = [
 
 // Interactive 3D Spatial Parallax Avatar (Moves Face with True 3D Depth)
 const TiltAvatar = () => {
+  const reduceMotion = useReducedMotion();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
   const mouseXSpring = useSpring(x, { stiffness: 180, damping: 20 });
   const mouseYSpring = useSpring(y, { stiffness: 180, damping: 20 });
 
+  const backdropX = useTransform(mouseXSpring, [-0.5, 0.5], ["20px", "-20px"]);
+  const backdropY = useTransform(mouseYSpring, [-0.5, 0.5], ["20px", "-20px"]);
+
   // 3D Card Rotation
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["16deg", "-16deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-16deg", "16deg"]);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["8deg", "-8deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-8deg", "8deg"]);
 
   // 3D Parallax Face Movement (Independent inner depth plane)
   const faceTranslateX = useTransform(mouseXSpring, [-0.5, 0.5], ["-22px", "22px"]);
@@ -62,18 +67,18 @@ const TiltAvatar = () => {
       {/* Glowing backdrop card with dynamic shift */}
       <motion.div
         style={{
-          x: useTransform(mouseXSpring, [-0.5, 0.5], ["20px", "-20px"]),
-          y: useTransform(mouseYSpring, [-0.5, 0.5], ["20px", "-20px"]),
+          x: reduceMotion ? 0 : backdropX,
+          y: reduceMotion ? 0 : backdropY,
         }}
         className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 rotate-6 opacity-35 blur-xl pointer-events-none"
       />
 
       <motion.div
-        onMouseMove={handleMouseMove}
+        onMouseMove={reduceMotion ? undefined : handleMouseMove}
         onMouseLeave={handleLeave}
         style={{
-          rotateX,
-          rotateY,
+          rotateX: reduceMotion ? 0 : rotateX,
+          rotateY: reduceMotion ? 0 : rotateY,
           transformStyle: "preserve-3d",
         }}
         className="absolute inset-0 rounded-3xl bg-slate-900 border-2 border-slate-700/80 overflow-hidden shadow-2xl flex items-center justify-center group cursor-grab active:cursor-grabbing"
@@ -88,8 +93,8 @@ const TiltAvatar = () => {
         {/* 3D Parallax Moving Face Layer */}
         <motion.div
           style={{
-            x: faceTranslateX,
-            y: faceTranslateY,
+            x: reduceMotion ? 0 : faceTranslateX,
+            y: reduceMotion ? 0 : faceTranslateY,
             scale: 1.15,
           }}
           className="w-full h-full pointer-events-none select-none"
@@ -108,8 +113,8 @@ const TiltAvatar = () => {
         {/* Dynamic Holographic Reflection Sheen */}
         <motion.div
           style={{
-            x: glareX,
-            y: glareY,
+            x: reduceMotion ? 0 : glareX,
+            y: reduceMotion ? 0 : glareY,
             opacity: glareOpacity,
           }}
           className="pointer-events-none absolute -inset-full bg-gradient-to-tr from-transparent via-white/25 to-transparent rotate-45 z-20"
@@ -118,8 +123,8 @@ const TiltAvatar = () => {
         {/* Floating 3D Tech Badge that pops out in front */}
         <motion.div
           style={{
-            x: badgeTranslateX,
-            y: badgeTranslateY,
+            x: reduceMotion ? 0 : badgeTranslateX,
+            y: reduceMotion ? 0 : badgeTranslateY,
           }}
           className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-2.5 sm:p-3 rounded-2xl glass-panel text-left flex items-center justify-between border border-white/20 z-25 shadow-xl backdrop-blur-md"
         >
@@ -136,6 +141,7 @@ const TiltAvatar = () => {
 
 // Fluid Spring/Timer Animated Counter for hero metrics
 const AnimatedCounter = ({ value }) => {
+  const reduceMotion = useReducedMotion();
   const match = String(value).match(/^(\d+)(.*)$/);
   const targetNum = match ? parseInt(match[1], 10) : 0;
   const suffix = match ? match[2] : "";
@@ -145,7 +151,7 @@ const AnimatedCounter = ({ value }) => {
   const isInView = useInView(ref, { once: true });
 
   useEffect(() => {
-    if (isInView && targetNum > 0) {
+    if (!reduceMotion && isInView && targetNum > 0) {
       let start = 0;
       const duration = 1200;
       const stepTime = Math.max(Math.floor(duration / targetNum), 20);
@@ -160,16 +166,19 @@ const AnimatedCounter = ({ value }) => {
       }, stepTime);
       return () => clearInterval(interval);
     }
-  }, [isInView, targetNum]);
+  }, [isInView, targetNum, reduceMotion]);
 
   return (
     <span ref={ref}>
-      {count}{suffix}
+      {reduceMotion ? targetNum : count}{suffix}
     </span>
   );
 };
 
 const Intro = () => {
+  const sectionRef = useRef(null);
+  const isVisible = useInView(sectionRef);
+  const reduceMotion = useReducedMotion();
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
   const yearsExp = getYearsOfExperience();
@@ -181,6 +190,7 @@ const Intro = () => {
   const [typingSpeed, setTypingSpeed] = useState(85);
 
   useEffect(() => {
+    if (reduceMotion || !isVisible) return;
     let pauseTimer = null;
     const currentTitle = titles[loopNum % titles.length];
 
@@ -213,7 +223,7 @@ const Intro = () => {
       clearTimeout(timer);
       if (pauseTimer) clearTimeout(pauseTimer);
     };
-  }, [displayText, isDeleting, loopNum, typingSpeed]);
+  }, [displayText, isDeleting, loopNum, typingSpeed, reduceMotion, isVisible]);
 
   const stats = [
     {
@@ -239,7 +249,7 @@ const Intro = () => {
   ];
 
   return (
-    <section id="home" className="min-h-screen pt-28 pb-16 flex items-center relative overflow-hidden">
+    <section ref={sectionRef} id="home" className="min-h-screen pt-28 pb-16 flex items-center relative overflow-hidden">
       {/* Ambient background glow elements */}
       <div className="absolute top-1/4 left-10 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -249,7 +259,7 @@ const Intro = () => {
         <div className="lg:col-span-7 space-y-6 text-left">
           {/* Status Badge */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: -24 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             className={`inline-flex max-w-full items-center gap-2 px-3.5 py-2 sm:py-1.5 rounded-2xl sm:rounded-full border text-[11px] sm:text-xs font-semibold tracking-wide uppercase leading-relaxed shadow-sm ${
@@ -270,7 +280,7 @@ const Intro = () => {
 
           {/* Heading */}
           <motion.div
-            initial={{ opacity: 0, x: -60 }}
+            initial={{ opacity: 0, x: -24 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="space-y-2"
@@ -286,9 +296,9 @@ const Intro = () => {
 
           {/* Animated Mechanical Typewriter Role Switcher */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: -24 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.35 }}
+            transition={{ duration: 0.5, delay: 0.15 }}
             className="min-h-12 flex flex-wrap items-center"
           >
             <span className={`text-lg sm:text-2xl font-semibold ${darkMode ? "text-cyan-400" : "text-cyan-700"}`}>I am a </span>
@@ -297,7 +307,7 @@ const Intro = () => {
                 darkMode ? "text-indigo-300" : "text-indigo-600"
               }`}
             >
-              {displayText}
+              {reduceMotion ? titles[0] : displayText}
             </span>
             <span className="inline-block w-0.5 sm:w-1 h-5 sm:h-7 bg-cyan-400 ml-1.5 translate-y-0.5 rounded-full animate-pulse shadow-xs shadow-cyan-400" />
           </motion.div>
@@ -315,9 +325,9 @@ const Intro = () => {
 
           {/* CTA Action Buttons */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: -24 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.55 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
             className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4"
           >
             <Magnetic strength={0.25} className="w-full sm:w-auto">
@@ -397,7 +407,7 @@ const Intro = () => {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.65 }}
+            transition={{ duration: 0.6, delay: 0.25 }}
             className="pt-6 border-t border-slate-800/40 grid grid-cols-2 sm:grid-cols-4 gap-3"
           >
             {stats.map((st, sIdx) => (
@@ -406,11 +416,11 @@ const Intro = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 whileHover={{ y: -5, scale: 1.03 }}
-                transition={{ duration: 0.3, delay: 0.7 + sIdx * 0.1 }}
+                transition={{ duration: 0.3, delay: sIdx * 0.05 }}
                 className={`p-3.5 rounded-2xl border transition-all duration-300 cursor-default ${
                   darkMode
-                    ? "bg-slate-900/85 backdrop-blur-md hover:bg-slate-950/15 hover:backdrop-blur-none border-slate-700/60 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/10"
-                    : "bg-[#fbf9f5]/90 backdrop-blur-md hover:bg-[#ede8df]/25 hover:backdrop-blur-none border-[#d6cebf] shadow-2xs hover:border-cyan-600/50 hover:shadow-md"
+                    ? "bg-slate-900/95 border-slate-700/60 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/10"
+                    : "bg-[#fbf9f5]/95 border-[#d6cebf] shadow-2xs hover:border-cyan-600/50 hover:shadow-md"
                 }`}
               >
                 <div className="flex items-center gap-2 mb-1">

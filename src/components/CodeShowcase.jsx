@@ -1,3 +1,4 @@
+import { getScrollBehavior } from "../hooks/useReducedMotion";
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { ThemeContext } from "../context";
 import { Code2, Copy, Check, Terminal, ShieldAlert, FileCode, Minus, Square, X, Play } from "lucide-react";
@@ -325,7 +326,7 @@ const CodeShowcase = () => {
 
         setTimeout(() => {
           if (typeof drawerRef.current?.scrollIntoView === "function") {
-            drawerRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+            drawerRef.current.scrollIntoView({ behavior: getScrollBehavior(), block: "center" });
           }
         }, 120);
       } else {

@@ -1,8 +1,9 @@
-import React, { useContext } from "react";
+import useReducedMotion from "../hooks/useReducedMotion";
+import React, { useContext, useRef } from "react";
 import { ThemeContext } from "../context";
 import { experienceData } from "../data";
 import { Briefcase, GraduationCap, MapPin, Calendar, CheckCircle2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 
 // Frosted Glass Experience Card with Cursor & Touch Spotlight
 const ExperienceCard = ({ item, isEven, darkMode }) => {
@@ -15,10 +16,10 @@ const ExperienceCard = ({ item, isEven, darkMode }) => {
   return (
     <div
       onMouseMove={handleMouseMove}
-      className={`group relative w-full ml-13 md:ml-0 md:w-[calc(50%-3rem)] p-5 sm:p-8 rounded-3xl border transition-all duration-300 hover:-translate-y-1.5 overflow-hidden ${
+      className={`portfolio-card group relative w-[calc(100%-3.25rem)] ml-13 md:ml-0 md:w-[calc(50%-3rem)] p-5 sm:p-8 rounded-3xl border transition-all duration-300 hover:-translate-y-1 overflow-hidden ${
         darkMode
-          ? "bg-slate-900/85 backdrop-blur-md group-hover:bg-slate-950/15 group-hover:backdrop-blur-none border-slate-700/60 group-hover:border-cyan-500/60 shadow-lg group-hover:shadow-2xl group-hover:shadow-cyan-500/10"
-          : "bg-[#fbf9f5]/90 backdrop-blur-md group-hover:bg-[#ede8df]/25 group-hover:backdrop-blur-none border-[#d6cebf] group-hover:border-cyan-600/60 shadow-sm group-hover:shadow-lg"
+          ? "bg-slate-900/95 hover:bg-slate-900 border-slate-700/60 hover:border-cyan-500/40 shadow-lg group-hover:shadow-2xl group-hover:shadow-cyan-500/10"
+          : "bg-[#fbf9f5]/95 hover:bg-[#fbf9f5] border-[#d6cebf] hover:border-cyan-600/40 shadow-sm group-hover:shadow-lg"
       } ${isEven ? "md:mr-auto" : "md:ml-auto"}`}
     >
       {/* Interactive Cursor Spotlight Glow */}
@@ -106,17 +107,20 @@ const ExperienceCard = ({ item, isEven, darkMode }) => {
 };
 
 const Experience = () => {
+  const reduceMotion = useReducedMotion();
+  const sectionRef = useRef(null);
+  const isVisible = useInView(sectionRef);
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
 
   return (
-    <section id="experience" className="py-24 relative overflow-hidden">
+    <section ref={sectionRef} id="experience" className="py-24 relative overflow-hidden">
       {/* Target anchor alias for legacy #about links */}
       <div id="about" className="absolute -top-24" />
 
       {/* Ambient background glow elements */}
-      <div className="absolute top-1/3 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none animate-pulse-glow" />
-      <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none animate-pulse-glow" />
+      <div className="absolute top-1/3 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Title Header */}
@@ -150,9 +154,7 @@ const Experience = () => {
           <div className="absolute top-0 bottom-0 left-5 md:left-1/2 -translate-x-1/2 w-1.5 overflow-hidden pointer-events-none rounded-full">
             <motion.div
               style={{ position: "absolute", left: 0, right: 0 }}
-              animate={{
-                top: ["-10%", "105%"],
-              }}
+              animate={{ top: reduceMotion || !isVisible ? "0%" : ["-10%", "105%"] }}
               transition={{
                 duration: 5.5,
                 repeat: Infinity,

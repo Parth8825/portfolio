@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { ThemeContext } from "../context";
 import { Sun, Moon, Menu, X, Code2, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { scrollToSection } from "../utils/scroll";
 
 const Navbar = ({ onOpenCommandPalette }) => {
   const theme = useContext(ThemeContext);
@@ -12,31 +13,63 @@ const Navbar = ({ onOpenCommandPalette }) => {
   const [activeSection, setActiveSection] = useState("home");
 
   useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 20);
+    let scrollFrame = null;
+    let resizeFrame = null;
+    const sectionIds = ["home", "experience", "skills", "code-showcase", "projects", "contact"];
+    let sectionOffsets = [];
 
-          const sectionIds = ["home", "experience", "skills", "code-showcase", "projects", "contact"];
+    const updateSectionOffsets = () => {
+      sectionOffsets = sectionIds
+        .map((id) => {
+          const section = document.getElementById(id);
+          return section ? { id, top: section.offsetTop } : null;
+        })
+        .filter(Boolean);
+    };
+
+    const scheduleOffsetUpdate = () => {
+      if (resizeFrame) return;
+      resizeFrame = window.requestAnimationFrame(() => {
+        updateSectionOffsets();
+        resizeFrame = null;
+      });
+    };
+
+    const handleScroll = () => {
+      if (!scrollFrame) {
+        scrollFrame = window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 20);
           const scrollPosition = window.scrollY + 140;
 
-          for (let i = sectionIds.length - 1; i >= 0; i--) {
-            const section = document.getElementById(sectionIds[i]);
-            if (section && section.offsetTop <= scrollPosition) {
-              setActiveSection((prev) => (prev !== sectionIds[i] ? sectionIds[i] : prev));
+          for (let i = sectionOffsets.length - 1; i >= 0; i--) {
+            if (sectionOffsets[i].top <= scrollPosition) {
+              setActiveSection((prev) => (prev !== sectionOffsets[i].id ? sectionOffsets[i].id : prev));
               break;
             }
           }
-          ticking = false;
+          scrollFrame = null;
         });
-        ticking = true;
       }
     };
 
+    updateSectionOffsets();
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", scheduleOffsetUpdate, { passive: true });
+
+    const main = document.querySelector("main");
+    const resizeObserver = main && typeof ResizeObserver !== "undefined"
+      ? new ResizeObserver(scheduleOffsetUpdate)
+      : null;
+    resizeObserver?.observe(main);
+
     handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", scheduleOffsetUpdate);
+      resizeObserver?.disconnect();
+      if (scrollFrame) window.cancelAnimationFrame(scrollFrame);
+      if (resizeFrame) window.cancelAnimationFrame(resizeFrame);
+    };
   }, []);
 
   useEffect(() => {
@@ -68,20 +101,13 @@ const Navbar = ({ onOpenCommandPalette }) => {
     const targetElement = document.getElementById(targetId);
 
     if (targetElement) {
-      setTimeout(() => {
-        const navOffset = 80;
-        const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
-        const offsetPosition = elementPosition - navOffset;
-
-        window.scrollTo({
-          top: Math.max(0, offsetPosition),
-          behavior: "smooth",
-        });
+      window.requestAnimationFrame(() => {
+        scrollToSection(targetId);
 
         if (typeof window !== "undefined" && window.history?.pushState) {
           window.history.pushState(null, "", href);
         }
-      }, 50);
+      });
     }
   };
 
@@ -128,6 +154,7 @@ const Navbar = ({ onOpenCommandPalette }) => {
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
+                aria-current={isActive ? "location" : undefined}
                 className={`relative text-sm font-medium transition-colors cursor-pointer ${
                   isActive
                     ? darkMode
@@ -184,6 +211,8 @@ const Navbar = ({ onOpenCommandPalette }) => {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle Navigation Menu"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
             className={`md:hidden p-2.5 rounded-xl border transition-all duration-200 active:scale-95 ${
               darkMode
                 ? "bg-slate-900 border-slate-800 text-slate-200"
@@ -199,6 +228,7 @@ const Navbar = ({ onOpenCommandPalette }) => {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
+            id="mobile-navigation"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
@@ -216,6 +246,7 @@ const Navbar = ({ onOpenCommandPalette }) => {
                   key={link.name}
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
+                aria-current={isActive ? "location" : undefined}
                   className={`block px-3 py-2.5 rounded-xl text-base font-medium transition-colors cursor-pointer active:scale-[0.98] ${
                     isActive
                       ? darkMode

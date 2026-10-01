@@ -1,3 +1,4 @@
+import useReducedMotion from "../hooks/useReducedMotion";
 import React, { useContext, useRef, useState, useEffect } from "react";
 import { ThemeContext } from "../context";
 import emailjs from "@emailjs/browser";
@@ -92,6 +93,7 @@ const triggerConfetti = () => {
 };
 
 const Contact = () => {
+  const reduceMotion = useReducedMotion();
   const formRef = useRef();
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
@@ -111,10 +113,10 @@ const Contact = () => {
   const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
-    if (submitted) {
+    if (submitted && !reduceMotion) {
       triggerConfetti();
     }
-  }, [submitted]);
+  }, [submitted, reduceMotion]);
 
   // Submission cooldown countdown timer (prevents accidental / repeated sends)
   useEffect(() => {
@@ -282,8 +284,8 @@ const Contact = () => {
           >
             <div className={`p-5 sm:p-8 rounded-3xl border space-y-8 transition-all duration-300 ${
               darkMode
-                ? "bg-slate-900/85 backdrop-blur-md hover:bg-slate-950/20 hover:backdrop-blur-none border-slate-700/60 hover:border-cyan-500/50 shadow-lg hover:shadow-cyan-500/10"
-                : "bg-[#fbf9f5]/90 backdrop-blur-md hover:bg-[#ede8df]/30 hover:backdrop-blur-none border-[#d6cebf] shadow-sm"
+                ? "bg-slate-900/95 border-slate-700/60 hover:border-cyan-500/50 shadow-lg hover:shadow-cyan-500/10"
+                : "bg-[#fbf9f5]/95 border-[#d6cebf] shadow-sm"
             }`}>
               <div>
                 <h3 className={`text-2xl font-extrabold mb-2 ${darkMode ? "text-white" : "text-[#1c1917]"}`}>
@@ -337,8 +339,8 @@ const Contact = () => {
           >
             <div className={`p-5 sm:p-10 rounded-3xl border transition-all duration-300 ${
               darkMode
-                ? "bg-slate-900/85 backdrop-blur-md hover:bg-slate-950/20 hover:backdrop-blur-none border-slate-700/60 hover:border-cyan-500/50 shadow-lg hover:shadow-cyan-500/10"
-                : "bg-[#fbf9f5]/90 backdrop-blur-md hover:bg-[#ede8df]/30 hover:backdrop-blur-none border-[#d6cebf] shadow-sm"
+                ? "bg-slate-900/95 border-slate-700/60 hover:border-cyan-500/50 shadow-lg hover:shadow-cyan-500/10"
+                : "bg-[#fbf9f5]/95 border-[#d6cebf] shadow-sm"
             }`}>
               <form ref={formRef} onSubmit={handleSubmit} noValidate autoComplete="off" className="space-y-6 text-left">
                 {/* Hidden Honeypot Field for Spam Bot Protection */}
