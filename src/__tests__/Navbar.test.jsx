@@ -1,8 +1,18 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import Navbar from '../components/Navbar';
 import { ThemeProvider } from '../context';
+
+beforeEach(() => {
+  localStorage.clear();
+  document.documentElement.classList.remove('dark');
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+  delete document.startViewTransition;
+});
 
 describe('Navbar Component', () => {
   it('renders navigation links and handles theme toggle', () => {
@@ -52,37 +62,53 @@ describe('Navbar Component', () => {
     expect(toggleButton).toBeInTheDocument();
   });
 
-  it('updates the active link from cached section positions while scrolling', async () => {
-    const offsets = {
-      home: 0,
-      experience: 500,
-      skills: 1000,
-      'code-showcase': 1500,
-      projects: 2000,
-      contact: 2500,
-    };
-    const offsetSpy = vi.spyOn(HTMLElement.prototype, 'offsetTop', 'get')
-      .mockImplementation(function getOffsetTop() {
-        return offsets[this.id] ?? 0;
-      });
-    Object.defineProperty(window, 'scrollY', { value: 500, writable: true, configurable: true });
+  it('uses the shared active section supplied by the app', () => {
+    render(
+      <ThemeProvider>
+        <Navbar activeSection="experience" />
+      </ThemeProvider>
+    );
+
+    expect(screen.getAllByRole('link', { name: 'Experience' })[0]).toHaveAttribute('aria-current', 'location');
+    expect(screen.getAllByRole('link', { name: 'Home' })[0]).not.toHaveAttribute('aria-current');
+  });
+
+  it('uses the View Transition API when supported', () => {
+    const startViewTransition = vi.fn((update) => {
+      update();
+      return { finished: Promise.resolve() };
+    });
+    document.startViewTransition = startViewTransition;
 
     render(
       <ThemeProvider>
         <Navbar />
-        <main>
-          {Object.keys(offsets).map((id) => <section id={id} key={id} />)}
-        </main>
       </ThemeProvider>
     );
 
-    fireEvent.scroll(window);
+    fireEvent.click(screen.getByLabelText('Toggle Theme'), { clientX: 120, clientY: 40 });
+    expect(startViewTransition).toHaveBeenCalledTimes(1);
+    expect(document.documentElement.style.getPropertyValue('--theme-transition-x')).toBe('120px');
+    expect(localStorage.getItem('portfolio_theme')).toBe('dark');
+  });
 
-    await waitFor(() => {
-      expect(screen.getAllByRole('link', { name: 'Experience' })[0]).toHaveAttribute('aria-current', 'location');
-    });
+  it('bypasses the View Transition API for reduced motion', () => {
+    const startViewTransition = vi.fn();
+    document.startViewTransition = startViewTransition;
+    vi.spyOn(window, 'matchMedia').mockImplementation((query) => ({
+      matches: query === '(prefers-reduced-motion: reduce)' || query === '(prefers-color-scheme: dark)',
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
 
-    offsetSpy.mockRestore();
-    window.scrollY = 0;
+    render(
+      <ThemeProvider>
+        <Navbar />
+      </ThemeProvider>
+    );
+
+    fireEvent.click(screen.getByLabelText('Toggle Theme'));
+    expect(startViewTransition).not.toHaveBeenCalled();
+    expect(localStorage.getItem('portfolio_theme')).toBe('dark');
   });
 });

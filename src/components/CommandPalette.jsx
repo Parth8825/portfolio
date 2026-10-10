@@ -69,10 +69,8 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to Home / Hero",
       category: "Navigation",
       action: () => {
+        scrollToSection("home");
         onClose();
-        setTimeout(() => {
-          scrollToSection("home");
-        }, 80);
       },
     },
     {
@@ -81,10 +79,8 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to Enterprise Projects",
       category: "Navigation",
       action: () => {
+        scrollToSection("projects");
         onClose();
-        setTimeout(() => {
-          scrollToSection("projects");
-        }, 80);
       },
     },
     {
@@ -93,10 +89,8 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to Career Experience & Education",
       category: "Navigation",
       action: () => {
+        scrollToSection("experience");
         onClose();
-        setTimeout(() => {
-          scrollToSection("experience");
-        }, 80);
       },
     },
     {
@@ -105,10 +99,8 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to Technical Toolkit",
       category: "Navigation",
       action: () => {
+        scrollToSection("skills");
         onClose();
-        setTimeout(() => {
-          scrollToSection("skills");
-        }, 80);
       },
     },
     {
@@ -117,10 +109,8 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to C# & SQL Code Showcase",
       category: "Navigation",
       action: () => {
+        scrollToSection("code-showcase");
         onClose();
-        setTimeout(() => {
-          scrollToSection("code-showcase");
-        }, 80);
       },
     },
     {
@@ -129,10 +119,8 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to Contact Form",
       category: "Navigation",
       action: () => {
+        scrollToSection("contact");
         onClose();
-        setTimeout(() => {
-          scrollToSection("contact");
-        }, 80);
       },
     },
     {

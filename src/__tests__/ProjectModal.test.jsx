@@ -33,6 +33,8 @@ describe('ProjectModal Component', () => {
     expect(screen.getByText('ASP.NET Core + Azure App Services')).toBeInTheDocument();
     expect(screen.getByText(/sub-100ms response time/i)).toBeInTheDocument();
     expect(screen.getByText(/OAuth 2.0 \/ Entra ID token security/i)).toBeInTheDocument();
+    expect(screen.getByText('PROJECT 01')).toBeInTheDocument();
+    expect(screen.getByRole('list', { name: 'Key technical achievements' })).toBeInTheDocument();
   });
 
   it('calls onClose when close button or escape key is pressed', () => {
@@ -100,5 +102,21 @@ describe('ProjectModal Component', () => {
     unmount();
     expect(document.activeElement).toBe(triggerBtn);
     document.body.removeChild(triggerBtn);
+  });
+
+  it('marks the dialog for static rendering when reduced motion is requested', () => {
+    vi.spyOn(window, 'matchMedia').mockImplementation((query) => ({
+      matches: query === '(prefers-reduced-motion: reduce)',
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
+
+    render(
+      <ThemeProvider>
+        <ProjectModal project={dummyProject} onClose={vi.fn()} />
+      </ThemeProvider>
+    );
+
+    expect(screen.getByRole('dialog')).toHaveAttribute('data-reduced-motion', 'true');
   });
 });

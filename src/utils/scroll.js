@@ -6,6 +6,8 @@ const hasPendingSectionBefore = (target) =>
   );
 
 export const scrollToSection = (targetId, navOffset = 80) => {
+  if (typeof document === "undefined" || !document.getElementById(targetId)) return;
+
   const startedAt = performance.now();
   document.dispatchEvent(new CustomEvent("portfolio:navigate", { detail: { targetId } }));
 
@@ -26,4 +28,11 @@ export const scrollToSection = (targetId, navOffset = 80) => {
   };
 
   window.requestAnimationFrame(scrollWhenReady);
+};
+
+export const navigateToSection = (targetId) => {
+  scrollToSection(targetId);
+  if (typeof window !== "undefined" && window.history?.pushState) {
+    window.history.pushState(null, "", `#${targetId}`);
+  }
 };

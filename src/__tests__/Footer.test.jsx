@@ -18,6 +18,10 @@ describe('Footer Component', () => {
     expect(screen.getByText('Parth Darji')).toBeInTheDocument();
     expect(screen.getByText(/Software Developer/i)).toBeInTheDocument();
     expect(screen.getByText(new RegExp(new Date().getFullYear().toString()))).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: /footer navigation/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'GitHub Profile' })).toHaveAttribute('href', 'https://github.com/Parth8825');
+    expect(screen.getByRole('link', { name: 'LinkedIn Profile' })).toHaveAttribute('href', 'https://www.linkedin.com/in/parthdarji8825');
+    expect(screen.getByRole('link', { name: 'Email Me' })).toHaveAttribute('href', 'mailto:parthdarji8825@gmail.com');
 
     const topBtn = screen.getByRole('button', { name: /scroll to top/i });
     expect(topBtn).toBeInTheDocument();

@@ -25,9 +25,14 @@ describe('scrollToSection', () => {
       return frames.length;
     });
     const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    const navigateListener = vi.fn();
+    document.addEventListener('portfolio:navigate', navigateListener);
     Object.defineProperty(window, 'pageYOffset', { value: 100, configurable: true });
 
     scrollToSection('projects');
+    expect(navigateListener).toHaveBeenCalledWith(expect.objectContaining({
+      detail: { targetId: 'projects' },
+    }));
     frames.shift()(0);
     expect(scrollTo).not.toHaveBeenCalled();
 

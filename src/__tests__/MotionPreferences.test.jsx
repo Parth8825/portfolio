@@ -3,6 +3,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act, render, renderHook, screen } from '@testing-library/react';
 import useReducedMotion, { getScrollBehavior } from '../hooks/useReducedMotion';
 import Intro from '../components/Intro';
+import Experience from '../components/Experience';
+import Skills from '../components/Skills';
 import { ThemeProvider } from '../context';
 
 afterEach(() => vi.restoreAllMocks());
@@ -33,10 +35,11 @@ describe('Motion preferences', () => {
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
     }));
-    render(<ThemeProvider><Intro /></ThemeProvider>);
+    const { container } = render(<ThemeProvider><Intro /></ThemeProvider>);
     expect(screen.getByText('Software Developer')).toBeInTheDocument();
     expect(screen.getByText('100%')).toBeInTheDocument();
     expect(screen.getByText('5+')).toBeInTheDocument();
+    expect(container.querySelector('[data-avatar-status]')).not.toHaveClass('animate-pulse');
   });
 
   it('keeps the LCP description visible without a motion entrance and prioritizes the avatar', () => {
@@ -48,5 +51,23 @@ describe('Motion preferences', () => {
     const avatar = screen.getByAltText('Parth Darji - Software Developer');
     expect(avatar).toHaveAttribute('fetchpriority', 'high');
     expect(avatar).toHaveAttribute('decoding', 'async');
+  });
+
+  it('marks the timeline and skill grid for static reduced-motion rendering', () => {
+    vi.spyOn(window, 'matchMedia').mockImplementation((query) => ({
+      matches: query === '(prefers-reduced-motion: reduce)',
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
+
+    const { container } = render(
+      <ThemeProvider>
+        <Experience />
+        <Skills />
+      </ThemeProvider>
+    );
+
+    expect(container.querySelector('#experience')).toHaveAttribute('data-reduced-motion', 'true');
+    expect(container.querySelector('#skills')).toHaveAttribute('data-reduced-motion', 'true');
   });
 });

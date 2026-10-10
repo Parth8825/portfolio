@@ -6,8 +6,17 @@ import { enterpriseProjects } from "../data";
 import { FolderCode, Mail } from "lucide-react";
 import { LinkedinIcon } from "./Icons";
 import { motion, AnimatePresence } from "framer-motion";
+import SectionEyebrow from "./SectionEyebrow";
 
 const ProjectModal = lazy(() => import("./ProjectModal"));
+
+const projectAccents = [
+  "6 182 212",
+  "99 102 241",
+  "168 85 247",
+  "244 63 94",
+  "16 185 129",
+];
 
 const ModalFallback = () => {
   if (typeof document === "undefined") return null;
@@ -29,7 +38,7 @@ const ProductList = () => {
   const [selectedProject, setSelectedProject] = useState(null);
 
   return (
-    <section id="projects" className="py-20 relative">
+    <section id="projects" data-section-accent="indigo" className="chapter-section py-20 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -39,12 +48,9 @@ const ProductList = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-4 mb-16"
         >
-          <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold tracking-wide uppercase ${
-            darkMode ? "border-purple-500/30 bg-purple-500/10 text-purple-400" : "border-purple-300 bg-purple-900/10 text-purple-900"
-          }`}>
-            <FolderCode size={14} />
+          <SectionEyebrow icon={FolderCode} number="04">
             Enterprise Solutions
-          </div>
+          </SectionEyebrow>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
             Featured <span className="text-gradient">Production Projects</span>
           </h2>
@@ -54,19 +60,27 @@ const ProductList = () => {
         </motion.div>
 
         {/* Project Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {enterpriseProjects.map((item, index) => (
-            <Product
-              key={item.id}
-              index={index}
-              title={item.title}
-              company={item.company}
-              desc={item.desc}
-              architecture={item.architecture}
-              tags={item.tags}
-              onOpenModal={() => setSelectedProject(item)}
-            />
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-5 sm:gap-6 mb-16">
+          {enterpriseProjects.map((item, index) => {
+            const projectNumber = String(index + 1).padStart(2, "0");
+            const accentRgb = projectAccents[index % projectAccents.length];
+
+            return (
+              <Product
+                key={item.id}
+                index={index}
+                projectNumber={projectNumber}
+                accentRgb={accentRgb}
+                className={index < 2 ? "lg:col-span-3" : "lg:col-span-2"}
+                title={item.title}
+                company={item.company}
+                desc={item.desc}
+                architecture={item.architecture}
+                tags={item.tags}
+                onOpenModal={() => setSelectedProject({ ...item, projectNumber, accentRgb })}
+              />
+            );
+          })}
         </div>
 
         {/* Connect Banner */}
@@ -75,11 +89,7 @@ const ProductList = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6 }}
-          className={`p-5 sm:p-8 rounded-3xl border text-center flex flex-col sm:flex-row items-center justify-between gap-6 ${
-            darkMode
-              ? "glass-panel border-slate-800"
-              : "bg-[#fbf9f5] border-[#d6cebf] shadow-md"
-          }`}
+          className="surface-card p-5 sm:p-8 rounded-3xl border text-center flex flex-col sm:flex-row items-center justify-between gap-6"
         >
           <div className="text-left">
             <h3 className={`text-lg sm:text-xl font-bold mb-1 ${darkMode ? "text-white" : "text-[#1c1917]"}`}>
@@ -93,7 +103,7 @@ const ProductList = () => {
           <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto shrink-0">
             <a
               href="mailto:parthdarji8825@gmail.com"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-semibold text-sm transition-all shadow-md shadow-cyan-500/25 active:scale-95 w-full sm:w-auto"
+              className="action-control inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-semibold text-sm shadow-md shadow-cyan-500/25 w-full sm:w-auto"
             >
               <Mail size={18} />
               Email Me
@@ -102,7 +112,7 @@ const ProductList = () => {
               href="https://www.linkedin.com/in/parthdarji8825"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm transition-all shadow-md shadow-blue-600/25 active:scale-95 w-full sm:w-auto"
+              className="action-control inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm shadow-md shadow-blue-600/25 w-full sm:w-auto"
             >
               <LinkedinIcon size={18} />
               LinkedIn

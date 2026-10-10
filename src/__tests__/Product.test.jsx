@@ -1,8 +1,10 @@
-import { describe, it, expect, vi } from 'vitest';
+import { afterEach, describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import Product from '../components/Product';
 import { ThemeProvider } from '../context';
+
+afterEach(() => vi.restoreAllMocks());
 
 describe('Product Component', () => {
   const dummyProps = {
@@ -30,6 +32,7 @@ describe('Product Component', () => {
     expect(screen.getByText('ASP.NET Core')).toBeInTheDocument();
     expect(screen.getByText('Azure')).toBeInTheDocument();
     expect(screen.getByText(/View Architecture Details/i)).toBeInTheDocument();
+    expect(screen.getAllByText('01').length).toBeGreaterThan(0);
   });
 
   it('triggers onOpenModal when card is clicked', () => {
@@ -126,5 +129,42 @@ describe('Product Component', () => {
 
     expect(card.style.getPropertyValue('--mouse-x')).toBe('50px');
     expect(card.style.getPropertyValue('--mouse-y')).toBe('80px');
+    expect(card.style.getPropertyValue('--project-rotate-x')).toBeTruthy();
+    expect(card.style.getPropertyValue('--project-rotate-y')).toBeTruthy();
+  });
+
+  it('applies its project identity as CSS data without changing accessible activation', () => {
+    render(
+      <ThemeProvider>
+        <Product {...dummyProps} projectNumber="04" accentRgb="244 63 94" />
+      </ThemeProvider>
+    );
+
+    const card = screen.getByRole('button', {
+      name: /View architecture details for CAA Membership Validation APIs/i,
+    });
+    expect(card.closest('[data-project-number]')).toHaveAttribute('data-project-number', '04');
+    expect(card.style.getPropertyValue('--project-accent-rgb')).toBe('244 63 94');
+  });
+
+  it('disables pointer tracking when reduced motion is requested', () => {
+    vi.spyOn(window, 'matchMedia').mockImplementation((query) => ({
+      matches: query === '(prefers-reduced-motion: reduce)',
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
+
+    render(
+      <ThemeProvider>
+        <Product {...dummyProps} />
+      </ThemeProvider>
+    );
+
+    const card = screen.getByRole('button', {
+      name: /View architecture details for CAA Membership Validation APIs/i,
+    });
+    fireEvent.mouseMove(card, { clientX: 100, clientY: 100 });
+    expect(card).toHaveAttribute('data-reduced-motion', 'true');
+    expect(card.style.getPropertyValue('--mouse-x')).toBe('');
   });
 });

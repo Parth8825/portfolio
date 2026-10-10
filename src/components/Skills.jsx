@@ -2,11 +2,15 @@ import React, { useContext } from "react";
 import { ThemeContext } from "../context";
 import { Server, Database, Layout, Wrench, Terminal } from "lucide-react";
 import { motion } from "framer-motion";
+import SectionEyebrow from "./SectionEyebrow";
+import useReducedMotion from "../hooks/useReducedMotion";
 
 const skillCategories = [
   {
     category: "Backend & Web APIs",
     icon: <Server className="text-cyan-400" size={24} />,
+    accent: "6 182 212",
+    primaryCount: 2,
     skills: [
       { name: "ASP.NET Core", level: "Advanced" },
       { name: "C#", level: "Advanced" },
@@ -21,6 +25,8 @@ const skillCategories = [
   {
     category: "Databases & Architecture",
     icon: <Database className="text-indigo-400" size={24} />,
+    accent: "99 102 241",
+    primaryCount: 2,
     skills: [
       { name: "Microsoft SQL Server", level: "Advanced" },
       { name: "Stored Procedures & T-SQL", level: "Advanced" },
@@ -32,6 +38,8 @@ const skillCategories = [
   {
     category: "Frontend & Ecosystem",
     icon: <Layout className="text-purple-400" size={24} />,
+    accent: "168 85 247",
+    primaryCount: 2,
     skills: [
       { name: "React.js", level: "Proficient" },
       { name: "TypeScript", level: "Proficient" },
@@ -45,6 +53,8 @@ const skillCategories = [
   {
     category: "Cloud, DevOps & CMS",
     icon: <Wrench className="text-emerald-400" size={24} />,
+    accent: "16 185 129",
+    primaryCount: 2,
     skills: [
       { name: "Azure Cloud & App Services", level: "Advanced" },
       { name: "Azure SQL & Azure Storage", level: "Advanced" },
@@ -57,7 +67,7 @@ const skillCategories = [
 ];
 
 // Interactive Spotlight Skill Card Component
-const SkillCard = ({ cat, idx, darkMode }) => {
+const SkillCard = ({ cat, idx, darkMode, reduceMotion }) => {
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     e.currentTarget.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
@@ -66,15 +76,14 @@ const SkillCard = ({ cat, idx, darkMode }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9, y: 35 }}
-      whileInView={{ opacity: 1, scale: 1, y: 0 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 28 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, delay: idx * 0.06 }}
       onMouseMove={handleMouseMove}
-      className={`portfolio-card group relative p-5 sm:p-8 rounded-3xl border overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
-        darkMode
-          ? "bg-slate-900/95 hover:bg-slate-900 border-slate-700/60 hover:border-cyan-500/40 shadow-lg group-hover:shadow-2xl group-hover:shadow-cyan-500/10"
-          : "bg-[#fbf9f5]/95 hover:bg-[#fbf9f5] border-[#d6cebf] hover:border-cyan-600/40 shadow-sm group-hover:shadow-lg"
+      style={{ "--skill-accent-rgb": cat.accent }}
+      className={`skill-category-card surface-card interactive-card portfolio-card group relative p-5 sm:p-7 rounded-3xl border overflow-hidden hover:-translate-y-1 ${
+        idx === 0 || idx === 3 ? "lg:col-span-7" : "lg:col-span-5"
       }`}
     >
       {/* Interactive Cursor Spotlight */}
@@ -101,51 +110,67 @@ const SkillCard = ({ cat, idx, darkMode }) => {
       />
 
       <div className="relative z-10">
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-800/40">
-          <div className={`p-3 rounded-xl border ${
+        <div className="flex items-center gap-3 mb-5 pb-4 border-b border-slate-800/40">
+          <div className={`skill-category-icon p-3 rounded-xl border ${
             darkMode ? "bg-slate-950/40 border-slate-700/60" : "bg-[#ede8df] border-[#d6cebf] shadow-2xs"
           }`}>
             {cat.icon}
           </div>
-          <h3 className={`text-xl font-extrabold ${darkMode ? "text-white" : "text-[#1c1917]"}`}>
-            {cat.category}
-          </h3>
+          <div>
+            <span className="font-mono text-[10px] font-bold tracking-[0.18em] text-[rgb(var(--skill-accent-rgb))]">
+              0{idx + 1} / CATEGORY
+            </span>
+            <h3 className={`text-lg sm:text-xl font-extrabold ${darkMode ? "text-white" : "text-[#1c1917]"}`}>
+              {cat.category}
+            </h3>
+          </div>
         </div>
 
-        {/* Skills Tags */}
-        <div className="flex flex-wrap gap-2.5">
+        <ul className="skill-list grid grid-cols-1 sm:grid-cols-2 gap-2.5" aria-label={`${cat.category} proficiency`}>
           {cat.skills.map((skill, sIdx) => (
-            <motion.div
-              key={sIdx}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, delay: sIdx * 0.025 }}
-              whileHover={{ scale: 1.08 }}
-              className={`px-3 py-2 rounded-xl border text-xs sm:text-sm font-medium transition-colors cursor-default ${
+            <li
+              key={skill.name}
+              aria-label={`${skill.name}: ${skill.level} proficiency`}
+              className={`skill-item ${sIdx < cat.primaryCount ? "skill-item-primary" : ""} p-3 rounded-xl border cursor-default ${
                 darkMode
-                  ? "bg-slate-950/60 border-slate-700/80 text-white font-medium hover:border-cyan-400"
-                  : "bg-[#ede8df] border-[#d6cebf] text-[#1c1917] font-semibold hover:border-cyan-600 shadow-2xs"
+                  ? "bg-slate-950/60 border-slate-700/80 text-white"
+                  : "bg-[#ede8df] border-[#d6cebf] text-[#1c1917] shadow-2xs"
               }`}
             >
-              <span>{skill.name}</span>
-              <span className={`ml-2 text-xs font-mono ${darkMode ? "text-cyan-400 font-semibold" : "text-cyan-800 font-extrabold"}`}>
-                ({skill.level})
+              <div className="flex items-start justify-between gap-2">
+                <span className={`${sIdx < cat.primaryCount ? "text-sm sm:text-base font-extrabold" : "text-xs sm:text-sm font-semibold"}`}>
+                  {skill.name}
+                </span>
+                <span className="text-[10px] font-mono font-bold text-[rgb(var(--skill-accent-rgb))] shrink-0">
+                  {skill.level}
+                </span>
+              </div>
+              <span className="skill-level mt-2 flex gap-1" aria-hidden="true">
+                {[1, 2, 3].map((segment) => {
+                  const activeSegments = skill.level === "Advanced" ? 3 : 2;
+                  return <span key={segment} className={segment <= activeSegments ? "is-active" : ""} />;
+                })}
               </span>
-            </motion.div>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </motion.div>
   );
 };
 
 const Skills = () => {
+  const reduceMotion = useReducedMotion();
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
 
   return (
-    <section id="skills" className="py-24 relative overflow-hidden">
+    <section
+      id="skills"
+      data-section-accent="violet"
+      data-reduced-motion={reduceMotion ? "true" : undefined}
+      className="chapter-section py-24 relative overflow-hidden"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Title Header */}
         <motion.div
@@ -155,12 +180,9 @@ const Skills = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-4 mb-16"
         >
-          <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold tracking-wide uppercase shadow-sm ${
-            darkMode ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400" : "border-cyan-300 bg-cyan-50 text-cyan-800"
-          }`}>
-            <Terminal size={14} />
+          <SectionEyebrow icon={Terminal} number="02">
             Technical Toolkit
-          </div>
+          </SectionEyebrow>
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
             Skills & <span className="text-gradient">Technologies</span>
           </h2>
@@ -170,9 +192,9 @@ const Skills = () => {
         </motion.div>
 
         {/* Skills Categories Grid with Spotlight */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 lg:gap-8">
           {skillCategories.map((cat, idx) => (
-            <SkillCard key={idx} cat={cat} idx={idx} darkMode={darkMode} />
+            <SkillCard key={cat.category} cat={cat} idx={idx} darkMode={darkMode} reduceMotion={reduceMotion} />
           ))}
         </div>
       </div>

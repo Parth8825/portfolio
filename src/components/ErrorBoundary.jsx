@@ -40,7 +40,7 @@ class ErrorBoundary extends Component {
             )}
             <button
               onClick={this.handleReload}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-medium rounded-xl transition-all duration-200 shadow-lg shadow-cyan-500/25 active:scale-95"
+              className="action-control inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-medium rounded-xl shadow-lg shadow-cyan-500/25"
             >
               <RefreshCw size={18} />
               Reload Page

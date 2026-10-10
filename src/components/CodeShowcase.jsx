@@ -3,6 +3,7 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 import { ThemeContext } from "../context";
 import { Code2, Copy, Check, Terminal, ShieldAlert, FileCode, Minus, Square, X, Play } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import SectionEyebrow from "./SectionEyebrow";
 
 const demoSimulations = {
   api: [
@@ -355,7 +356,7 @@ const CodeShowcase = () => {
   };
 
   return (
-    <section id="code-showcase" className="py-20 relative overflow-hidden">
+    <section id="code-showcase" data-section-accent="emerald" className="chapter-section py-20 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <motion.div
@@ -365,12 +366,9 @@ const CodeShowcase = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-4 mb-10"
         >
-          <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold tracking-wide uppercase shadow-sm ${
-            darkMode ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400" : "border-cyan-300 bg-cyan-900/10 text-cyan-900"
-          }`}>
-            <Terminal size={14} />
+          <SectionEyebrow icon={Terminal} number="03">
             Clean Architecture Patterns
-          </div>
+          </SectionEyebrow>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
             Synthetic Demo <span className="text-gradient">Code Patterns</span>
           </h2>
@@ -397,7 +395,7 @@ const CodeShowcase = () => {
               <button
                 key={snip.id}
                 onClick={() => setActiveTab(snip.id)}
-                className={`relative px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-1.5 sm:gap-2 cursor-pointer z-10 ${
+                className={`action-control relative px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 sm:gap-2 cursor-pointer z-10 ${
                   isActive
                     ? "text-slate-950"
                     : darkMode
@@ -456,7 +454,7 @@ const CodeShowcase = () => {
               {/* Interactive Run Demo Simulation Button with Auto-Scroll */}
               <button
                 onClick={handleToggleDemo}
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1.2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold transition-all border active:scale-95 cursor-pointer ${
+                className={`action-control inline-flex items-center gap-1.5 px-2.5 py-1.2 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold border cursor-pointer ${
                   isRunningDemo
                     ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/40 shadow-xs shadow-cyan-500/20 ring-1 ring-cyan-400/40"
                     : "bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700"
@@ -471,7 +469,7 @@ const CodeShowcase = () => {
 
               <button
                 onClick={handleCopy}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1.2 sm:px-3 sm:py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-all border border-slate-700 active:scale-95 cursor-pointer"
+                className="action-control inline-flex items-center gap-1.5 px-2.5 py-1.2 sm:px-3 sm:py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 cursor-pointer"
               >
                 {copied ? (
                   <>

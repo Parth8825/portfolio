@@ -7,9 +7,11 @@ import Skills from "./components/Skills";
 import ProductList from "./components/ProductList";
 import Footer from "./components/Footer";
 import LazySection from "./components/LazySection";
+import ScrollNavigator from "./components/ScrollNavigator";
 import { ThemeContext } from "./context";
 import { AnimatePresence, motion, useMotionValue, useScroll, useSpring } from "framer-motion";
-import { scrollToSection } from "./utils/scroll";
+import { navigateToSection } from "./utils/scroll";
+import useActiveSection from "./hooks/useActiveSection";
 
 const CodeShowcase = lazy(() => import("./components/CodeShowcase"));
 const Contact = lazy(() => import("./components/Contact"));
@@ -20,6 +22,7 @@ function App() {
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const activeSection = useActiveSection();
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -91,10 +94,7 @@ function App() {
       const targetElem = document.getElementById(targetId);
       if (targetElem) {
         e.preventDefault();
-        scrollToSection(targetId);
-        if (typeof window !== "undefined" && window.history?.pushState) {
-          window.history.pushState(null, "", `#${targetId}`);
-        }
+        navigateToSection(targetId);
       }
     };
     document.addEventListener("click", handleAnchorClick);
@@ -153,7 +153,14 @@ function App() {
         />
       )}
 
-      <Navbar onOpenCommandPalette={() => setCommandPaletteOpen(true)} />
+      <Navbar
+        activeSection={activeSection}
+        onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+      />
+      <ScrollNavigator
+        activeSection={activeSection}
+        scrollProgress={scrollYProgress}
+      />
       <main className="relative z-10">
         <Intro />
         <Experience />
