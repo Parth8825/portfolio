@@ -1,8 +1,10 @@
+import useReducedMotion from "../hooks/useReducedMotion";
 import React, { useContext, useRef, useState, useEffect } from "react";
 import { ThemeContext } from "../context";
 import emailjs from "@emailjs/browser";
 import { Mail, MapPin, Send, CheckCircle, AlertCircle, Loader2, ExternalLink, Clock } from "lucide-react";
 import { motion } from "framer-motion";
+import SectionEyebrow from "./SectionEyebrow";
 
 // Security utility function to escape HTML special characters
 const sanitizeInput = (str) => {
@@ -92,6 +94,7 @@ const triggerConfetti = () => {
 };
 
 const Contact = () => {
+  const reduceMotion = useReducedMotion();
   const formRef = useRef();
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
@@ -111,10 +114,10 @@ const Contact = () => {
   const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
-    if (submitted) {
+    if (submitted && !reduceMotion) {
       triggerConfetti();
     }
-  }, [submitted]);
+  }, [submitted, reduceMotion]);
 
   // Submission cooldown countdown timer (prevents accidental / repeated sends)
   useEffect(() => {
@@ -247,7 +250,7 @@ const Contact = () => {
   )}`;
 
   return (
-    <section id="contact" className="py-20 relative">
+    <section id="contact" data-section-accent="rose" className="chapter-section py-20 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -257,12 +260,9 @@ const Contact = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-4 mb-16"
         >
-          <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold tracking-wide uppercase ${
-            darkMode ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400" : "border-cyan-300 bg-cyan-50 text-cyan-800"
-          }`}>
-            <Mail size={14} />
+          <SectionEyebrow icon={Mail} number="05">
             Get In Touch
-          </div>
+          </SectionEyebrow>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
             Let&apos;s Discuss <span className="text-gradient">Your Project</span>
           </h2>
@@ -280,11 +280,7 @@ const Contact = () => {
             transition={{ duration: 0.6 }}
             className="lg:col-span-5 space-y-6 text-left"
           >
-            <div className={`p-5 sm:p-8 rounded-3xl border space-y-8 transition-all duration-300 ${
-              darkMode
-                ? "bg-slate-900/85 backdrop-blur-md hover:bg-slate-950/20 hover:backdrop-blur-none border-slate-700/60 hover:border-cyan-500/50 shadow-lg hover:shadow-cyan-500/10"
-                : "bg-[#fbf9f5]/90 backdrop-blur-md hover:bg-[#ede8df]/30 hover:backdrop-blur-none border-[#d6cebf] shadow-sm"
-            }`}>
+            <div className="surface-card interactive-card p-5 sm:p-8 rounded-3xl border space-y-8">
               <div>
                 <h3 className={`text-2xl font-extrabold mb-2 ${darkMode ? "text-white" : "text-[#1c1917]"}`}>
                   Contact Details
@@ -335,11 +331,7 @@ const Contact = () => {
             transition={{ duration: 0.6 }}
             className="lg:col-span-7"
           >
-            <div className={`p-5 sm:p-10 rounded-3xl border transition-all duration-300 ${
-              darkMode
-                ? "bg-slate-900/85 backdrop-blur-md hover:bg-slate-950/20 hover:backdrop-blur-none border-slate-700/60 hover:border-cyan-500/50 shadow-lg hover:shadow-cyan-500/10"
-                : "bg-[#fbf9f5]/90 backdrop-blur-md hover:bg-[#ede8df]/30 hover:backdrop-blur-none border-[#d6cebf] shadow-sm"
-            }`}>
+            <div className="surface-card interactive-card p-5 sm:p-10 rounded-3xl border">
               <form ref={formRef} onSubmit={handleSubmit} noValidate autoComplete="off" className="space-y-6 text-left">
                 {/* Hidden Honeypot Field for Spam Bot Protection */}
                 <div className="hidden" aria-hidden="true">
@@ -478,7 +470,7 @@ const Contact = () => {
                       <button
                         type="button"
                         onClick={() => setSubmitted(false)}
-                        className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 transition-colors cursor-pointer"
+                        className="action-control px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 cursor-pointer"
                       >
                         Send another message
                       </button>
@@ -499,7 +491,7 @@ const Contact = () => {
                       <span className="text-xs text-amber-200 font-medium">Send your prefilled message directly:</span>
                       <a
                         href={mailtoLink}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-lg transition-all shadow-md active:scale-95"
+                        className="action-control inline-flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-lg shadow-md"
                       >
                         <ExternalLink size={14} />
                         Open Email Client
@@ -512,7 +504,7 @@ const Contact = () => {
                 <button
                   type="submit"
                   disabled={loading || cooldown > 0}
-                  className="w-full py-4 px-6 bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-bold text-base rounded-xl transition-all duration-200 shadow-lg shadow-cyan-500/25 active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+                  className="action-control w-full py-4 px-6 bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-bold text-base rounded-xl shadow-lg shadow-cyan-500/25 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>

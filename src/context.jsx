@@ -77,6 +77,10 @@ export const ThemeProvider = (props) => {
     } else {
       document.documentElement.classList.remove("dark");
     }
+
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", state.darkMode ? "#0f172a" : "#ede8df");
   }, [state.darkMode]);
 
   // Listen for system theme changes dynamically

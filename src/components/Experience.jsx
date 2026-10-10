@@ -1,11 +1,13 @@
-import React, { useContext } from "react";
+import useReducedMotion from "../hooks/useReducedMotion";
+import React, { useContext, useRef } from "react";
 import { ThemeContext } from "../context";
 import { experienceData } from "../data";
 import { Briefcase, GraduationCap, MapPin, Calendar, CheckCircle2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useScroll } from "framer-motion";
+import SectionEyebrow from "./SectionEyebrow";
 
 // Frosted Glass Experience Card with Cursor & Touch Spotlight
-const ExperienceCard = ({ item, isEven, darkMode }) => {
+const ExperienceCard = ({ item, darkMode }) => {
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     e.currentTarget.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
@@ -15,11 +17,7 @@ const ExperienceCard = ({ item, isEven, darkMode }) => {
   return (
     <div
       onMouseMove={handleMouseMove}
-      className={`group relative w-full ml-13 md:ml-0 md:w-[calc(50%-3rem)] p-5 sm:p-8 rounded-3xl border transition-all duration-300 hover:-translate-y-1.5 overflow-hidden ${
-        darkMode
-          ? "bg-slate-900/85 backdrop-blur-md group-hover:bg-slate-950/15 group-hover:backdrop-blur-none border-slate-700/60 group-hover:border-cyan-500/60 shadow-lg group-hover:shadow-2xl group-hover:shadow-cyan-500/10"
-          : "bg-[#fbf9f5]/90 backdrop-blur-md group-hover:bg-[#ede8df]/25 group-hover:backdrop-blur-none border-[#d6cebf] group-hover:border-cyan-600/60 shadow-sm group-hover:shadow-lg"
-      } ${isEven ? "md:mr-auto" : "md:ml-auto"}`}
+      className="experience-card surface-card interactive-card portfolio-card group relative w-[calc(100%-3.25rem)] ml-13 md:ml-0 md:w-auto p-5 sm:p-7 lg:p-8 rounded-3xl border hover:-translate-y-1 overflow-hidden"
     >
       {/* Interactive Cursor Spotlight Glow */}
       <div
@@ -51,7 +49,7 @@ const ExperienceCard = ({ item, isEven, darkMode }) => {
           }`}>
             {item.type}
           </span>
-          <div className={`flex items-center gap-1.5 text-xs font-semibold ${darkMode ? "text-slate-400" : "text-[#44403c]"}`}>
+          <div className={`md:hidden flex items-center gap-1.5 text-xs font-semibold ${darkMode ? "text-slate-400" : "text-[#44403c]"}`}>
             <Calendar size={13} className={darkMode ? "text-cyan-400" : "text-cyan-700"} />
             {item.period}
           </div>
@@ -76,14 +74,14 @@ const ExperienceCard = ({ item, isEven, darkMode }) => {
         </p>
 
         {/* Bullet Points */}
-        <div className="space-y-2.5 mb-5">
+        <ul className="space-y-2.5 mb-5" aria-label={`${item.role} achievements`}>
           {item.points.map((pt, pIdx) => (
-            <div key={pIdx} className="flex items-start gap-2.5 text-xs sm:text-sm">
+            <li key={pIdx} className="flex items-start gap-2.5 text-xs sm:text-sm">
               <CheckCircle2 size={16} className={`${darkMode ? "text-cyan-400" : "text-cyan-700"} shrink-0 mt-0.5`} />
               <span className={darkMode ? "text-slate-100 font-normal" : "text-[#3f3b35] font-medium"}>{pt}</span>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
 
         {/* Tech Stack Badges */}
         <div className="flex flex-wrap gap-1.5 pt-3.5 border-t border-slate-800/40">
@@ -106,17 +104,29 @@ const ExperienceCard = ({ item, isEven, darkMode }) => {
 };
 
 const Experience = () => {
+  const reduceMotion = useReducedMotion();
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start center", "end center"],
+  });
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
 
   return (
-    <section id="experience" className="py-24 relative overflow-hidden">
+    <section
+      ref={sectionRef}
+      id="experience"
+      data-section-accent="cyan"
+      data-reduced-motion={reduceMotion ? "true" : undefined}
+      className="chapter-section py-24 relative overflow-hidden"
+    >
       {/* Target anchor alias for legacy #about links */}
       <div id="about" className="absolute -top-24" />
 
       {/* Ambient background glow elements */}
-      <div className="absolute top-1/3 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none animate-pulse-glow" />
-      <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none animate-pulse-glow" />
+      <div className="absolute top-1/3 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Title Header */}
@@ -127,12 +137,9 @@ const Experience = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-4 mb-16 sm:mb-20"
         >
-          <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-semibold tracking-wide uppercase shadow-sm ${
-            darkMode ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400" : "border-cyan-300 bg-cyan-50 text-cyan-800"
-          }`}>
-            <Briefcase size={14} />
+          <SectionEyebrow icon={Briefcase} number="01">
             Career & Academic Journey
-          </div>
+          </SectionEyebrow>
           <h2 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
             Work Experience & <span className="text-gradient">Education</span>
           </h2>
@@ -141,47 +148,45 @@ const Experience = () => {
           </p>
         </motion.div>
 
-        {/* Pixel-Perfect Responsive Timeline with Animated Traveling Neon Beam */}
-        <div className="relative space-y-8 sm:space-y-12">
-          {/* Static Background Line */}
-          <div className="absolute top-0 bottom-0 left-5 md:left-1/2 -translate-x-1/2 w-1 bg-gradient-to-b from-cyan-500/30 via-indigo-500/30 to-purple-500/30 rounded-full pointer-events-none" />
-
-          {/* Traveling Neon Light Beam Traversing 100% of the Timeline Spine */}
-          <div className="absolute top-0 bottom-0 left-5 md:left-1/2 -translate-x-1/2 w-1.5 overflow-hidden pointer-events-none rounded-full">
+        <div className="experience-timeline relative max-w-5xl mx-auto space-y-8 sm:space-y-10" role="list" aria-label="Career and education timeline">
+          <div className="experience-timeline-track" aria-hidden="true">
             <motion.div
-              style={{ position: "absolute", left: 0, right: 0 }}
-              animate={{
-                top: ["-10%", "105%"],
-              }}
-              transition={{
-                duration: 5.5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="w-full h-52 bg-gradient-to-b from-transparent via-cyan-400 to-transparent shadow-lg shadow-cyan-400"
+              className="experience-timeline-progress"
+              style={{ scaleY: reduceMotion ? 1 : scrollYProgress }}
             />
           </div>
 
           {experienceData.map((item, index) => {
-            const isEven = index % 2 === 0;
             const isEducation = item.type === "Education";
 
             return (
               <motion.div
                 key={item.id}
-                initial={{ opacity: 0, y: 45, x: isEven ? -25 : 25 }}
-                whileInView={{ opacity: 1, y: 0, x: 0 }}
+                role="listitem"
+                initial={reduceMotion ? false : { opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.55, delay: index * 0.08 }}
-                className="relative flex items-start md:items-center justify-start md:justify-normal md:odd:flex-row-reverse group"
+                className="relative md:grid md:grid-cols-[10rem_3rem_minmax(0,1fr)] items-start group"
               >
-                {/* Glowing Marker Badge */}
-                <div className="absolute left-5 md:left-1/2 -translate-x-1/2 top-1.5 md:top-auto w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-slate-950 border-2 border-cyan-400 flex items-center justify-center text-cyan-400 shadow-lg shadow-cyan-500/30 z-20 group-hover:scale-110 group-hover:rotate-6 group-hover:bg-cyan-500 group-hover:text-slate-950 transition-all duration-300">
-                  {isEducation ? <GraduationCap className="w-4 h-4 md:w-5 md:h-5" /> : <Briefcase className="w-4 h-4 md:w-5 md:h-5" />}
+                <div className="hidden md:flex justify-end pr-4 self-stretch">
+                  <div className="experience-period sticky top-28 self-start text-right">
+                    <span className="block font-mono text-[10px] tracking-[0.18em] text-cyan-500 mb-1" aria-hidden="true">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className={`block text-xs font-bold ${darkMode ? "text-slate-200" : "text-[#3f3b35]"}`}>
+                      {item.period}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Timeline Content Card */}
-                <ExperienceCard item={item} isEven={isEven} darkMode={darkMode} />
+                <div className="absolute left-5 md:static md:translate-x-0 -translate-x-1/2 top-1.5 md:flex md:justify-center md:pt-1 z-20">
+                  <div className="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-slate-950 border-2 border-cyan-400 flex items-center justify-center text-cyan-400 shadow-lg shadow-cyan-500/20 group-hover:bg-cyan-500 group-hover:text-slate-950 transition-colors duration-200">
+                  {isEducation ? <GraduationCap className="w-4 h-4 md:w-5 md:h-5" /> : <Briefcase className="w-4 h-4 md:w-5 md:h-5" />}
+                  </div>
+                </div>
+
+                <ExperienceCard item={item} darkMode={darkMode} />
               </motion.div>
             );
           })}

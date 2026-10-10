@@ -1,8 +1,10 @@
+import { getScrollBehavior } from "../hooks/useReducedMotion";
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { ThemeContext } from "../context";
 import { Search, Home, Briefcase, Wrench, FolderCode, Mail, Copy, Check, Terminal, CornerDownLeft, X } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "./Icons";
 import { motion } from "framer-motion";
+import { scrollToSection } from "../utils/scroll";
 
 const CommandPalette = ({ isOpen, onClose }) => {
   const theme = useContext(ThemeContext);
@@ -67,15 +69,8 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to Home / Hero",
       category: "Navigation",
       action: () => {
+        scrollToSection("home");
         onClose();
-        setTimeout(() => {
-          const el = document.getElementById("home");
-          if (typeof el?.scrollIntoView === "function") {
-            el.scrollIntoView({ behavior: "smooth" });
-          } else {
-            window.location.hash = "#home";
-          }
-        }, 80);
       },
     },
     {
@@ -84,15 +79,8 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to Enterprise Projects",
       category: "Navigation",
       action: () => {
+        scrollToSection("projects");
         onClose();
-        setTimeout(() => {
-          const el = document.getElementById("projects");
-          if (typeof el?.scrollIntoView === "function") {
-            el.scrollIntoView({ behavior: "smooth" });
-          } else {
-            window.location.hash = "#projects";
-          }
-        }, 80);
       },
     },
     {
@@ -101,15 +89,8 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to Career Experience & Education",
       category: "Navigation",
       action: () => {
+        scrollToSection("experience");
         onClose();
-        setTimeout(() => {
-          const el = document.getElementById("experience");
-          if (typeof el?.scrollIntoView === "function") {
-            el.scrollIntoView({ behavior: "smooth" });
-          } else {
-            window.location.hash = "#experience";
-          }
-        }, 80);
       },
     },
     {
@@ -118,15 +99,8 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to Technical Toolkit",
       category: "Navigation",
       action: () => {
+        scrollToSection("skills");
         onClose();
-        setTimeout(() => {
-          const el = document.getElementById("skills");
-          if (typeof el?.scrollIntoView === "function") {
-            el.scrollIntoView({ behavior: "smooth" });
-          } else {
-            window.location.hash = "#skills";
-          }
-        }, 80);
       },
     },
     {
@@ -135,15 +109,8 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to C# & SQL Code Showcase",
       category: "Navigation",
       action: () => {
+        scrollToSection("code-showcase");
         onClose();
-        setTimeout(() => {
-          const el = document.getElementById("code-showcase");
-          if (typeof el?.scrollIntoView === "function") {
-            el.scrollIntoView({ behavior: "smooth" });
-          } else {
-            window.location.hash = "#code-showcase";
-          }
-        }, 80);
       },
     },
     {
@@ -152,15 +119,8 @@ const CommandPalette = ({ isOpen, onClose }) => {
       label: "Go to Contact Form",
       category: "Navigation",
       action: () => {
+        scrollToSection("contact");
         onClose();
-        setTimeout(() => {
-          const el = document.getElementById("contact");
-          if (typeof el?.scrollIntoView === "function") {
-            el.scrollIntoView({ behavior: "smooth" });
-          } else {
-            window.location.hash = "#contact";
-          }
-        }, 80);
       },
     },
     {
@@ -207,7 +167,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (typeof itemRefs.current[selectedIndex]?.scrollIntoView === "function") {
       itemRefs.current[selectedIndex].scrollIntoView({
-        behavior: "smooth",
+        behavior: getScrollBehavior(),
         block: "nearest",
       });
     }

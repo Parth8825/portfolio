@@ -48,4 +48,11 @@ Object.defineProperty(globalThis, 'IntersectionObserver', {
 // Mock window.scrollTo for jsdom
 window.scrollTo = () => {};
 
+// JSDOM has no canvas renderer; returning null exercises the component's
+// graceful no-canvas fallback without emitting a not-implemented error.
+Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
+  configurable: true,
+  value: () => null,
+});
+
 

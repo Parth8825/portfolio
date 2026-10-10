@@ -22,6 +22,11 @@ const LazySection = ({
   useEffect(() => {
     if (shouldLoad) return;
 
+    const shouldPreloadFor = (targetId) => {
+      const target = targetId ? document.getElementById(targetId) : null;
+      return targetId === id || Boolean(target && ref.current && ref.current.offsetTop < target.offsetTop);
+    };
+
     // 1. Check if hash matches
     const handleHash = () => {
       if (window.location.hash === `#${id}`) {
@@ -33,11 +38,19 @@ const LazySection = ({
     // 2. Preemptively trigger if user clicks any link targeting this section
     const handleAnchorClick = (e) => {
       const anchor = e.target.closest?.('a[href^="#"]');
-      if (anchor && anchor.getAttribute("href") === `#${id}`) {
+      const targetId = anchor?.getAttribute("href")?.slice(1);
+      if (shouldPreloadFor(targetId)) {
         setShouldLoad(true);
       }
     };
     document.addEventListener("click", handleAnchorClick, { capture: true });
+
+    const handleNavigation = (e) => {
+      if (shouldPreloadFor(e.detail?.targetId)) {
+        setShouldLoad(true);
+      }
+    };
+    document.addEventListener("portfolio:navigate", handleNavigation);
 
     // 3. Viewport-aware preemptive loading using IntersectionObserver
     if (!window.IntersectionObserver) {
@@ -45,6 +58,7 @@ const LazySection = ({
       return () => {
         window.removeEventListener("hashchange", handleHash);
         document.removeEventListener("click", handleAnchorClick, { capture: true });
+        document.removeEventListener("portfolio:navigate", handleNavigation);
       };
     }
 
@@ -66,6 +80,7 @@ const LazySection = ({
       observer.disconnect();
       window.removeEventListener("hashchange", handleHash);
       document.removeEventListener("click", handleAnchorClick, { capture: true });
+      document.removeEventListener("portfolio:navigate", handleNavigation);
     };
   }, [id, rootMargin, shouldLoad]);
 
@@ -74,6 +89,7 @@ const LazySection = ({
       <div
         ref={ref}
         id={id}
+        data-lazy-pending="true"
         className={`${minHeight} relative`}
         aria-hidden="true"
       />
@@ -81,7 +97,16 @@ const LazySection = ({
   }
 
   return (
-    <Suspense fallback={<div id={id} className={`${minHeight} relative`} />}>
+    <Suspense
+      fallback={(
+        <div
+          id={id}
+          data-lazy-pending="true"
+          className={`${minHeight} relative`}
+          aria-hidden="true"
+        />
+      )}
+    >
       {children}
     </Suspense>
   );

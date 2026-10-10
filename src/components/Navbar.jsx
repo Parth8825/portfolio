@@ -1,42 +1,37 @@
 import React, { useContext, useState, useEffect } from "react";
+import { flushSync } from "react-dom";
 import { ThemeContext } from "../context";
 import { Sun, Moon, Menu, X, Code2, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { navigateToSection } from "../utils/scroll";
+import { SITE_SECTIONS } from "../constants/navigation";
+import useReducedMotion from "../hooks/useReducedMotion";
 
-const Navbar = ({ onOpenCommandPalette }) => {
+const Navbar = ({ onOpenCommandPalette, activeSection = "home" }) => {
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
+  const reduceMotion = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [osKey, setOsKey] = useState("Ctrl+K");
-  const [activeSection, setActiveSection] = useState("home");
 
   useEffect(() => {
-    let ticking = false;
+    let scrollFrame = null;
+
     const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 20);
-
-          const sectionIds = ["home", "experience", "skills", "code-showcase", "projects", "contact"];
-          const scrollPosition = window.scrollY + 140;
-
-          for (let i = sectionIds.length - 1; i >= 0; i--) {
-            const section = document.getElementById(sectionIds[i]);
-            if (section && section.offsetTop <= scrollPosition) {
-              setActiveSection((prev) => (prev !== sectionIds[i] ? sectionIds[i] : prev));
-              break;
-            }
-          }
-          ticking = false;
-        });
-        ticking = true;
-      }
+      if (scrollFrame) return;
+      scrollFrame = window.requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 20);
+        scrollFrame = null;
+      });
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (scrollFrame) window.cancelAnimationFrame(scrollFrame);
+    };
   }, []);
 
   useEffect(() => {
@@ -47,17 +42,31 @@ const Navbar = ({ onOpenCommandPalette }) => {
     setOsKey(isMac ? "⌘K" : "Ctrl+K");
   }, []);
 
-  const navLinks = [
-    { name: "Home", href: "#home" },
-    { name: "Experience", href: "#experience" },
-    { name: "Skills", href: "#skills" },
-    { name: "Code", href: "#code-showcase" },
-    { name: "Projects", href: "#projects" },
-    { name: "Contact", href: "#contact" },
-  ];
+  const navLinks = SITE_SECTIONS.map(({ id, label }) => ({ name: label, href: `#${id}` }));
 
-  const toggleTheme = () => {
-    theme.dispatch({ type: "TOGGLE" });
+  const toggleTheme = (event) => {
+    const applyTheme = () => theme.dispatch({ type: "TOGGLE" });
+
+    if (reduceMotion || typeof document.startViewTransition !== "function") {
+      applyTheme();
+      return;
+    }
+
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    const originX = event.clientX || buttonRect.left + buttonRect.width / 2;
+    const originY = event.clientY || buttonRect.top + buttonRect.height / 2;
+    const revealRadius = Math.hypot(
+      Math.max(originX, window.innerWidth - originX),
+      Math.max(originY, window.innerHeight - originY)
+    );
+
+    document.documentElement.style.setProperty("--theme-transition-x", `${originX}px`);
+    document.documentElement.style.setProperty("--theme-transition-y", `${originY}px`);
+    document.documentElement.style.setProperty("--theme-transition-radius", `${revealRadius}px`);
+
+    document.startViewTransition(() => {
+      flushSync(applyTheme);
+    });
   };
 
   const handleNavClick = (e, href) => {
@@ -68,20 +77,7 @@ const Navbar = ({ onOpenCommandPalette }) => {
     const targetElement = document.getElementById(targetId);
 
     if (targetElement) {
-      setTimeout(() => {
-        const navOffset = 80;
-        const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
-        const offsetPosition = elementPosition - navOffset;
-
-        window.scrollTo({
-          top: Math.max(0, offsetPosition),
-          behavior: "smooth",
-        });
-
-        if (typeof window !== "undefined" && window.history?.pushState) {
-          window.history.pushState(null, "", href);
-        }
-      }, 50);
+      navigateToSection(targetId);
     }
   };
 
@@ -128,6 +124,7 @@ const Navbar = ({ onOpenCommandPalette }) => {
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
+                aria-current={isActive ? "location" : undefined}
                 className={`relative text-sm font-medium transition-colors cursor-pointer ${
                   isActive
                     ? darkMode
@@ -157,7 +154,7 @@ const Navbar = ({ onOpenCommandPalette }) => {
           <button
             onClick={onOpenCommandPalette}
             aria-label="Open Command Palette"
-            className={`p-2 sm:px-3 sm:py-2 rounded-xl border text-xs font-mono transition-all duration-200 flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95 ${
+            className={`action-control p-2 sm:px-3 sm:py-2 rounded-xl border text-xs font-mono flex items-center gap-1.5 cursor-pointer shadow-xs ${
               darkMode
                 ? "bg-slate-900 border-slate-800 text-slate-300 hover:border-cyan-500/50 hover:text-white"
                 : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917] hover:bg-[#ede8df] hover:border-cyan-600 shadow-2xs"
@@ -171,7 +168,8 @@ const Navbar = ({ onOpenCommandPalette }) => {
           <button
             onClick={toggleTheme}
             aria-label="Toggle Theme"
-            className={`p-2.5 rounded-xl border transition-all duration-200 active:scale-95 ${
+            title={darkMode ? "Switch to light theme" : "Switch to dark theme"}
+            className={`action-control p-2.5 rounded-xl border ${
               darkMode
                 ? "bg-slate-900 border-slate-800 text-amber-400 hover:bg-slate-800"
                 : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917] hover:bg-[#ede8df] shadow-2xs"
@@ -184,7 +182,9 @@ const Navbar = ({ onOpenCommandPalette }) => {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle Navigation Menu"
-            className={`md:hidden p-2.5 rounded-xl border transition-all duration-200 active:scale-95 ${
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
+            className={`action-control md:hidden p-2.5 rounded-xl border ${
               darkMode
                 ? "bg-slate-900 border-slate-800 text-slate-200"
                 : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917]"
@@ -199,6 +199,7 @@ const Navbar = ({ onOpenCommandPalette }) => {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
+            id="mobile-navigation"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
@@ -216,7 +217,8 @@ const Navbar = ({ onOpenCommandPalette }) => {
                   key={link.name}
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
-                  className={`block px-3 py-2.5 rounded-xl text-base font-medium transition-colors cursor-pointer active:scale-[0.98] ${
+                aria-current={isActive ? "location" : undefined}
+                  className={`action-control block px-3 py-2.5 rounded-xl text-base font-medium cursor-pointer ${
                     isActive
                       ? darkMode
                         ? "bg-cyan-500/15 text-cyan-400 font-semibold"

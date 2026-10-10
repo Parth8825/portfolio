@@ -1,3 +1,4 @@
+import useReducedMotion from "../hooks/useReducedMotion";
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { ThemeContext } from "../context";
 import { ArrowRight, Mail, Sparkles, Code2, Globe2, Award, Zap } from "lucide-react";
@@ -16,30 +17,18 @@ const titles = [
   "React & Frontend Engineer",
 ];
 
-// Interactive 3D Spatial Parallax Avatar (Moves Face with True 3D Depth)
+// Restrained pointer tilt inside a lightweight technical profile frame.
 const TiltAvatar = () => {
+  const reduceMotion = useReducedMotion();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
   const mouseXSpring = useSpring(x, { stiffness: 180, damping: 20 });
   const mouseYSpring = useSpring(y, { stiffness: 180, damping: 20 });
 
-  // 3D Card Rotation
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["16deg", "-16deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-16deg", "16deg"]);
-
-  // 3D Parallax Face Movement (Independent inner depth plane)
-  const faceTranslateX = useTransform(mouseXSpring, [-0.5, 0.5], ["-22px", "22px"]);
-  const faceTranslateY = useTransform(mouseYSpring, [-0.5, 0.5], ["-20px", "20px"]);
-
-  // Holographic Light Reflection Glare Sweep
-  const glareX = useTransform(mouseXSpring, [-0.5, 0.5], ["-100%", "100%"]);
-  const glareY = useTransform(mouseYSpring, [-0.5, 0.5], ["-100%", "100%"]);
-  const glareOpacity = useTransform(mouseXSpring, [-0.5, 0, 0.5], [0.4, 0.1, 0.4]);
-
-  // Floating 3D Badge (Opposite depth layer creating spatial separation)
-  const badgeTranslateX = useTransform(mouseXSpring, [-0.5, 0.5], ["12px", "-12px"]);
-  const badgeTranslateY = useTransform(mouseYSpring, [-0.5, 0.5], ["12px", "-12px"]);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["4deg", "-4deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-4deg", "4deg"]);
+  const glareX = useTransform(mouseXSpring, [-0.5, 0.5], ["-35%", "35%"]);
 
   const handleUpdate = (clientX, clientY, rect) => {
     const mouseX = (clientX - rect.left) / rect.width - 0.5;
@@ -58,42 +47,45 @@ const TiltAvatar = () => {
   };
 
   return (
-    <div style={{ perspective: 1200 }} className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 select-none">
-      {/* Glowing backdrop card with dynamic shift */}
-      <motion.div
-        style={{
-          x: useTransform(mouseXSpring, [-0.5, 0.5], ["20px", "-20px"]),
-          y: useTransform(mouseYSpring, [-0.5, 0.5], ["20px", "-20px"]),
-        }}
-        className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 rotate-6 opacity-35 blur-xl pointer-events-none"
-      />
+    <div
+      data-avatar-frame
+      style={{ perspective: 1200 }}
+      className="hero-avatar-frame relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 select-none"
+    >
+      <div className="hero-avatar-backplate" aria-hidden="true" />
+      <div className="hero-avatar-meta hero-avatar-meta-top" aria-hidden="true">
+        <span>PROFILE // 01</span>
+        <span>FULL-STACK ENGINEER</span>
+      </div>
+      <div className="hero-avatar-meta hero-avatar-meta-side" aria-hidden="true">
+        <span>AZURE</span>
+        <span>ASP.NET</span>
+        <span>REACT</span>
+      </div>
 
       <motion.div
-        onMouseMove={handleMouseMove}
+        onMouseMove={reduceMotion ? undefined : handleMouseMove}
         onMouseLeave={handleLeave}
         style={{
-          rotateX,
-          rotateY,
+          rotateX: reduceMotion ? 0 : rotateX,
+          rotateY: reduceMotion ? 0 : rotateY,
           transformStyle: "preserve-3d",
         }}
-        className="absolute inset-0 rounded-3xl bg-slate-900 border-2 border-slate-700/80 overflow-hidden shadow-2xl flex items-center justify-center group cursor-grab active:cursor-grabbing"
+        className="hero-avatar-card absolute inset-0 rounded-3xl bg-slate-900 overflow-hidden shadow-2xl flex items-center justify-center group cursor-grab active:cursor-grabbing"
       >
+        <span className="hero-frame-corner hero-frame-corner-tl" aria-hidden="true" />
+        <span className="hero-frame-corner hero-frame-corner-tr" aria-hidden="true" />
+        <span className="hero-frame-corner hero-frame-corner-bl" aria-hidden="true" />
+        <span className="hero-frame-corner hero-frame-corner-br" aria-hidden="true" />
+
         {/* Invisible Protection Overlay Shield (blocks right click & drag) */}
-        <div 
+        <div
           className="absolute inset-0 z-30 select-none pointer-events-auto"
           onContextMenu={(e) => e.preventDefault()}
           onDragStart={(e) => e.preventDefault()}
         />
-        
-        {/* 3D Parallax Moving Face Layer */}
-        <motion.div
-          style={{
-            x: faceTranslateX,
-            y: faceTranslateY,
-            scale: 1.15,
-          }}
-          className="w-full h-full pointer-events-none select-none"
-        >
+
+        <div className="w-full h-full pointer-events-none select-none">
           <img
             src={developerAvatar}
             alt="Parth Darji - Software Developer"
@@ -101,34 +93,29 @@ const TiltAvatar = () => {
             decoding="async"
             draggable={false}
             onContextMenu={(e) => e.preventDefault()}
-            className="w-full h-full object-cover object-[50%_15%]"
+            className="w-full h-full object-cover object-[50%_15%] scale-[1.06]"
           />
-        </motion.div>
+        </div>
 
-        {/* Dynamic Holographic Reflection Sheen */}
+        {/* Subtle pointer reflection without a blurred moving layer. */}
         <motion.div
           style={{
-            x: glareX,
-            y: glareY,
-            opacity: glareOpacity,
+            x: reduceMotion ? 0 : glareX,
+            opacity: reduceMotion ? 0.08 : 0.16,
           }}
-          className="pointer-events-none absolute -inset-full bg-gradient-to-tr from-transparent via-white/25 to-transparent rotate-45 z-20"
+          className="pointer-events-none absolute -inset-x-1/2 inset-y-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -skew-x-12 z-20"
         />
 
-        {/* Floating 3D Tech Badge that pops out in front */}
-        <motion.div
-          style={{
-            x: badgeTranslateX,
-            y: badgeTranslateY,
-          }}
-          className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-2.5 sm:p-3 rounded-2xl glass-panel text-left flex items-center justify-between border border-white/20 z-25 shadow-xl backdrop-blur-md"
-        >
+        <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-2.5 sm:p-3 rounded-2xl bg-slate-950/90 text-left flex items-center justify-between border border-white/15 z-25 shadow-xl">
           <div>
             <p className="text-[10px] sm:text-xs text-cyan-400 font-semibold uppercase tracking-wider">Tech Focus</p>
             <p className="text-xs sm:text-sm font-bold text-white">.NET Core & Modern Web</p>
           </div>
-          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-400 animate-pulse shrink-0 shadow-xs shadow-emerald-400" />
-        </motion.div>
+          <div
+            data-avatar-status
+            className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-400 shrink-0 shadow-xs shadow-emerald-400 ${reduceMotion ? "" : "animate-pulse"}`}
+          />
+        </div>
       </motion.div>
     </div>
   );
@@ -136,6 +123,7 @@ const TiltAvatar = () => {
 
 // Fluid Spring/Timer Animated Counter for hero metrics
 const AnimatedCounter = ({ value }) => {
+  const reduceMotion = useReducedMotion();
   const match = String(value).match(/^(\d+)(.*)$/);
   const targetNum = match ? parseInt(match[1], 10) : 0;
   const suffix = match ? match[2] : "";
@@ -145,7 +133,7 @@ const AnimatedCounter = ({ value }) => {
   const isInView = useInView(ref, { once: true });
 
   useEffect(() => {
-    if (isInView && targetNum > 0) {
+    if (!reduceMotion && isInView && targetNum > 0) {
       let start = 0;
       const duration = 1200;
       const stepTime = Math.max(Math.floor(duration / targetNum), 20);
@@ -160,19 +148,29 @@ const AnimatedCounter = ({ value }) => {
       }, stepTime);
       return () => clearInterval(interval);
     }
-  }, [isInView, targetNum]);
+  }, [isInView, targetNum, reduceMotion]);
 
   return (
     <span ref={ref}>
-      {count}{suffix}
+      {reduceMotion ? targetNum : count}{suffix}
     </span>
   );
 };
 
 const Intro = () => {
+  const sectionRef = useRef(null);
+  const isVisible = useInView(sectionRef);
+  const reduceMotion = useReducedMotion();
   const theme = useContext(ThemeContext);
   const darkMode = theme.state.darkMode;
   const yearsExp = getYearsOfExperience();
+  const heroEntrance = (delay = 0) => reduceMotion
+    ? { initial: false }
+    : {
+        initial: { opacity: 0, y: 14 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] },
+      };
 
   // Mechanical Typewriter Engine
   const [displayText, setDisplayText] = useState("");
@@ -181,6 +179,7 @@ const Intro = () => {
   const [typingSpeed, setTypingSpeed] = useState(85);
 
   useEffect(() => {
+    if (reduceMotion || !isVisible) return;
     let pauseTimer = null;
     const currentTitle = titles[loopNum % titles.length];
 
@@ -213,7 +212,7 @@ const Intro = () => {
       clearTimeout(timer);
       if (pauseTimer) clearTimeout(pauseTimer);
     };
-  }, [displayText, isDeleting, loopNum, typingSpeed]);
+  }, [displayText, isDeleting, loopNum, typingSpeed, reduceMotion, isVisible]);
 
   const stats = [
     {
@@ -238,20 +237,24 @@ const Intro = () => {
     },
   ];
 
+  const socialLinkClass = `action-control hero-social-link p-3 rounded-xl border flex items-center justify-center ${
+    darkMode
+      ? "bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:border-cyan-500/50"
+      : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917] hover:bg-[#ede8df] hover:border-cyan-600 shadow-2xs"
+  }`;
+
   return (
-    <section id="home" className="min-h-screen pt-28 pb-16 flex items-center relative overflow-hidden">
+    <section ref={sectionRef} id="home" className="min-h-screen pt-28 pb-16 flex items-center relative overflow-hidden">
       {/* Ambient background glow elements */}
       <div className="absolute top-1/4 left-10 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-8 lg:gap-y-6 items-center">
         {/* Left Column - Hero Text */}
-        <div className="lg:col-span-7 space-y-6 text-left">
+        <div className="lg:col-span-7 space-y-5 sm:space-y-6 text-left">
           {/* Status Badge */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            {...heroEntrance(0)}
             className={`inline-flex max-w-full items-center gap-2 px-3.5 py-2 sm:py-1.5 rounded-2xl sm:rounded-full border text-[11px] sm:text-xs font-semibold tracking-wide uppercase leading-relaxed shadow-sm ${
               darkMode
                 ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400"
@@ -270,9 +273,7 @@ const Intro = () => {
 
           {/* Heading */}
           <motion.div
-            initial={{ opacity: 0, x: -60 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            {...heroEntrance(0.05)}
             className="space-y-2"
           >
             <p className={darkMode ? "text-slate-400 text-base sm:text-lg font-medium" : "text-slate-600 text-base sm:text-lg font-medium"}>
@@ -286,9 +287,7 @@ const Intro = () => {
 
           {/* Animated Mechanical Typewriter Role Switcher */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.35 }}
+            {...heroEntrance(0.1)}
             className="min-h-12 flex flex-wrap items-center"
           >
             <span className={`text-lg sm:text-2xl font-semibold ${darkMode ? "text-cyan-400" : "text-cyan-700"}`}>I am a </span>
@@ -297,14 +296,14 @@ const Intro = () => {
                 darkMode ? "text-indigo-300" : "text-indigo-600"
               }`}
             >
-              {displayText}
+              {reduceMotion ? titles[0] : displayText}
             </span>
             <span className="inline-block w-0.5 sm:w-1 h-5 sm:h-7 bg-cyan-400 ml-1.5 translate-y-0.5 rounded-full animate-pulse shadow-xs shadow-cyan-400" />
           </motion.div>
 
           {/* Dynamic Description */}
           <p
-            className={`max-w-2xl text-sm sm:text-lg leading-relaxed ${
+            className={`hero-lcp-description max-w-2xl text-sm sm:text-lg leading-relaxed ${
               darkMode ? "text-slate-300" : "text-slate-600"
             }`}
           >
@@ -315,47 +314,42 @@ const Intro = () => {
 
           {/* CTA Action Buttons */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.55 }}
-            className="pt-2 flex flex-wrap items-center gap-3 sm:gap-4"
+            {...heroEntrance(0.15)}
+            className="pt-1 space-y-3"
           >
-            <Magnetic strength={0.25} className="w-full sm:w-auto">
-              <a
-                href="#projects"
-                className="inline-flex items-center justify-center gap-2.5 px-5 py-3 sm:px-6 sm:py-3.5 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-semibold rounded-xl text-sm sm:text-base transition-all duration-200 shadow-lg shadow-cyan-500/25 active:scale-95 group w-full sm:w-auto"
-              >
-                View Projects
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-              </a>
-            </Magnetic>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <Magnetic strength={0.25} className="w-full sm:w-auto">
+                <a
+                  href="#projects"
+                  className="action-control inline-flex items-center justify-center gap-2.5 px-5 py-3 sm:px-6 sm:py-3.5 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-semibold rounded-xl text-sm sm:text-base shadow-lg shadow-cyan-500/25 group w-full sm:w-auto"
+                >
+                  View Projects
+                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </a>
+              </Magnetic>
 
-            <Magnetic strength={0.25} className="w-full sm:w-auto">
-              <a
-                href="#contact"
-                className={`inline-flex items-center justify-center gap-2 px-5 py-3 sm:px-6 sm:py-3.5 rounded-xl border font-semibold text-sm sm:text-base transition-all duration-200 w-full sm:w-auto ${
-                  darkMode
-                    ? "bg-slate-900/80 border-slate-800 text-slate-200 hover:bg-slate-800 hover:border-slate-700"
-                    : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917] hover:bg-[#ede8df] shadow-2xs"
-                }`}
-              >
-                Contact Me
-              </a>
-            </Magnetic>
+              <Magnetic strength={0.25} className="w-full sm:w-auto">
+                <a
+                  href="#contact"
+                  className={`action-control inline-flex items-center justify-center gap-2 px-5 py-3 sm:px-6 sm:py-3.5 rounded-xl border font-semibold text-sm sm:text-base w-full sm:w-auto ${
+                    darkMode
+                      ? "bg-slate-900/80 border-slate-800 text-slate-200 hover:bg-slate-800 hover:border-slate-700"
+                      : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917] hover:bg-[#ede8df] shadow-2xs"
+                  }`}
+                >
+                  Contact Me
+                </a>
+              </Magnetic>
+            </div>
 
-            {/* Social Links with Magnetic Attraction */}
-            <div className="flex items-center gap-2 w-full sm:w-auto justify-start sm:justify-none pt-2 sm:pt-0">
+            <div role="group" aria-label="Social profiles" className="flex items-center gap-2">
               <Magnetic strength={0.45}>
                 <a
                   href="https://github.com/Parth8825"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="GitHub Profile"
-                  className={`p-3 rounded-xl border transition-colors flex items-center justify-center ${
-                    darkMode
-                      ? "bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:border-cyan-500/50"
-                      : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917] hover:bg-[#ede8df] hover:border-cyan-600 shadow-2xs"
-                  }`}
+                  className={socialLinkClass}
                 >
                   <GithubIcon size={20} />
                 </a>
@@ -367,11 +361,7 @@ const Intro = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="LinkedIn Profile"
-                  className={`p-3 rounded-xl border transition-colors flex items-center justify-center ${
-                    darkMode
-                      ? "bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:border-cyan-500/50"
-                      : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917] hover:bg-[#ede8df] hover:border-cyan-600 shadow-2xs"
-                  }`}
+                  className={socialLinkClass}
                 >
                   <LinkedinIcon size={20} />
                 </a>
@@ -381,60 +371,47 @@ const Intro = () => {
                 <a
                   href="mailto:parthdarji8825@gmail.com"
                   aria-label="Email Me"
-                  className={`p-3 rounded-xl border transition-colors flex items-center justify-center ${
-                    darkMode
-                      ? "bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:border-cyan-500/50"
-                      : "bg-[#fbf9f5] border-[#d6cebf] text-[#1c1917] hover:bg-[#ede8df] hover:border-cyan-600 shadow-2xs"
-                  }`}
+                  className={socialLinkClass}
                 >
                   <Mail size={20} />
                 </a>
               </Magnetic>
             </div>
           </motion.div>
-
-          {/* Animated Impact Stats Bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.65 }}
-            className="pt-6 border-t border-slate-800/40 grid grid-cols-2 sm:grid-cols-4 gap-3"
-          >
-            {stats.map((st, sIdx) => (
-              <motion.div
-                key={sIdx}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                whileHover={{ y: -5, scale: 1.03 }}
-                transition={{ duration: 0.3, delay: 0.7 + sIdx * 0.1 }}
-                className={`p-3.5 rounded-2xl border transition-all duration-300 cursor-default ${
-                  darkMode
-                    ? "bg-slate-900/85 backdrop-blur-md hover:bg-slate-950/15 hover:backdrop-blur-none border-slate-700/60 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/10"
-                    : "bg-[#fbf9f5]/90 backdrop-blur-md hover:bg-[#ede8df]/25 hover:backdrop-blur-none border-[#d6cebf] shadow-2xs hover:border-cyan-600/50 hover:shadow-md"
-                }`}
-              >
-                <div className="flex items-center gap-2 mb-1">
-                  {st.icon}
-                  <span className={`text-lg sm:text-xl font-black ${darkMode ? "text-white" : "text-[#1c1917]"}`}>
-                    <AnimatedCounter value={st.value} />
-                  </span>
-                </div>
-                <p className={`text-[11px] font-semibold leading-snug ${darkMode ? "text-slate-200" : "text-[#44403c]"}`}>
-                  {st.label}
-                </p>
-              </motion.div>
-            ))}
-          </motion.div>
         </div>
 
-        {/* Right Column - Protected Avatar with 3D Tilt */}
+        {/* Technical profile frame moves between content and stats on mobile. */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, x: 50 }}
-          animate={{ opacity: 1, scale: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="lg:col-span-5 flex justify-center items-center"
+          initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.55, delay: reduceMotion ? 0 : 0.1, ease: [0.22, 1, 0.36, 1] }}
+          className="lg:col-span-5 lg:col-start-8 lg:row-start-1 lg:row-span-2 flex justify-center items-center py-3 sm:py-5 lg:py-0"
         >
           <TiltAvatar />
+        </motion.div>
+
+        {/* Connected impact statistics panel */}
+        <motion.div
+          initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: reduceMotion ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="surface-card hero-stats-panel lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 overflow-hidden rounded-3xl border"
+          role="list"
+          aria-label="Professional highlights"
+        >
+          {stats.map((stat) => (
+            <div key={stat.label} className="hero-stat p-3.5 sm:p-4 cursor-default" role="listitem">
+              <div className="flex items-center gap-2 mb-1">
+                {stat.icon}
+                <span className={`text-lg sm:text-xl font-black ${darkMode ? "text-white" : "text-[#1c1917]"}`}>
+                  <AnimatedCounter value={stat.value} />
+                </span>
+              </div>
+              <p className={`text-[11px] font-semibold leading-snug ${darkMode ? "text-slate-200" : "text-[#44403c]"}`}>
+                {stat.label}
+              </p>
+            </div>
+          ))}
         </motion.div>
       </div>
     </section>

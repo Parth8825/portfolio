@@ -12,7 +12,9 @@ describe('Skills Component', () => {
       </ThemeProvider>
     );
 
-    expect(screen.getByText('Technical Toolkit')).toBeInTheDocument();
+    const heading = screen.getByText('Technical Toolkit');
+    expect(heading).toBeInTheDocument();
+    expect(heading.closest('section')).toHaveAttribute('data-section-accent', 'violet');
     expect(screen.getByText('Backend & Web APIs')).toBeInTheDocument();
     expect(screen.getByText('Databases & Architecture')).toBeInTheDocument();
     expect(screen.getByText('Frontend & Ecosystem')).toBeInTheDocument();
@@ -22,5 +24,9 @@ describe('Skills Component', () => {
     expect(screen.getByText('C#')).toBeInTheDocument();
     expect(screen.getByText('Microsoft SQL Server')).toBeInTheDocument();
     expect(screen.getByText('Azure Cloud & App Services')).toBeInTheDocument();
+    expect(screen.getByLabelText('ASP.NET Core: Advanced proficiency')).toBeInTheDocument();
+    expect(screen.getByLabelText('React.js: Proficient proficiency')).toBeInTheDocument();
+    expect(screen.getAllByText('Advanced').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Proficient').length).toBeGreaterThan(0);
   });
 });
